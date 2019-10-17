@@ -6,7 +6,7 @@
 #    By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2019/10/08 11:37:09 by nerahmou     #+#   ##    ##    #+#        #
-#    Updated: 2019/10/14 10:43:05 by nerahmou    ###    #+. /#+    ###.fr      #
+#    Updated: 2019/10/17 16:25:23 by nerahmou    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
@@ -26,7 +26,7 @@ CC = gcc
 DEBUG = 0
 
 ifeq ($(DEBUG),1)
-	CFLAGS = -g3 -Wall -Wpadded -fsanitize=address
+	CFLAGS = -g3 -Wall -Wpadded #-fsanitize=address
 else
 	CFLAGS = -Wall -Wextra -Werror -Wpadded -fsanitize=address
 endif
@@ -35,7 +35,8 @@ HEADERS = malloc.h
 HEADERS_DIR = includes
 
 
-SRCS = main.c
+SRCS = main.c\
+	   malloc.c
 SRCS_DIR = srcs
 
 OBJS = $(addprefix $(OBJS_DIR)/,$(SRCS:.c=.o))
@@ -66,6 +67,7 @@ $(OBJS_DIR)/%.o: %.c $(HEADERS) | $(OBJS_DIR)
 
 libft/libft.a:
 	make -C $(LIBFT_DIR)
+
 
 $(OBJS_DIR):
 	@echo Create $(OBJS_DIR) directory

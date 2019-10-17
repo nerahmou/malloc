@@ -1,18 +1,25 @@
 /* ************************************************************************** */
 /*                                                          LE - /            */
 /*                                                              /             */
-/*   main.c                                           .::    .:/ .      .::   */
+/*   malloc.c                                         .::    .:/ .      .::   */
 /*                                                 +:+:+   +:    +:  +:+:+    */
-/*   By: nerahmou <nerahmou@student.le-101.fr>      +:+   +:    +:    +:+     */
+/*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
-/*   Created: 2019/10/08 09:40:14 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/10/17 16:25:51 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Created: 2019/10/17 16:24:17 by nerahmou     #+#   ##    ##    #+#       */
+/*   Updated: 2019/10/17 17:08:16 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "malloc.h"
 
-int main(int argc, char* argv[]){
-	return 0;
+void	*malloc(size_t size)
+{
+	static t_heap	*heap = NULL;
+	void	*addr;
+	
+	addr = NULL;
+	if (heap == NULL)
+		;//init_heap();
+	return (addr);
 }
