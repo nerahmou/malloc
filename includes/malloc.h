@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/10/17 16:22:32 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/10/19 18:40:40 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -17,15 +17,28 @@
 ** DEFINES
 */
 # define MALLOC_H
+
 # define PROT_OPTS (PROT_READ | PROT_WRITE)
-# define MAP_OPTS (MAP_ANON | MAP_PRIVATE)
+# define MAP_FLAGS (MAP_ANON | MAP_PRIVATE)
+# define MMAP(addr, len) mmap(addr, len, PROT_OPTS, MAP_FLAGS, -1, 0)
+
+# define PAGE_SIZE getpagesize()
+
+# define TINY_ALIGN 16
+# define TINY_MAX_SIZE 512
+# define TINY_SEGMENT_SIZE (TINY_MAX_SIZE * 500)
+
+# define SMALL_ALIGN 16
+# define SMALL_MAX_SIZE 65024
+# define SMALL_SEGMENT_SIZE (SMALL_MAX_SIZE * 100)
 
 /*
 ** INCLUDES
 */
-# include <sys/mman.h>
+# include <stdlib.h>
 # include <stdbool.h>
-# include "libft.h"
+# include <sys/mman.h>
+
 /*
 ** TYPE_DEFS
 ** - t_heap: Structure global gerant la memoire
@@ -64,6 +77,7 @@ typedef struct s_chunk		t_chunk;
 **
 */
 
+
 struct	s_chunk
 {
 	size_t		size:sizeof(size_t) * 8 - 1;
@@ -84,6 +98,12 @@ struct	s_heap
 	t_segment	*small;
 	t_segment	*large;
 };
+
+/*
+*****************GLOBAL_VARS****************
+*/
+t_heap g_heap;
+
 
 void	show_alloc_mem(void);
 /*

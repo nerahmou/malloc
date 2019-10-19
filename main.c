@@ -6,7 +6,7 @@
 /*   By: nerahmou <nerahmou@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/08 09:40:14 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/10/17 16:25:51 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/10/19 18:13:11 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -14,5 +14,6 @@
 #include "malloc.h"
 
 int main(int argc, char* argv[]){
+	void *d =	malloc(2);
 	return 0;
 }

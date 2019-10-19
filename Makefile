@@ -6,80 +6,66 @@
 #    By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2019/10/08 11:37:09 by nerahmou     #+#   ##    ##    #+#        #
-#    Updated: 2019/10/17 16:25:23 by nerahmou    ###    #+. /#+    ###.fr      #
+#    Updated: 2019/10/19 17:02:25 by nerahmou    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
 
-.PHONY: all, clean, fclean, re
-
+.PHONY: all, clean, fclean, re, malloc
 .SUFFIXES:
 
-red=$(echo -e "\033[0;31m")
-ccyellow=$(echo -e "\033[0;33m")
-ccend=$(echo -e "\033[0m")
-green = $(@echo "\033[92m")
 ########################### VARS ############################
-
+#SHELL := /bin/zsh
+DEBUG := 0
+CC := gcc
 RM += -r
-CC = gcc
-DEBUG = 0
 
 ifeq ($(DEBUG),1)
-	CFLAGS = -g3 -Wall -Wpadded #-fsanitize=address
+	CFLAGS := -g3 -Wall -Wpadded -fPIC -fsanitize=address
 else
-	CFLAGS = -Wall -Wextra -Werror -Wpadded -fsanitize=address
+	CFLAGS := -Wall -Wextra -Werror -Wpadded -fPIC -fsanitize=address
+endif
+ifeq ($(HOSTTYPE),)
+	HOSTTYPE := $(shell uname -m)_$(shell uname -s)
 endif
 
-HEADERS = malloc.h
-HEADERS_DIR = includes
 
+HEADERS_DIR := includes
+SRCS_DIR := srcs
+OBJS_DIR := obj
 
-SRCS = main.c\
-	   malloc.c
-SRCS_DIR = srcs
+HEADERS := $(addprefix $(HEADERS_DIR)/,malloc.h)
+SRCS := $(addprefix $(SRCS_DIR)/,malloc.c)
+OBJS := $(addprefix $(OBJS_DIR)/,$(notdir $(SRCS:.c=.o)))
 
-OBJS = $(addprefix $(OBJS_DIR)/,$(SRCS:.c=.o))
-OBJS_DIR = obj
-
-LIBFT = libft.a
-LIBFT_DIR = libft
-
-NAME = test
-
-#DIRS TO SEARCH IN IF ANY FILE NOT FOUND IN CURRENT DIRECTORY
-#vpath %.a $(LIBFT_DIR)
-vpath %.c $(SRCS_DIR)
-vpath %.h $(HEADERS_DIR)
-
-
+NAME := libft_malloc_$(HOSTTYPE).so
+LINK_NAME := libft_malloc.so
 
 
 all: $(NAME)
 
-$(NAME): libft/libft.a $(OBJS)
-	@echo Link object files
-	$(CC) $(CFLAGS) -L$(LIBFT_DIR) -lft $^ -o $(NAME)
+$(NAME): $(OBJS)
+	@echo "Link object files" 1>&2
+	$(CC) -shared $(CFLAGS) $^ -o $(NAME)
+	ln -s $(NAME) $(LINK_NAME) 2> /dev/null || true
 
-$(OBJS_DIR)/%.o: %.c $(HEADERS) | $(OBJS_DIR)
-	@echo Compile $< in $@
-	$(CC) $(CFLAGS) -I$(HEADERS_DIR) -I$(LIBFT_DIR)/$(HEADERS_DIR) -c $< -o $@ 
-
-libft/libft.a:
-	make -C $(LIBFT_DIR)
-
+$(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c $(HEADERS) | $(OBJS_DIR)
+	@echo "Compile $< in $@" 1>&2
+	$(CC) $(CFLAGS) -I$(HEADERS_DIR) -c $< -o $@ 
 
 $(OBJS_DIR):
-	@echo Create $(OBJS_DIR) directory
-	@mkdir $(OBJS_DIR)
+	@echo "Create $@ directory" 1>&2
+	mkdir $@
 
 clean:
-	@echo "Appel de clean (LIBFT)"; make -C $(LIBFT_DIR) clean
-	@$(RM) -rf $(OBJS_DIR)
-
+	@echo "Clean" 1>&2
+	$(RM) $(OBJS_DIR)
 
 fclean: clean
-	@echo "Appel de fclean (LIBFT)"; make -C $(LIBFT_DIR) fclean
-	@$(RM) -rf $(NAME)
+	@echo "Fclean" 1>&2
+	$(RM) $(NAME)
 
 re: fclean all
+
+init_env:
+	@printf "export DYLD_LIBRARY_PATH='.' DYLD_INSERT_LIBRARIES='libft_malloc.so'"

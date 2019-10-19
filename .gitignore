@@ -2,3 +2,5 @@ cmake*
 .idea
 *.dSYM
 notes
+main.c
+libft_malloc.so
