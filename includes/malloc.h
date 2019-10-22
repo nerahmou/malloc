@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/10/19 18:40:40 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/10/22 15:41:27 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -24,12 +24,12 @@
 
 # define PAGE_SIZE getpagesize()
 
-# define TINY_ALIGN 16
+# define ALIGNEMENT 16
+
 # define TINY_MAX_SIZE 512
 # define TINY_SEGMENT_SIZE (TINY_MAX_SIZE * 500)
 
-# define SMALL_ALIGN 16
-# define SMALL_MAX_SIZE 65024
+# define SMALL_MAX_SIZE 4096
 # define SMALL_SEGMENT_SIZE (SMALL_MAX_SIZE * 100)
 
 /*
@@ -38,6 +38,15 @@
 # include <stdlib.h>
 # include <stdbool.h>
 # include <sys/mman.h>
+# include <sys/resource.h>
+
+/*
+ * PROTOTYPES
+ */
+
+void	*small_chunk();
+void	*large_chunk();
+
 
 /*
 ** TYPE_DEFS
@@ -49,6 +58,8 @@
 typedef struct s_heap		t_heap;
 typedef struct s_segment	t_segment;
 typedef struct s_chunk		t_chunk;
+typedef struct s_op			t_op;
+
 
 /*
 ** STRUCTURES
@@ -74,7 +85,9 @@ typedef struct s_chunk		t_chunk;
 **		large:	Point to the list of LARGE segments
 **	}
 **
-**
+**	s_op (24 octets):	Fait correspondre la fonction a appeler en fonction de la taille du malloc demandée
+**	{
+**	}
 */
 
 
@@ -94,15 +107,24 @@ struct	s_segment
 
 struct	s_heap
 {
-	t_segment	*tiny;
-	t_segment	*small;
-	t_segment	*large;
+	t_segment	*tiny_segment;
+	t_segment	*small_segment;
+	t_segment	*large_segment;
+};
+
+struct s_op
+{
+	size_t		max_chunk_size;
+	size_t		segment_size;
+	t_segment	*segment;
+	void		*(ptr_func)(t_segment*, size_t, size_t);
 };
 
 /*
 *****************GLOBAL_VARS****************
 */
-t_heap g_heap;
+t_heap	g_heap;
+t_op	g_op[3];
 
 
 void	show_alloc_mem(void);
@@ -118,4 +140,7 @@ void	*realloc(void *ptr, size_t size);
 ******************FREE****************
 */
 void	free(void *ptr);
+
+
+
 #endif
