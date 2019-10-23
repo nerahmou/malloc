@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/10/22 15:41:27 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/10/23 16:11:43 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -55,10 +55,11 @@ void	*large_chunk();
 **				comprenant: les tinies, les smalls et les larges
 ** - t_chunk: Un troncon de memoire comprenant: Metadata + data
 */
-typedef struct s_heap		t_heap;
-typedef struct s_segment	t_segment;
-typedef struct s_chunk		t_chunk;
-typedef struct s_op			t_op;
+typedef struct s_private_memory		t_private_memory;
+typedef struct s_heap				t_heap;
+typedef struct s_segment			t_segment;
+typedef struct s_chunk				t_chunk;
+typedef struct s_op					t_op;
 
 
 /*
@@ -105,11 +106,18 @@ struct	s_segment
 	t_segment	*next;
 };
 
+struct	s_private_memory
+{
+	t_segment			*tiny_segment;
+	t_segment			*small_segment;
+	t_segment			*large_segment;
+};
+
 struct	s_heap
 {
-	t_segment	*tiny_segment;
-	t_segment	*small_segment;
-	t_segment	*large_segment;
+	t_segment			*tiny_segment;
+	t_segment			*small_segment;
+	t_segment			*large_segment;
 };
 
 struct s_op
@@ -117,14 +125,14 @@ struct s_op
 	size_t		max_chunk_size;
 	size_t		segment_size;
 	t_segment	*segment;
-	void		*(ptr_func)(t_segment*, size_t, size_t);
+	void		*(*ptr_func)(t_segment*, size_t, size_t);
 };
 
 /*
 *****************GLOBAL_VARS****************
 */
 t_heap	g_heap;
-t_op	g_op[3];
+t_op	g_op[4];
 
 
 void	show_alloc_mem(void);

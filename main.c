@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/22 11:24:43 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/10/22 11:55:01 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/10/23 16:03:03 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -15,10 +15,10 @@
 #include "malloc.h"
 #include <stdio.h>
 
+
 int main(int argc, char* argv[]){
-	int i = 512;
-	int j = 511;
-	//printf("%d", array[0]);
-	//void *d =	malloc(2);
+	
+	printf("%zu", g_op[0].max_chunk_size);
+	//int *n = malloc(8);
 	return 0;
 }

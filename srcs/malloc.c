@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/17 16:24:17 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/10/22 16:05:08 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/10/23 15:54:45 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -14,8 +14,7 @@
 #include "malloc.h"
 #include <stdio.h>
 
-//t_heap	g_heap;
-//t_op	g_op;
+t_heap	g_heap;
 
 
 
@@ -27,7 +26,7 @@ void	*new_segment(size_t len)
 
 
 
-void	*large_chunk(t_segment *segment, int segment_size, size_t size)
+/*void	*large_chunk(t_segment *segment, int segment_size, size_t size)
 {
 	t_segment	*tmp;
 	t_segment	*new;
@@ -40,23 +39,25 @@ void	*large_chunk(t_segment *segment, int segment_size, size_t size)
 	new->first_chunk = MMAP(NULL, sizeof(t_chunk));
 	new->last_chunk = MMAP(NULL, sizeof(t_chunk));
 
+		return NULL;
 }
-
+*/
 void	*small_chunk(t_segment *segment, int segment_size, size_t size)
 {
+		return NULL;
 }
 
-void	*place_chunk(size_t size)
+void	*new_chunk(size_t size)
 {
 	void		*addr;
-	char		i;
+	short		i;
 	int			max_chunk_size;
 	int			segment_size;
 	t_segment	*segment;
 
 	addr = NULL;
 	i = 0;
-	while (g_op[i].segment)
+	while (g_op[i].max_chunk_size)
 	{
 		max_chunk_size = g_op[i].max_chunk_size;
 		if ((size / max_chunk_size) == 0)
@@ -75,7 +76,7 @@ void	*malloc(size_t size)
 	void	*addr;
 	
 	addr = NULL;
-	addr = place_chunk(size);
+	addr = new_chunk(size);
 	return (addr);
 }
 
