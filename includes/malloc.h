@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/10/23 16:11:43 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/10/25 18:42:46 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -32,6 +32,21 @@
 # define SMALL_MAX_SIZE 4096
 # define SMALL_SEGMENT_SIZE (SMALL_MAX_SIZE * 100)
 
+# define LARGE_MAX_SIZE UINT64_MAX
+# define LARGE_SEGMENT_SIZE 0
+/*
+ * ENUMS
+ *
+ *	e_SEGMENT_OFFSET_TYPE: Utilisé pour acceder au bon type de segment dans la
+ *	g_heap
+ * */
+enum e_SEGMENT_OFFSET_TYPE{
+	TINY_SEGMENT_OFFSET,
+	SMALL_SEGMENT_OFFSET,
+	LARGE_SEGMENT_OFFSET
+};
+
+# define GET_SEGMENT_TYPE(addr, offset) (t_segment*)(addr + offset)
 /*
 ** INCLUDES
 */
@@ -124,15 +139,17 @@ struct s_op
 {
 	size_t		max_chunk_size;
 	size_t		segment_size;
-	t_segment	*segment;
+	size_t		offset;
+	//t_segment	*segment;
 	void		*(*ptr_func)(t_segment*, size_t, size_t);
 };
 
 /*
 *****************GLOBAL_VARS****************
 */
-t_heap	g_heap;
-t_op	g_op[4];
+
+extern t_heap	g_heap;
+extern t_op		g_op[4];
 
 
 void	show_alloc_mem(void);

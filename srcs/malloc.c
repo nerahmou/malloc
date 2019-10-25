@@ -6,16 +6,14 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/17 16:24:17 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/10/23 15:54:45 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/10/25 19:19:14 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
+
 #include "malloc.h"
 #include <stdio.h>
-
-t_heap	g_heap;
-
 
 
 void	*new_segment(size_t len)
@@ -23,10 +21,7 @@ void	*new_segment(size_t len)
 	return (MMAP(NULL, len));
 }
 
-
-
-
-/*void	*large_chunk(t_segment *segment, int segment_size, size_t size)
+void	*large_chunk(t_segment *segment, int segment_size, size_t size)
 {
 	t_segment	*tmp;
 	t_segment	*new;
@@ -41,7 +36,7 @@ void	*new_segment(size_t len)
 
 		return NULL;
 }
-*/
+
 void	*small_chunk(t_segment *segment, int segment_size, size_t size)
 {
 		return NULL;
@@ -53,7 +48,7 @@ void	*new_chunk(size_t size)
 	short		i;
 	int			max_chunk_size;
 	int			segment_size;
-	t_segment	*segment;
+	t_segment	*segment = NULL;
 
 	addr = NULL;
 	i = 0;
@@ -63,7 +58,7 @@ void	*new_chunk(size_t size)
 		if ((size / max_chunk_size) == 0)
 		{
 			segment_size = g_op[i].segment_size;
-			segment = g_op[i].segment;
+			segment = GET_SEGMENT_TYPE(&g_heap.tiny_segment, g_op[i].offset);
 			addr = g_op[i].ptr_func(segment, size, segment_size);
 		}
 		i++;
