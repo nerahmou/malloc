@@ -6,12 +6,12 @@
 #    By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2019/10/08 11:37:09 by nerahmou     #+#   ##    ##    #+#        #
-#    Updated: 2019/10/25 15:18:48 by nerahmou    ###    #+. /#+    ###.fr      #
+#    Updated: 2019/10/28 13:52:26 by nerahmou    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
 
-.PHONY: all, clean, fclean, re, malloc
+.PHONY: all, clean, fclean, re, main_test
 .SUFFIXES:
 
 ########################### VARS ############################
@@ -41,6 +41,13 @@ OBJS := $(addprefix $(OBJS_DIR)/,$(notdir $(SRCS:.c=.o)))
 NAME := libft_malloc_$(HOSTTYPE).so
 LINK_NAME := libft_malloc.so
 
+
+main_test=test
+
+
+$(main_test): all
+	$(CC) main.c -I$(HEADERS_DIR) -o $(main_test)
+	./$@
 
 all: $(NAME)
 

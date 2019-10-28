@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/10/25 18:42:46 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/10/28 15:54:57 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -46,7 +46,8 @@ enum e_SEGMENT_OFFSET_TYPE{
 	LARGE_SEGMENT_OFFSET
 };
 
-# define GET_SEGMENT_TYPE(addr, offset) (t_segment*)(addr + offset)
+# define GET_SEGMENT_TYPE(offset) (t_segment*)(&g_heap.tiny_segment + offset)
+# define GET_PADDED_CHUNK_SIZE(size) ((size - 1) / 16 * 16 + 16)
 /*
 ** INCLUDES
 */
@@ -59,6 +60,9 @@ enum e_SEGMENT_OFFSET_TYPE{
  * PROTOTYPES
  */
 
+/*
+ *void	*small_chunk(): Handle the tinies and smalls mallo
+ */
 void	*small_chunk();
 void	*large_chunk();
 
@@ -109,23 +113,14 @@ typedef struct s_op					t_op;
 
 struct	s_chunk
 {
-	size_t		size:sizeof(size_t) * 8 - 1;
-	size_t		in_use:1;
-	void		*data;
+	size_t		size;
+	size_t		in_use;
 };
 
 struct	s_segment
 {
-	t_chunk		*first_chunk;
-	t_chunk		*last_chunk;
 	t_segment	*next;
-};
-
-struct	s_private_memory
-{
-	t_segment			*tiny_segment;
-	t_segment			*small_segment;
-	t_segment			*large_segment;
+	t_chunk		*last_chunk;
 };
 
 struct	s_heap
@@ -140,7 +135,6 @@ struct s_op
 	size_t		max_chunk_size;
 	size_t		segment_size;
 	size_t		offset;
-	//t_segment	*segment;
 	void		*(*ptr_func)(t_segment*, size_t, size_t);
 };
 

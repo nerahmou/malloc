@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/22 15:12:28 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/10/25 18:41:43 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/10/28 17:20:35 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -21,3 +21,7 @@ t_op g_op[4] = {
 	{LARGE_MAX_SIZE, LARGE_SEGMENT_SIZE, LARGE_SEGMENT_OFFSET, &large_chunk},
 	{0, 0, 0, NULL}
 };
+
+void	init_heap()
+{
+}
