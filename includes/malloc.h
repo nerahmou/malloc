@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/10/29 11:38:29 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/10/29 13:43:13 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -20,7 +20,7 @@
 
 # define PROT_OPTS (PROT_READ | PROT_WRITE)
 # define MAP_FLAGS (MAP_ANON | MAP_PRIVATE)
-# define MMAP(addr, len) mmap(addr, len, PROT_OPTS, MAP_FLAGS, -1, 0)
+# define MMAP(len) mmap(NULL, len, PROT_OPTS, MAP_FLAGS, -1, 0)
 
 # define PAGE_SIZE getpagesize()
 
