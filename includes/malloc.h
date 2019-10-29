@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/10/29 13:43:13 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/10/29 16:30:01 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -49,7 +49,7 @@ enum e_SEGMENT_OFFSET_TYPE{
 /*
  * Recupere le bon segment a l'interieur de la heap en fonction en se servant d'un offset definit
  * dans le tableau global g_op*/
-# define GET_APPROPRIATE_SEGMENT_TYPE(offset) (t_segment*)(&g_heap.tiny_segment + offset)
+# define GET_APPROPRIATE_SEGMENT_TYPE(offset) (t_segment**)(&g_heap.tiny_segment + offset)
 /*
  * Arrondi au multiple de 16 superieur
  * */
@@ -142,7 +142,7 @@ struct s_op
 	size_t		max_chunk_size;
 	size_t		segment_size;
 	size_t		offset;
-	void		*(*ptr_func)(t_segment*, size_t, size_t);
+	bool		is_large;
 };
 
 /*

@@ -1,5 +1,6 @@
 cmake*
 .idea
+a.out*
 *.dSYM
 notes
 main.c
