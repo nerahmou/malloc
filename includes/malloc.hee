@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/10/29 11:38:29 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/10/29 10:54:04 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -27,7 +27,7 @@
 # define ALIGNEMENT 16
 
 # define TINY_MAX_SIZE 512
-# define TINY_SEGMENT_SIZE 64//(TINY_MAX_SIZE * 500)
+# define TINY_SEGMENT_SIZE (TINY_MAX_SIZE * 500)
 
 # define SMALL_MAX_SIZE 4096
 # define SMALL_SEGMENT_SIZE (SMALL_MAX_SIZE * 100)
@@ -49,7 +49,7 @@ enum e_SEGMENT_OFFSET_TYPE{
 /*
  * Recupere le bon segment a l'interieur de la heap en fonction en se servant d'un offset definit
  * dans le tableau global g_op*/
-# define GET_APPROPRIATE_SEGMENT_TYPE(offset) (t_segment*)(&g_heap.tiny_segment + offset)
+# define GET_SEGMENT_TYPE(offset) (t_segment*)(&g_heap.tiny_segment + offset)
 /*
  * Arrondi au multiple de 16 superieur
  * */

@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/17 16:24:17 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/10/29 12:04:33 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/10/29 10:59:36 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -16,7 +16,7 @@
 #include <stdio.h>
 
 
-void	*new_segment(t_segment **head, size_t len)
+void	*new_segment(size_t len)
 {
 	t_segment	*new_seg;
 
@@ -25,10 +25,8 @@ void	*new_segment(t_segment **head, size_t len)
 	{
 		new_seg->next = NULL;
 		new_seg->last_chunk = (t_chunk*)new_seg + 1;
-		new_seg->last_chunk->size = len - (sizeof(t_segment) + sizeof(t_chunk));
+		new_seg->last_chunk->size = len - sizeof(t_chunk);
 	}
-	if (*head == NULL)
-		*head = new_seg;
 	return (new_seg);
 }
 
@@ -42,29 +40,21 @@ void	*small_chunk(t_segment **head, int segment_size, size_t malloc_size)
 	void		*data_addr;
 	t_chunk		*new_chunk;
 	t_segment	*segment;
-	t_segment	*tmp;
 
 	data_addr = NULL;
-	tmp = NULL;
 	segment = *head;
 	malloc_size = ROUND_NEXT_MULTIPLE(malloc_size);
 	while (segment)
 	{
 		if (segment->last_chunk->size >= malloc_size)
 			break;
-		tmp = segment;
 		segment = segment->next;
 	}
-	if (segment == NULL)
-	{	
-		segment = new_segment(head, segment_size);
-		if (segment == NULL)
-			return (data_addr);
-		if (tmp != NULL)
-			tmp->next = segment;
-	}
+	if (segment == NULL && (segment = new_segment(segment_size)) == NULL)
+		return (data_addr);
 	segment->last_chunk->size = segment->last_chunk->size - malloc_size;
 	segment->last_chunk = segment->last_chunk + (malloc_size / ALIGNEMENT);
+	segment->last_chunk->in_use = segment->last_chunk->size == 0 ? 1 : 0;
 	new_chunk = segment->last_chunk - (malloc_size / ALIGNEMENT);
 	new_chunk->size = malloc_size;
 	new_chunk->in_use = 1;
@@ -91,7 +81,7 @@ void	*new_chunk(size_t size)
 			segment_size = g_op[i].segment_size;
 			segment = GET_APPROPRIATE_SEGMENT_TYPE(g_op[i].offset);
 			addr = g_op[i].ptr_func(segment, segment_size, size);
-			return (addr);
+			break;
 		}
 		i++;
 	}
