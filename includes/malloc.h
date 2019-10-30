@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/10/30 16:45:04 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/10/30 17:12:45 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -54,14 +54,22 @@ enum e_SEGMENT_OFFSET_TYPE{
  * Recupere le bon segment a l'interieur de la heap en fonction en se servant d'un offset definit
  * dans le tableau global g_op*/
 # define GET_APPROPRIATE_SEGMENT_TYPE(offset) (t_segment**)(&g_heap.tiny_segment + offset)
+
+
 /*
  * Arrondi au multiple de 16 superieur
  * */
-# define ROUND_NEXT_MULTIPLE(size) ((size - 1) / 16 * 16 + 16)
+# define GET_NEXT_MULTIPLE(size) ((size - 1) / 16 * 16 + 16)
 
-# define MOVE_CHUNK_ADDR(chunk, size) chunk = chunk + (size + CHUNK_HEAD_SIZE) / ALIGNEMENT
+/*
+ * Retourne la taille totale de l'allocation demandée en incluant le header du chunk
+ */
 
-# define UPDATE_CHUNK_SIZE(chunk, new_size) chunk->size = new_size - CHUNK_HEAD_SIZE
+# define GET_REQUIRED_SIZE(size) GET_NEXT_MULTIPLE(size) + CHUNK_HEAD_SIZE
+
+# define MOVE_CHUNK_ADDR(chunk, size) chunk = chunk + size / ALIGNEMENT
+
+# define UPDATE_CHUNK_SIZE(chunk, new_size) chunk->size = new_size
 
 # define CHUNK_DATA(chunk) chunk + 1
 /*

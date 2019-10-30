@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/17 16:24:17 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/10/30 16:46:37 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/10/30 17:03:01 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -32,10 +32,10 @@ void	*new_segment(t_segment **head, bool is_large, size_t len)
 
 /*
  * get_segment():	Find and return a segment with enough space for the 
- *					malloc_size. If not found, call new_segment()
+ *					size. If not found, call new_segment()
  */
-//t_segment	*get_segment(t_segment **head, int seg_size, size_t malloc_size)
-t_segment	*get_segment(t_op g_op, size_t malloc_size)
+//t_segment	*get_segment(t_segment **head, int seg_size, size_t size)
+t_segment	*get_segment(t_op g_op, size_t size)
 {
 	t_segment	*segment;
 	t_segment	**head;
@@ -47,14 +47,14 @@ t_segment	*get_segment(t_op g_op, size_t malloc_size)
 	segment = *head;
 	while (segment)
 	{
-		if (segment->last_chunk->size >= malloc_size)
+		if (segment->last_chunk->size >= size)
 			break;
 		tmp_previous = segment;
 		segment = segment->next;
 	}
 	if (segment == NULL)
 	{	
-		segment_size = g_op.is_large ? malloc_size : g_op.segment_size;
+		segment_size = g_op.is_large ? size : g_op.segment_size;
 		segment = new_segment(head, g_op.is_large, segment_size);
 		if (tmp_previous != NULL)
 			tmp_previous->next = segment;
@@ -62,22 +62,21 @@ t_segment	*get_segment(t_op g_op, size_t malloc_size)
 	return (segment);
 }
 
-void	*place_chunk(t_op g_op, size_t malloc_size)
+void	*place_chunk(t_op g_op, size_t size)
 {
 	t_segment	*segment;
 	t_chunk		*new_chunk;
 	t_chunk		*last_chunk;
 
-	malloc_size = ROUND_NEXT_MULTIPLE(malloc_size);
-	segment = get_segment(g_op, malloc_size);
+	segment = get_segment(g_op, size);
 	if (g_op.is_large || segment == NULL) //Pas besoin de chunk
 		return (segment);
 	last_chunk = segment->last_chunk;
-	MOVE_CHUNK_ADDR(segment->last_chunk, malloc_size);
-	UPDATE_CHUNK_SIZE(segment->last_chunk, last_chunk->size - malloc_size);
+	MOVE_CHUNK_ADDR(segment->last_chunk, size);
+	UPDATE_CHUNK_SIZE(segment->last_chunk, last_chunk->size - size);
 	new_chunk = last_chunk;
 	new_chunk->in_use = 1;
-	UPDATE_CHUNK_SIZE(new_chunk, malloc_size);
+	UPDATE_CHUNK_SIZE(new_chunk, size);
 	return (CHUNK_DATA(new_chunk));
 }
 
@@ -92,6 +91,7 @@ void	*new_chunk(size_t size)
 	{
 		if ((size / g_op[i].max_chunk_size) == 0)
 		{
+			size = GET_REQUIRED_SIZE(size);
 			addr = place_chunk(g_op[i], size);
 			break;
 		}
