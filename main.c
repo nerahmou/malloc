@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/22 11:24:43 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/10/30 11:25:31 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/10/30 16:07:40 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -16,7 +16,6 @@
 #include <stdio.h>
 
 int main(int argc, char* argv[]){
-	char *s1 = (char *)malloc(8);
-	char *s2 = (char *)malloc(5000);
+	void *tab[] = {malloc(8), malloc(0), malloc(511)/*, malloc(512), malloc(5000)*/};
 	return 1;
 }

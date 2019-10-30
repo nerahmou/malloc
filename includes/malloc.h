@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/10/30 13:17:36 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/10/30 16:45:04 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -27,7 +27,7 @@
 # define ALIGNEMENT 16
 
 # define TINY_MAX_SIZE 512
-# define TINY_SEGMENT_SIZE 64//(TINY_MAX_SIZE * 500)
+# define TINY_SEGMENT_SIZE (TINY_MAX_SIZE * 500)
 
 # define SMALL_MAX_SIZE 4096
 # define SMALL_SEGMENT_SIZE (SMALL_MAX_SIZE * 100)
@@ -59,7 +59,9 @@ enum e_SEGMENT_OFFSET_TYPE{
  * */
 # define ROUND_NEXT_MULTIPLE(size) ((size - 1) / 16 * 16 + 16)
 
-# define MOVE_CHUNK_ADDR(chunk, size) chunk + (size + CHUNK_HEAD_SIZE) / ALIGNEMENT
+# define MOVE_CHUNK_ADDR(chunk, size) chunk = chunk + (size + CHUNK_HEAD_SIZE) / ALIGNEMENT
+
+# define UPDATE_CHUNK_SIZE(chunk, new_size) chunk->size = new_size - CHUNK_HEAD_SIZE
 
 # define CHUNK_DATA(chunk) chunk + 1
 /*

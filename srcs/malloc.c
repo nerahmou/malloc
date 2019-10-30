@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/17 16:24:17 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/10/30 13:26:20 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/10/30 16:46:37 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -18,7 +18,6 @@
 void	*new_segment(t_segment **head, bool is_large, size_t len)
 {
 	t_segment	*new_seg;
-	size_t		last_chunk_size;
 
 	new_seg = MMAP(len);
 	if (new_seg == NULL)
@@ -63,12 +62,6 @@ t_segment	*get_segment(t_op g_op, size_t malloc_size)
 	return (segment);
 }
 
-/*void	*large_chunk(t_segment *segment, int seg_size, size_t size)
-{
-	return NULL;
-}
-*/
-//void	*small_chunk(t_segment **head, int seg_size, size_t malloc_size)
 void	*place_chunk(t_op g_op, size_t malloc_size)
 {
 	t_segment	*segment;
@@ -80,11 +73,11 @@ void	*place_chunk(t_op g_op, size_t malloc_size)
 	if (g_op.is_large || segment == NULL) //Pas besoin de chunk
 		return (segment);
 	last_chunk = segment->last_chunk;
-	segment->last_chunk->size = segment->last_chunk->size - malloc_size;
-	segment->last_chunk = MOVE_CHUNK_ADDR(last_chunk, malloc_size);
+	MOVE_CHUNK_ADDR(segment->last_chunk, malloc_size);
+	UPDATE_CHUNK_SIZE(segment->last_chunk, last_chunk->size - malloc_size);
 	new_chunk = last_chunk;
-	new_chunk->size = malloc_size;
 	new_chunk->in_use = 1;
+	UPDATE_CHUNK_SIZE(new_chunk, malloc_size);
 	return (CHUNK_DATA(new_chunk));
 }
 
