@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/17 16:24:17 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/10/29 16:53:01 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/10/30 13:26:20 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -72,39 +72,33 @@ t_segment	*get_segment(t_op g_op, size_t malloc_size)
 void	*place_chunk(t_op g_op, size_t malloc_size)
 {
 	t_segment	*segment;
-	t_segment	*head;
 	t_chunk		*new_chunk;
+	t_chunk		*last_chunk;
 
-	malloc_size = g_op.is_large ? malloc_size : ROUND_NEXT_MULTIPLE(malloc_size);
-	//head = GET_APPROPRIATE_SEGMENT_TYPE(g_op.offset);
+	malloc_size = ROUND_NEXT_MULTIPLE(malloc_size);
 	segment = get_segment(g_op, malloc_size);
 	if (g_op.is_large || segment == NULL) //Pas besoin de chunk
 		return (segment);
+	last_chunk = segment->last_chunk;
 	segment->last_chunk->size = segment->last_chunk->size - malloc_size;
-	segment->last_chunk = segment->last_chunk + (malloc_size / ALIGNEMENT);
-	new_chunk = segment->last_chunk - (malloc_size / ALIGNEMENT);
+	segment->last_chunk = MOVE_CHUNK_ADDR(last_chunk, malloc_size);
+	new_chunk = last_chunk;
 	new_chunk->size = malloc_size;
 	new_chunk->in_use = 1;
-	return (new_chunk + 1);
+	return (CHUNK_DATA(new_chunk));
 }
 
 void	*new_chunk(size_t size)
 {
 	void		*addr;
 	short		i;
-	int			seg_size;
-	t_segment	*segment;
 
-	segment = NULL;
 	addr = NULL;
 	i = -1;
 	while (g_op[++i].max_chunk_size)
 	{
 		if ((size / g_op[i].max_chunk_size) == 0)
 		{
-			//seg_size = g_op[i].segment_size;
-			//segment = GET_APPROPRIATE_SEGMENT_TYPE(g_op[i].offset);
-			//addr = g_op[i].ptr_func(segment, seg_size, size);
 			addr = place_chunk(g_op[i], size);
 			break;
 		}
@@ -116,7 +110,6 @@ void	*malloc(size_t size)
 {
 	void	*addr;
 	
-	addr = NULL;
 	addr = new_chunk(size);
 	return (addr);
 }

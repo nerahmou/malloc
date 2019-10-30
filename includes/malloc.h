@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/10/29 16:30:01 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/10/30 13:17:36 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -34,6 +34,10 @@
 
 # define LARGE_MAX_SIZE UINT64_MAX
 # define LARGE_SEGMENT_SIZE 0
+
+
+# define SEG_HEAD_SIZE sizeof(t_segment)
+# define CHUNK_HEAD_SIZE sizeof(t_chunk)
 /*
  * ENUMS
  *
@@ -54,6 +58,10 @@ enum e_SEGMENT_OFFSET_TYPE{
  * Arrondi au multiple de 16 superieur
  * */
 # define ROUND_NEXT_MULTIPLE(size) ((size - 1) / 16 * 16 + 16)
+
+# define MOVE_CHUNK_ADDR(chunk, size) chunk + (size + CHUNK_HEAD_SIZE) / ALIGNEMENT
+
+# define CHUNK_DATA(chunk) chunk + 1
 /*
 ** INCLUDES
 */
