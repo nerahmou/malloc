@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/17 16:24:17 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/10/30 17:03:01 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/10/31 13:16:25 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -15,13 +15,15 @@
 #include <stdio.h>
 
 
-void	*new_segment(t_segment **head, bool is_large, size_t len)
+void	*new_segment(t_segment **head, t_op g_op, size_t len)
 {
 	t_segment	*new_seg;
+	size_t		chunk_size;
 
+	len = g_op.is_large ? len : g_op.segment_size;
 	new_seg = MMAP(len);
 	if (new_seg == NULL)
-		return (NULL);
+		return (new_seg);
 	if (*head == NULL)
 		*head = new_seg;
 	new_seg->next = NULL;
@@ -34,28 +36,25 @@ void	*new_segment(t_segment **head, bool is_large, size_t len)
  * get_segment():	Find and return a segment with enough space for the 
  *					size. If not found, call new_segment()
  */
-//t_segment	*get_segment(t_segment **head, int seg_size, size_t size)
 t_segment	*get_segment(t_op g_op, size_t size)
 {
 	t_segment	*segment;
 	t_segment	**head;
 	t_segment	*tmp_previous;
-	size_t		segment_size;
 
 	tmp_previous = NULL;
 	head = GET_APPROPRIATE_SEGMENT_TYPE(g_op.offset);
 	segment = *head;
 	while (segment)
 	{
-		if (segment->last_chunk->size >= size)
+		if (!g_op.is_large && segment->last_chunk->size >= size)
 			break;
 		tmp_previous = segment;
 		segment = segment->next;
 	}
 	if (segment == NULL)
 	{	
-		segment_size = g_op.is_large ? size : g_op.segment_size;
-		segment = new_segment(head, g_op.is_large, segment_size);
+		segment = new_segment(head, g_op, size);
 		if (tmp_previous != NULL)
 			tmp_previous->next = segment;
 	}
@@ -69,8 +68,9 @@ void	*place_chunk(t_op g_op, size_t size)
 	t_chunk		*last_chunk;
 
 	segment = get_segment(g_op, size);
-	if (g_op.is_large || segment == NULL) //Pas besoin de chunk
-		return (segment);
+	segment = NULL;
+	if (g_op.is_large || segment == NULL) //Pas besoin de configuger le chunk
+		return (CHUNK_DATA(segment));
 	last_chunk = segment->last_chunk;
 	MOVE_CHUNK_ADDR(segment->last_chunk, size);
 	UPDATE_CHUNK_SIZE(segment->last_chunk, last_chunk->size - size);
@@ -80,7 +80,7 @@ void	*place_chunk(t_op g_op, size_t size)
 	return (CHUNK_DATA(new_chunk));
 }
 
-void	*new_chunk(size_t size)
+void	*malloc(size_t size)
 {
 	void		*addr;
 	short		i;
@@ -96,14 +96,6 @@ void	*new_chunk(size_t size)
 			break;
 		}
 	}
-	return (addr);
-}
-
-void	*malloc(size_t size)
-{
-	void	*addr;
-	
-	addr = new_chunk(size);
 	return (addr);
 }
 

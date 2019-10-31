@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/10/30 17:12:45 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/10/31 13:16:32 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -71,7 +71,10 @@ enum e_SEGMENT_OFFSET_TYPE{
 
 # define UPDATE_CHUNK_SIZE(chunk, new_size) chunk->size = new_size
 
-# define CHUNK_DATA(chunk) chunk + 1
+/*
+ * Return the addr of the data to use
+ */
+# define CHUNK_DATA(addr) addr + (addr != NULL)
 /*
 ** INCLUDES
 */
