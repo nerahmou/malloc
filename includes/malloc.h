@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/10/31 13:16:32 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/10/31 16:46:08 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -54,6 +54,8 @@ enum e_SEGMENT_OFFSET_TYPE{
  * Recupere le bon segment a l'interieur de la heap en fonction en se servant d'un offset definit
  * dans le tableau global g_op*/
 # define GET_APPROPRIATE_SEGMENT_TYPE(offset) (t_segment**)(&g_heap.tiny_segment + offset)
+
+# define GET_SEGMENT_LIMIT(addr, ) g_op.is_large ? addr + g_op.segment_size / ALIGNEMENT : addr + ALIGNEMENT
 
 
 /*
