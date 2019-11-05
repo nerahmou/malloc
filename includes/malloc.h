@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/05 16:25:57 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/05 18:18:53 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -72,7 +72,7 @@ enum e_SEGMENT_OFFSET_TYPE{
 
 # define GET_REQUIRED_SIZE(size) GET_NEXT_MULTIPLE(size) + CHUNK_HEAD_SIZE
 
-# define MOVE_CHUNK_ADDR(chunk, size) chunk = chunk + size / ALIGNEMENT
+# define MOVE_CHUNK_ADDR(chunk, size) chunk + size / ALIGNEMENT
 
 # define UPDATE_CHUNK_SIZE(chunk, new_size) chunk->size = new_size
 
@@ -143,7 +143,6 @@ typedef struct s_op					t_op;
 **	}
 */
 
-
 struct	s_chunk
 {
 	size_t		size;
@@ -153,7 +152,11 @@ struct	s_chunk
 struct	s_segment
 {
 	t_segment	*next;
-	t_chunk		*last_chunk;
+	union
+	{
+		t_chunk		*last_chunk;
+		size_t		seg_size;
+	} u_u;
 };
 
 struct	s_heap

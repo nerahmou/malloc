@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/31 16:11:21 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/05 16:25:21 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/05 17:18:41 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -16,6 +16,26 @@
 /*
  * Types are long to make addresses calcul easier
  */
+
+//void	*munmap_region()
+
+void	*free_large(t_segment **head, t_segment *to_munmap)
+{
+	t_segment *segment;
+	t_segment *next;
+
+	segment = *head;
+	if (*head == to_munmap)
+		*head = to_munmap->next;
+	else
+	{
+		while (segment->next != to_munmap)
+			segment = segment->next;
+		segment->next = to_munmap->next;
+	}
+	munmap(to_munmap, 10);
+	return (NULL);
+}
 
 bool	chunk_in_segment(long addr, long segment, long segment_size)
 {
@@ -38,7 +58,11 @@ t_segment	*valid_addr(void *addr)
 		while(segment)
 		{
 			if (chunk_in_segment((long)addr, (long)segment, segment_size))
+			{
+				if (g_op[i].is_large)
+					return (free_large(head, segment));
 				return (segment);
+			}
 			segment = segment->next;
 		}
 	}

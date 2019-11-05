@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/17 16:24:17 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/10/31 16:46:01 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/05 18:19:16 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -22,14 +22,18 @@ void	*new_segment(t_segment **head, t_op g_op, size_t len)
 
 	len = g_op.is_large ? len : g_op.segment_size;
 	new_seg = MMAP(len);
-	if (new_seg == NULL)
+	if (new_seg == MAP_FAILED)
 		return (NULL);
 	if (*head == NULL)
 		*head = new_seg;
 	new_seg->next = NULL;
-	MOVE_CHUNK_ADDR(new_seg->last_chunk, SEG_HEAD_SIZE);
-	new_seg->last_chunk = (t_chunk*)new_seg + 1;
-	new_seg->last_chunk->size = len - (sizeof(t_segment) + sizeof(t_chunk));
+	if (g_op.is_large)
+		new_seg->u_u.seg_size = len - sizeof(t_segment);
+	else
+	{
+		new_seg->u_u.last_chunk = MOVE_CHUNK_ADDR((t_chunk*)new_seg, SEG_HEAD_SIZE);
+		new_seg->u_u.last_chunk->size = len - (sizeof(t_segment) + sizeof(t_chunk));
+	}
 	return (new_seg);
 }
 
@@ -48,7 +52,7 @@ t_segment	*get_segment(t_op g_op, size_t size)
 	segment = *head;
 	while (segment)
 	{
-		if (!g_op.is_large && segment->last_chunk->size >= size)
+		if (!g_op.is_large && segment->u_u.last_chunk->size >= size)
 			break;
 		tmp_previous = segment;
 		segment = segment->next;
@@ -71,9 +75,9 @@ void	*place_chunk(t_op g_op, size_t size)
 	segment = get_segment(g_op, size);
 	if (g_op.is_large || segment == NULL) //Pas besoin de configuger le chunk
 		return (CHUNK_DATA(segment));
-	last_chunk = segment->last_chunk;
-	MOVE_CHUNK_ADDR(segment->last_chunk, size);
-	UPDATE_CHUNK_SIZE(segment->last_chunk, last_chunk->size - size);
+	last_chunk = segment->u_u.last_chunk;
+	segment->u_u.last_chunk = MOVE_CHUNK_ADDR(segment->u_u.last_chunk, size);
+	UPDATE_CHUNK_SIZE(segment->u_u.last_chunk, last_chunk->size - size);
 	new_chunk = last_chunk;
 	new_chunk->in_use = 1;
 	UPDATE_CHUNK_SIZE(new_chunk, size);
