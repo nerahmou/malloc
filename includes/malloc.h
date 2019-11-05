@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/10/31 16:46:08 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/05 16:25:57 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -24,6 +24,10 @@
 
 # define PAGE_SIZE getpagesize()
 
+# define BINS_NUMBER 256
+
+# define BIN_INDEX(size) size / 16 - 1
+
 # define ALIGNEMENT 16
 
 # define TINY_MAX_SIZE 512
@@ -33,7 +37,7 @@
 # define SMALL_SEGMENT_SIZE (SMALL_MAX_SIZE * 100)
 
 # define LARGE_MAX_SIZE UINT64_MAX
-# define LARGE_SEGMENT_SIZE 0
+# define LARGE_SEG_SIZE 17
 
 
 # define SEG_HEAD_SIZE sizeof(t_segment)
@@ -55,7 +59,6 @@ enum e_SEGMENT_OFFSET_TYPE{
  * dans le tableau global g_op*/
 # define GET_APPROPRIATE_SEGMENT_TYPE(offset) (t_segment**)(&g_heap.tiny_segment + offset)
 
-# define GET_SEGMENT_LIMIT(addr, ) g_op.is_large ? addr + g_op.segment_size / ALIGNEMENT : addr + ALIGNEMENT
 
 
 /*
@@ -174,6 +177,11 @@ struct s_op
 
 extern t_heap	g_heap;
 extern t_op		g_op[4];
+/*
+ * Corbeilles utilisé pour stocker l'addresse des malloc free pour les
+ * reutiliser sans parcourir l'ensemble d'un segment
+ */
+extern void		*g_bins[BINS_NUMBER];
 
 
 void	show_alloc_mem(void);

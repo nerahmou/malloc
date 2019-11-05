@@ -6,41 +6,61 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/31 16:11:21 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/10/31 16:45:58 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/05 16:25:21 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "malloc.h"
 
+/*
+ * Types are long to make addresses calcul easier
+ */
+
+bool	chunk_in_segment(long addr, long segment, long segment_size)
+{
+	return (addr > segment && addr < segment + segment_size);
+}
 
 t_segment	*valid_addr(void *addr)
 {
 	t_segment	**head;
 	t_segment	*segment;
-	size_t		segment_end;
+	long		segment_size;
 	short		i;
 
 	i = 3;
-	while (--i)
+	while (i--)
 	{
 		head = GET_APPROPRIATE_SEGMENT_TYPE(g_op[i].offset);
 		segment = *head;
+		segment_size = g_op[i].is_large ? LARGE_SEG_SIZE : g_op[i].segment_size;
 		while(segment)
 		{
-			GET_SEGMENT_LIMIT(segment, g_op[i].is_large, g_op[i].segment_size);
-			if ((t_segment *)addr > segment && (t_segment *) addr <= segment + g_op[i].segment_size)
-				;
+			if (chunk_in_segment((long)addr, (long)segment, segment_size))
+				return (segment);
+			segment = segment->next;
 		}
 	}
-	return NULL;
+	return (NULL);
 }
 
 void	free(void *addr)
 {
+	t_segment	*segment;
+	t_chunk		*chunk;
+	short		index;
+
 	if (addr != NULL)
 	{
-		valid_addr(addr);
+		chunk = (t_chunk *)addr - 1;
+		segment = valid_addr(addr);
+		if (segment && chunk->in_use == true)
+		{
+			index = BIN_INDEX(chunk->size);
+			chunk->in_use = false;
+			addr = g_bins[index];
+			g_bins[index] = chunk + 1;
+		}
 	}
-
 }

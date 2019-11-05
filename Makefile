@@ -6,7 +6,7 @@
 #    By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2019/10/08 11:37:09 by nerahmou     #+#   ##    ##    #+#        #
-#    Updated: 2019/10/30 14:47:53 by nerahmou    ###    #+. /#+    ###.fr      #
+#    Updated: 2019/11/05 15:39:27 by nerahmou    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
@@ -35,7 +35,7 @@ SRCS_DIR := srcs
 OBJS_DIR := obj
 
 HEADERS := $(addprefix $(HEADERS_DIR)/,malloc.h)
-SRCS := $(addprefix $(SRCS_DIR)/,malloc.c utils.c)
+SRCS := $(addprefix $(SRCS_DIR)/,malloc.c free.c utils.c)
 OBJS := $(addprefix $(OBJS_DIR)/,$(notdir $(SRCS:.c=.o)))
 
 NAME := libft_malloc_$(HOSTTYPE).so
