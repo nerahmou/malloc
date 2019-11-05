@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/31 16:11:21 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/05 17:18:41 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/05 18:30:17 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -33,7 +33,7 @@ void	*free_large(t_segment **head, t_segment *to_munmap)
 			segment = segment->next;
 		segment->next = to_munmap->next;
 	}
-	munmap(to_munmap, 10);
+	munmap(to_munmap, to_munmap->u_u.seg_size + SEG_HEAD_SIZE);
 	return (NULL);
 }
 
