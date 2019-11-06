@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/31 16:11:21 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/05 18:30:17 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/06 13:51:36 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -17,12 +17,24 @@
  * Types are long to make addresses calcul easier
  */
 
-//void	*munmap_region()
+void	free_small(t_segment **head, t_segment *segment, void *addr)
+{
+	t_chunk		*chunk;
+	short		index;
 
-void	*free_large(t_segment **head, t_segment *to_munmap)
+	chunk = (t_chunk*)addr - 1;
+	if (chunk->in_use == true)
+	{
+		index = BIN_INDEX(chunk->size);
+		chunk->in_use = false;
+		addr = g_bins[index];
+		g_bins[index] = chunk + 1;
+	}
+}
+
+void	free_large(t_segment **head, t_segment *to_munmap)
 {
 	t_segment *segment;
-	t_segment *next;
 
 	segment = *head;
 	if (*head == to_munmap)
@@ -34,7 +46,6 @@ void	*free_large(t_segment **head, t_segment *to_munmap)
 		segment->next = to_munmap->next;
 	}
 	munmap(to_munmap, to_munmap->u_u.seg_size + SEG_HEAD_SIZE);
-	return (NULL);
 }
 
 bool	chunk_in_segment(long addr, long segment, long segment_size)
@@ -42,7 +53,7 @@ bool	chunk_in_segment(long addr, long segment, long segment_size)
 	return (addr > segment && addr < segment + segment_size);
 }
 
-t_segment	*valid_addr(void *addr)
+void	valid_addr(void *addr)
 {
 	t_segment	**head;
 	t_segment	*segment;
@@ -55,36 +66,22 @@ t_segment	*valid_addr(void *addr)
 		head = GET_APPROPRIATE_SEGMENT_TYPE(g_op[i].offset);
 		segment = *head;
 		segment_size = g_op[i].is_large ? LARGE_SEG_SIZE : g_op[i].segment_size;
-		while(segment)
+		while (segment)
 		{
 			if (chunk_in_segment((long)addr, (long)segment, segment_size))
 			{
 				if (g_op[i].is_large)
-					return (free_large(head, segment));
-				return (segment);
+					free_large(head, segment);
+				free_small(head, segment, addr);
+				return ;
 			}
 			segment = segment->next;
 		}
 	}
-	return (NULL);
 }
 
 void	free(void *addr)
 {
-	t_segment	*segment;
-	t_chunk		*chunk;
-	short		index;
-
 	if (addr != NULL)
-	{
-		chunk = (t_chunk *)addr - 1;
-		segment = valid_addr(addr);
-		if (segment && chunk->in_use == true)
-		{
-			index = BIN_INDEX(chunk->size);
-			chunk->in_use = false;
-			addr = g_bins[index];
-			g_bins[index] = chunk + 1;
-		}
-	}
+		valid_addr(addr);
 }

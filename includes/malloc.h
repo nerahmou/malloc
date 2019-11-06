@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/05 18:18:53 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/06 15:25:01 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -24,7 +24,7 @@
 
 # define PAGE_SIZE getpagesize()
 
-# define BINS_NUMBER 256
+# define BINS_NUMBER 257
 
 # define BIN_INDEX(size) size / 16 - 1
 
@@ -36,12 +36,13 @@
 # define SMALL_MAX_SIZE 4096
 # define SMALL_SEGMENT_SIZE (SMALL_MAX_SIZE * 100)
 
-# define LARGE_MAX_SIZE UINT64_MAX
+# define LARGE_MAX_SIZE UINT64_MAX - 1
 # define LARGE_SEG_SIZE 17
 
 
 # define SEG_HEAD_SIZE sizeof(t_segment)
-# define CHUNK_HEAD_SIZE sizeof(t_chunk)
+# define CHUNK_HEAD_SIZE sizeof(t_chunk) / 2
+# define CH_PTR (t_chunk*)
 /*
  * ENUMS
  *
@@ -57,10 +58,9 @@ enum e_SEGMENT_OFFSET_TYPE{
 /*
  * Recupere le bon segment a l'interieur de la heap en fonction en se servant d'un offset definit
  * dans le tableau global g_op*/
+# define GOOD_SEGMENT_TYPE(size, g_op) (size / g_op.max_chunk_size) == 0
+
 # define GET_APPROPRIATE_SEGMENT_TYPE(offset) (t_segment**)(&g_heap.tiny_segment + offset)
-
-
-
 /*
  * Arrondi au multiple de 16 superieur
  * */
@@ -74,12 +74,19 @@ enum e_SEGMENT_OFFSET_TYPE{
 
 # define MOVE_CHUNK_ADDR(chunk, size) chunk + size / ALIGNEMENT
 
-# define UPDATE_CHUNK_SIZE(chunk, new_size) chunk->size = new_size
 
 /*
  * Return the addr of the data to use
  */
-# define CHUNK_DATA(addr) addr + (addr != NULL)
+
+# define LARGE_CHUNK_DATA(addr) addr + (addr != NULL)
+
+# define CHUNK_DATA(addr) &(addr->u_u.data)
+
+# define NEW_CHUNK_POS(s, s_size) CH_PTR (s + (s_size - s->u_u.available_space))
+
+# define UPDATE_CHUNK_SIZE(new_size) new_size - CHUNK_HEAD_SIZE
+
 /*
 ** INCLUDES
 */
@@ -145,8 +152,15 @@ typedef struct s_op					t_op;
 
 struct	s_chunk
 {
-	size_t		size;
-	size_t		in_use;
+	t_chunk		*prev;
+	size_t		size: sizeof(size_t) / 2 * 8;
+	bool		in_use;
+	union
+	{
+		void *data;
+		void *prev_free;
+	} u_u;
+	void *next_free;
 };
 
 struct	s_segment
@@ -154,8 +168,8 @@ struct	s_segment
 	t_segment	*next;
 	union
 	{
-		t_chunk		*last_chunk;
-		size_t		seg_size;
+		size_t		available_space; // For tiny and small
+		size_t		seg_size; //For large chunks
 	} u_u;
 };
 

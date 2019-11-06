@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/17 16:24:17 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/05 18:19:16 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/06 15:39:30 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -18,7 +18,6 @@
 void	*new_segment(t_segment **head, t_op g_op, size_t len)
 {
 	t_segment	*new_seg;
-	size_t		chunk_size;
 
 	len = g_op.is_large ? len : g_op.segment_size;
 	new_seg = MMAP(len);
@@ -30,10 +29,7 @@ void	*new_segment(t_segment **head, t_op g_op, size_t len)
 	if (g_op.is_large)
 		new_seg->u_u.seg_size = len - sizeof(t_segment);
 	else
-	{
-		new_seg->u_u.last_chunk = MOVE_CHUNK_ADDR((t_chunk*)new_seg, SEG_HEAD_SIZE);
-		new_seg->u_u.last_chunk->size = len - (sizeof(t_segment) + sizeof(t_chunk));
-	}
+		new_seg->u_u.available_space = g_op.segment_size - SEG_HEAD_SIZE;
 	return (new_seg);
 }
 
@@ -52,7 +48,7 @@ t_segment	*get_segment(t_op g_op, size_t size)
 	segment = *head;
 	while (segment)
 	{
-		if (!g_op.is_large && segment->u_u.last_chunk->size >= size)
+		if (!g_op.is_large && segment->u_u.available_space >= size)
 			break;
 		tmp_previous = segment;
 		segment = segment->next;
@@ -70,17 +66,14 @@ void	*place_chunk(t_op g_op, size_t size)
 {
 	t_segment	*segment;
 	t_chunk		*new_chunk;
-	t_chunk		*last_chunk;
 
 	segment = get_segment(g_op, size);
 	if (g_op.is_large || segment == NULL) //Pas besoin de configuger le chunk
-		return (CHUNK_DATA(segment));
-	last_chunk = segment->u_u.last_chunk;
-	segment->u_u.last_chunk = MOVE_CHUNK_ADDR(segment->u_u.last_chunk, size);
-	UPDATE_CHUNK_SIZE(segment->u_u.last_chunk, last_chunk->size - size);
-	new_chunk = last_chunk;
-	new_chunk->in_use = 1;
-	UPDATE_CHUNK_SIZE(new_chunk, size);
+		return (LARGE_CHUNK_DATA(segment));
+	new_chunk = NEW_CHUNK_POS((long)segment, g_op.segment_size);
+	new_chunk->size = UPDATE_CHUNK_SIZE(size);
+	new_chunk->in_use = true;
+	segment->u_u.available_space -= size;
 	return (CHUNK_DATA(new_chunk));
 }
 
@@ -93,7 +86,7 @@ void	*malloc(size_t size)
 	i = -1;
 	while (g_op[++i].max_chunk_size)
 	{
-		if ((size / g_op[i].max_chunk_size) == 0)
+		if (GOOD_SEGMENT_TYPE(size, g_op[i]))
 		{
 			size = GET_REQUIRED_SIZE(size);
 			addr = place_chunk(g_op[i], size);
