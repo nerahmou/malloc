@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/31 16:11:21 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/06 13:51:36 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/07 13:56:44 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -17,18 +17,20 @@
  * Types are long to make addresses calcul easier
  */
 
-void	free_small(t_segment **head, t_segment *segment, void *addr)
+void	free_small(t_segment **head, t_segment *segment, void *addr, t_op g_op)
 {
 	t_chunk		*chunk;
 	short		index;
 
-	chunk = (t_chunk*)addr - 1;
+	chunk = GET_CHUNK_HEADER(addr);
 	if (chunk->in_use == true)
 	{
-		index = BIN_INDEX(chunk->size);
 		chunk->in_use = false;
-		addr = g_bins[index];
-		g_bins[index] = chunk + 1;
+		index = BIN_INDEX(chunk->size);
+		if (g_bins[index] != NULL)
+			g_bins[index]->u_u.prev_free = chunk;
+		chunk->next_free = g_bins[index];
+		g_bins[index] = chunk;
 	}
 }
 
@@ -72,7 +74,7 @@ void	valid_addr(void *addr)
 			{
 				if (g_op[i].is_large)
 					free_large(head, segment);
-				free_small(head, segment, addr);
+				free_small(head, segment, addr, g_op[i]);
 				return ;
 			}
 			segment = segment->next;

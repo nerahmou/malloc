@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/17 16:24:17 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/06 15:39:30 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/07 17:18:23 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -41,23 +41,23 @@ t_segment	*get_segment(t_op g_op, size_t size)
 {
 	t_segment	*segment;
 	t_segment	**head;
-	t_segment	*tmp_previous;
+	t_segment	*previous_segment;
 
-	tmp_previous = NULL;
+	previous_segment = NULL;
 	head = GET_APPROPRIATE_SEGMENT_TYPE(g_op.offset);
 	segment = *head;
 	while (segment)
 	{
 		if (!g_op.is_large && segment->u_u.available_space >= size)
 			break;
-		tmp_previous = segment;
+		previous_segment = segment;
 		segment = segment->next;
 	}
 	if (segment == NULL)
 	{	
 		segment = new_segment(head, g_op, size);
-		if (tmp_previous != NULL)
-			tmp_previous->next = segment;
+		if (previous_segment != NULL)
+			previous_segment->next = segment;
 	}
 	return (segment);
 }
@@ -66,12 +66,22 @@ void	*place_chunk(t_op g_op, size_t size)
 {
 	t_segment	*segment;
 	t_chunk		*new_chunk;
+	t_chunk		*prev_chunk;
 
 	segment = get_segment(g_op, size);
 	if (g_op.is_large || segment == NULL) //Pas besoin de configuger le chunk
 		return (LARGE_CHUNK_DATA(segment));
-	new_chunk = NEW_CHUNK_POS((long)segment, g_op.segment_size);
-	new_chunk->size = UPDATE_CHUNK_SIZE(size);
+	new_chunk = SET_CHUNK_POS((long)segment, g_op.segment_size);
+	prev_chunk = (t_chunk*)LARGE_CHUNK_DATA(segment);
+	while (prev_chunk->next_size != 0)
+		prev_chunk = GET_NEXT_CHUNK(prev_chunk);
+	if (IS_FIRST_CHUNK(segment, g_op.segment_size) == false)
+	{
+		prev_chunk->next_size = size;
+		new_chunk->prev = prev_chunk;
+	}
+	new_chunk->size = size; // Header compris
+	new_chunk->next_size = 0;
 	new_chunk->in_use = true;
 	segment->u_u.available_space -= size;
 	return (CHUNK_DATA(new_chunk));

@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/22 15:12:28 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/05 16:34:05 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/07 11:49:52 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -15,7 +15,7 @@
 
 t_heap	g_heap = {NULL};
 
-void	*g_bins[BINS_NUMBER] = {NULL};
+t_chunk	*g_bins[BINS_NUMBER] = {NULL};
 
 t_op g_op[4] = {
 	{TINY_MAX_SIZE, TINY_SEGMENT_SIZE, TINY_SEGMENT_OFFSET, false},

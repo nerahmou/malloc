@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/06 15:25:01 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/07 17:19:31 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -24,14 +24,16 @@
 
 # define PAGE_SIZE getpagesize()
 
-# define BINS_NUMBER 257
-
-# define BIN_INDEX(size) size / 16 - 1
-
 # define ALIGNEMENT 16
 
+# define BINS_NUMBER (SMALL_MAX_SIZE / 16)
+
+# define BIN_INDEX(size) size / ALIGNEMENT
+
+
 # define TINY_MAX_SIZE 512
-# define TINY_SEGMENT_SIZE (TINY_MAX_SIZE * 500)
+//# define TINY_SEGMENT_SIZE (TINY_MAX_SIZE * 500)
+# define TINY_SEGMENT_SIZE 96
 
 # define SMALL_MAX_SIZE 4096
 # define SMALL_SEGMENT_SIZE (SMALL_MAX_SIZE * 100)
@@ -41,7 +43,7 @@
 
 
 # define SEG_HEAD_SIZE sizeof(t_segment)
-# define CHUNK_HEAD_SIZE sizeof(t_chunk) / 2
+# define CHUNK_HEAD_SIZE 16
 # define CH_PTR (t_chunk*)
 /*
  * ENUMS
@@ -60,6 +62,10 @@ enum e_SEGMENT_OFFSET_TYPE{
  * dans le tableau global g_op*/
 # define GOOD_SEGMENT_TYPE(size, g_op) (size / g_op.max_chunk_size) == 0
 
+# define GET_CHUNK_HEADER(addr) CH_PTR (addr - CHUNK_HEAD_SIZE)
+
+# define GET_NEXT_CHUNK(chunk) CH_PTR ((long)chunk + chunk->size)
+
 # define GET_APPROPRIATE_SEGMENT_TYPE(offset) (t_segment**)(&g_heap.tiny_segment + offset)
 /*
  * Arrondi au multiple de 16 superieur
@@ -76,14 +82,15 @@ enum e_SEGMENT_OFFSET_TYPE{
 
 
 /*
- * Return the addr of the data to use
+ * 
  */
+# define IS_FIRST_CHUNK(seg, seg_size) (seg->u_u.available_space + SEG_HEAD_SIZE) == seg_size
 
-# define LARGE_CHUNK_DATA(addr) addr + (addr != NULL)
+# define LARGE_CHUNK_DATA(addr) (addr + (addr != NULL))
 
 # define CHUNK_DATA(addr) &(addr->u_u.data)
 
-# define NEW_CHUNK_POS(s, s_size) CH_PTR (s + (s_size - s->u_u.available_space))
+# define SET_CHUNK_POS(s, s_size) CH_PTR (s + (s_size - s->u_u.available_space))
 
 # define UPDATE_CHUNK_SIZE(new_size) new_size - CHUNK_HEAD_SIZE
 
@@ -153,7 +160,9 @@ typedef struct s_op					t_op;
 struct	s_chunk
 {
 	t_chunk		*prev;
-	size_t		size: sizeof(size_t) / 2 * 8;
+	size_t		next_size:16; // Meme role qu'un pointeur mais ne prends que 2 octets.
+						 // Utile pour eviter d'avoir un header a 48 octets
+	size_t		size:16;
 	bool		in_use;
 	union
 	{
@@ -198,7 +207,7 @@ extern t_op		g_op[4];
  * Corbeilles utilisé pour stocker l'addresse des malloc free pour les
  * reutiliser sans parcourir l'ensemble d'un segment
  */
-extern void		*g_bins[BINS_NUMBER];
+extern t_chunk	*g_bins[BINS_NUMBER];
 
 
 void	show_alloc_mem(void);
