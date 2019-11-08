@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/17 16:24:17 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/08 11:57:40 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/08 17:20:44 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -91,13 +91,16 @@ void	*malloc(size_t size)
 
 	addr = NULL;
 	i = -1;
-	while (g_op[++i].max_chunk_size)
+	if (size != 0)
 	{
-		if (GOOD_SEGMENT_TYPE(size, g_op[i]))
+		while (g_op[++i].max_chunk_size)
 		{
-			size = GET_REQUIRED_SIZE(size);
-			addr = place_chunk(g_op[i], size);
-			break;
+			if (GOOD_SEGMENT_TYPE(size, g_op[i]))
+			{
+				size = GET_REQUIRED_SIZE(size);
+				addr = place_chunk(g_op[i], size);
+				break;
+			}
 		}
 	}
 	return (addr);

@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/08 15:12:33 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/08 17:41:15 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -30,7 +30,9 @@
 
 # define BIN_INDEX(size) (size / ALIGNEMENT) - 1
 
-
+/*
+ * Les MAX_SIZE inclues les HEADERS de CHUNK
+ */
 # define TINY_MAX_SIZE 512
 //# define TINY_SEGMENT_SIZE (TINY_MAX_SIZE * 500)
 # define TINY_SEGMENT_SIZE 80
@@ -95,6 +97,11 @@ enum e_SEGMENT_OFFSET_TYPE{
 # define SET_CHUNK_POS(s, s_size) CH_PTR (s + (s_size - s->u_u.available_space))
 
 # define UPDATE_CHUNK_SIZE(new_size) new_size - CHUNK_HEAD_SIZE
+
+
+
+
+# define IS_PREV_FREE(ch, max) ch->size <= max && ch->prev && !ch->prev->in_use
 
 /*
 ** INCLUDES

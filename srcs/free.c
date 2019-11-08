@@ -6,16 +6,12 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/31 16:11:21 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/08 15:12:02 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/08 17:40:57 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "malloc.h"
-
-/*
- * Types are long to make addresses calcul easier
- */
 
 void	free_small(t_segment **head, t_segment *segment, void *addr, t_op g_op)
 {
@@ -26,6 +22,7 @@ void	free_small(t_segment **head, t_segment *segment, void *addr, t_op g_op)
 	if (chunk->in_use == true)
 	{
 		chunk->in_use = false;
+		defrag(segment, chunk, g_op);
 		index = BIN_INDEX(chunk->size);
 		if (g_bins[index] != NULL)
 			g_bins[index]->u_u.prev_free = chunk;
@@ -50,16 +47,10 @@ void	free_large(t_segment **head, t_segment *to_munmap)
 	munmap(to_munmap, to_munmap->u_u.seg_size + SEG_HEAD_SIZE);
 }
 
-bool	chunk_in_segment(long addr, long segment, long segment_size)
-{
-	return (addr > segment && addr <= segment + segment_size);
-}
-
 void	valid_addr(void *addr)
 {
 	t_segment	**head;
 	t_segment	*segment;
-	long		segment_size;
 	short		i;
 
 	i = 3;
@@ -67,16 +58,15 @@ void	valid_addr(void *addr)
 	{
 		head = GET_APPROPRIATE_SEGMENT_TYPE(g_op[i].offset);
 		segment = *head;
-		segment_size = g_op[i].segment_size;
 		while (segment)
 		{
-			if (CHUNK_IN_SEG((long)addr, (long)segment, segment_size))
+			if (CHUNK_IN_SEG((long)addr, (long)segment, g_op[i].segment_size))
 			{
 				if (g_op[i].is_large)
 					free_large(head, segment);
 				else
 					free_small(head, segment, addr, g_op[i]);
-				return ;
+				return;
 			}
 			segment = segment->next;
 		}
