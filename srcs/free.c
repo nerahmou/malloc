@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/31 16:11:21 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/07 13:56:44 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/08 15:12:02 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -52,7 +52,7 @@ void	free_large(t_segment **head, t_segment *to_munmap)
 
 bool	chunk_in_segment(long addr, long segment, long segment_size)
 {
-	return (addr > segment && addr < segment + segment_size);
+	return (addr > segment && addr <= segment + segment_size);
 }
 
 void	valid_addr(void *addr)
@@ -67,14 +67,15 @@ void	valid_addr(void *addr)
 	{
 		head = GET_APPROPRIATE_SEGMENT_TYPE(g_op[i].offset);
 		segment = *head;
-		segment_size = g_op[i].is_large ? LARGE_SEG_SIZE : g_op[i].segment_size;
+		segment_size = g_op[i].segment_size;
 		while (segment)
 		{
-			if (chunk_in_segment((long)addr, (long)segment, segment_size))
+			if (CHUNK_IN_SEG((long)addr, (long)segment, segment_size))
 			{
 				if (g_op[i].is_large)
 					free_large(head, segment);
-				free_small(head, segment, addr, g_op[i]);
+				else
+					free_small(head, segment, addr, g_op[i]);
 				return ;
 			}
 			segment = segment->next;

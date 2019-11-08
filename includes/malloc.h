@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/07 17:19:31 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/08 15:12:33 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -28,18 +28,18 @@
 
 # define BINS_NUMBER (SMALL_MAX_SIZE / 16)
 
-# define BIN_INDEX(size) size / ALIGNEMENT
+# define BIN_INDEX(size) (size / ALIGNEMENT) - 1
 
 
 # define TINY_MAX_SIZE 512
 //# define TINY_SEGMENT_SIZE (TINY_MAX_SIZE * 500)
-# define TINY_SEGMENT_SIZE 96
+# define TINY_SEGMENT_SIZE 80
 
 # define SMALL_MAX_SIZE 4096
 # define SMALL_SEGMENT_SIZE (SMALL_MAX_SIZE * 100)
 
 # define LARGE_MAX_SIZE UINT64_MAX - 1
-# define LARGE_SEG_SIZE 17
+# define LARGE_SEG_SIZE (SEG_HEAD_SIZE)
 
 
 # define SEG_HEAD_SIZE sizeof(t_segment)
@@ -85,6 +85,8 @@ enum e_SEGMENT_OFFSET_TYPE{
  * 
  */
 # define IS_FIRST_CHUNK(seg, seg_size) (seg->u_u.available_space + SEG_HEAD_SIZE) == seg_size
+
+# define CHUNK_IN_SEG(addr, seg, seg_size) addr > seg && addr <= seg + seg_size
 
 # define LARGE_CHUNK_DATA(addr) (addr + (addr != NULL))
 

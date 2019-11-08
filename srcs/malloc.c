@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/17 16:24:17 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/07 17:18:23 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/08 11:57:40 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -26,10 +26,7 @@ void	*new_segment(t_segment **head, t_op g_op, size_t len)
 	if (*head == NULL)
 		*head = new_seg;
 	new_seg->next = NULL;
-	if (g_op.is_large)
-		new_seg->u_u.seg_size = len - sizeof(t_segment);
-	else
-		new_seg->u_u.available_space = g_op.segment_size - SEG_HEAD_SIZE;
+	new_seg->u_u.seg_size = len - SEG_HEAD_SIZE; // Gere les deux cas vu que c'est uen union
 	return (new_seg);
 }
 
