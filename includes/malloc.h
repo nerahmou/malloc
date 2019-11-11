@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/08 17:41:15 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/11 17:14:31 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -22,20 +22,23 @@
 # define MAP_FLAGS (MAP_ANON | MAP_PRIVATE)
 # define MMAP(len) mmap(NULL, len, PROT_OPTS, MAP_FLAGS, -1, 0)
 
+# define MUNMAP(addr, len) munmap(addr, len + SEG_HEAD_SIZE);
+
 # define PAGE_SIZE getpagesize()
+
+# define FREE_LARGE(head, segment, g_op) free_segment(head, segment, g_op)
 
 # define ALIGNEMENT 16
 
 # define BINS_NUMBER (SMALL_MAX_SIZE / 16)
 
-# define BIN_INDEX(size) (size / ALIGNEMENT) - 1
+# define BIN_INDEX(size) (size - CHUNK_HEAD_SIZE) / ALIGNEMENT - 1
 
 /*
  * Les MAX_SIZE inclues les HEADERS de CHUNK
  */
 # define TINY_MAX_SIZE 512
-//# define TINY_SEGMENT_SIZE (TINY_MAX_SIZE * 500)
-# define TINY_SEGMENT_SIZE 80
+# define TINY_SEGMENT_SIZE (TINY_MAX_SIZE * 500)
 
 # define SMALL_MAX_SIZE 4096
 # define SMALL_SEGMENT_SIZE (SMALL_MAX_SIZE * 100)
@@ -99,9 +102,12 @@ enum e_SEGMENT_OFFSET_TYPE{
 # define UPDATE_CHUNK_SIZE(new_size) new_size - CHUNK_HEAD_SIZE
 
 
+# define NEXT_CHUNK(ch) CH_PTR ((long)ch + ch->size)
 
 
-# define IS_PREV_FREE(ch, max) ch->size <= max && ch->prev && !ch->prev->in_use
+# define IS_PREV_FREE(ch, max) ch->size < max && ch->prev && !ch->prev->in_use // a verifier
+
+# define IS_NEXT_FREE(ch, max) (ch->size < max && ch->next_size && (NEXT_CHUNK(ch))->in_use == false)
 
 /*
 ** INCLUDES
@@ -169,9 +175,9 @@ typedef struct s_op					t_op;
 struct	s_chunk
 {
 	t_chunk		*prev;
-	size_t		next_size:16; // Meme role qu'un pointeur mais ne prends que 2 octets.
+	size_t		next_size:28; // Meme role qu'un pointeur mais ne prends que 2 octets.
 						 // Utile pour eviter d'avoir un header a 48 octets
-	size_t		size:16;
+	size_t		size:28;
 	bool		in_use;
 	union
 	{
@@ -202,7 +208,7 @@ struct s_op
 {
 	size_t		max_chunk_size;
 	size_t		segment_size;
-	size_t		offset;
+	size_t		offset:56;
 	bool		is_large;
 };
 
@@ -232,6 +238,10 @@ void	*realloc(void *ptr, size_t size);
 ******************FREE****************
 */
 void	free(void *ptr);
+void	free_segment(t_segment **head, t_segment *segment, t_op g_op);
+bool	defrag(t_segment *segment, t_chunk *chunk, t_op g_op);
+void	update_bins(t_segment *segment);
+t_chunk *pop_from_bin(t_chunk *chunk, bool defrag);
 
 
 
