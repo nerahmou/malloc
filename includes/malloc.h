@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/11 17:14:31 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/12 11:29:40 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -17,6 +17,13 @@
 ** DEFINES
 */
 # define MALLOC_H
+
+
+# define DECI_BASE 10
+# define DECI_BASE_STR HEXA_BASE_STR
+
+# define HEXA_BASE 16
+# define HEXA_BASE_STR "0123456789ABCDEF"
 
 # define PROT_OPTS (PROT_READ | PROT_WRITE)
 # define MAP_FLAGS (MAP_ANON | MAP_PRIVATE)
@@ -85,6 +92,8 @@ enum e_SEGMENT_OFFSET_TYPE{
 
 # define MOVE_CHUNK_ADDR(chunk, size) chunk + size / ALIGNEMENT
 
+# define CHUNK_DATA_SIZE(chunk) chunk->size + (long)chunk - (long)chunk - CHUNK_HEAD_SIZE
+
 
 /*
  * 
@@ -117,6 +126,7 @@ enum e_SEGMENT_OFFSET_TYPE{
 # include <stdbool.h>
 # include <sys/mman.h>
 # include <sys/resource.h>
+# include <unistd.h>
 
 /*
  * PROTOTYPES
@@ -210,6 +220,7 @@ struct s_op
 	size_t		segment_size;
 	size_t		offset:56;
 	bool		is_large;
+	char		*segment_name;
 };
 
 /*
@@ -243,6 +254,7 @@ bool	defrag(t_segment *segment, t_chunk *chunk, t_op g_op);
 void	update_bins(t_segment *segment);
 t_chunk *pop_from_bin(t_chunk *chunk, bool defrag);
 
+void	show_alloc_mem();
 
 
 #endif

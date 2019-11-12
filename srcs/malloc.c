@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/17 16:24:17 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/11 17:20:06 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/12 11:19:52 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -14,7 +14,9 @@
 #include "malloc.h"
 #include <stdio.h>
 
-
+/*
+ * LARGE_SEG_SIZE = REQUIRED_SIZE + SEG_HEAD_SIZE;
+ */
 void	*new_segment(t_segment **head, t_op g_op, size_t len)
 {
 	t_segment	*new_seg;
