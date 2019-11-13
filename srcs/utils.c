@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/22 15:12:28 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/13 13:48:15 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/13 15:41:35 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -18,10 +18,10 @@ t_heap	g_heap = {NULL, NULL, NULL};
 t_chunk	*g_bins[BINS_NUMBER] = {NULL};
 
 t_op g_op[4] = {
-	{TINY_MAX_SIZE, TINY_MAX_BIN, TINY_REGION_SIZE, TINY_region_OFFSET, false, "TINY "},
-	{SMALL_MAX_SIZE, SMALL_MAX_BIN, SMALL_REGION_SIZE, SMALL_region_OFFSET, false, "SMALL"},
-	{LARGE_MAX_SIZE, LARGE_MAX_BIN, LARGE_REGION_SIZE, LARGE_region_OFFSET, true, "LARGE"},
-	{0, 0, 0, 0, NULL, NULL}
+	{TINY_MAX_SIZE, TINY_REGION_SIZE, TINY_region_OFFSET, false, "TINY "},
+	{SMALL_MAX_SIZE, SMALL_REGION_SIZE, SMALL_region_OFFSET, false, "SMALL"},
+	{LARGE_MAX_SIZE, LARGE_REGION_SIZE, LARGE_region_OFFSET, true, "LARGE"},
+	{0, 0, 0, NULL, NULL}
 };
 
 void ft_putnbr_base(size_t nbr, const char *base, size_t base_len)
@@ -46,7 +46,7 @@ void	print_region_info(t_region *region, const char *region_name)
 size_t	print_chunks(t_region *region, bool is_large)
 {
 	size_t		chunk_start;
-	size_t		chunk_size;
+	size_t		chunk_data_size;
 	size_t		total;
 	t_chunk		*chunk;
 
@@ -57,18 +57,18 @@ size_t	print_chunks(t_region *region, bool is_large)
 		if (is_large == true || chunk->in_use)
 		{
 			chunk_start = is_large ? (size_t)chunk : (size_t)CHUNK_DATA(chunk);
-			chunk_size = is_large ? region->u_u.size : CHUNK_DATA_SIZE(chunk);
+			chunk_data_size = is_large ? region->u_u.size/*AVAILABLE_SPACE(region)*/ : CHUNK_DATA_SIZE(chunk);
 			write(1, HEXA_PREFIX, 2);
 			ft_putnbr_base(chunk_start, HEXA_BASE_STR, HEXA_BASE);
 			write(1, " - " HEXA_PREFIX, 5);
-			ft_putnbr_base(chunk_start + chunk_size, HEXA_BASE_STR, HEXA_BASE);
+			ft_putnbr_base(chunk_start + chunk_data_size, HEXA_BASE_STR, HEXA_BASE);
 			write(1, " : ", 3);
-			ft_putnbr_base(chunk_size, DECI_BASE_STR, DECI_BASE);
+			ft_putnbr_base(chunk_data_size, DECI_BASE_STR, DECI_BASE);
 			write(1, " octets\n", 8);
-			total += chunk_size;
-			chunk = (is_large == true || chunk->next_size == 0) ? NULL : chunk;
+			total += chunk_data_size;
 		}
-		chunk = GET_NEXT_CHUNK(chunk);
+		total += chunk_data_size;
+		chunk = GET_NEXT_CHUNK(((is_large || !chunk->next_size) ? NULL : chunk));
 	}
 	return (total);
 }

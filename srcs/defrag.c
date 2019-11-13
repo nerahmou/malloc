@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/08 16:30:24 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/13 13:47:22 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/13 14:10:25 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -34,7 +34,7 @@ bool	defrag(t_region *region, t_chunk **chunk, t_op g_op)
 
 
 	freed_chunk = *chunk;
-	bin_size_limit = g_op.bin_size_limit;
+	bin_size_limit = g_op.max_chunk_size;
 	while (IS_PREV_FREE(freed_chunk, bin_size_limit))
 	{
 		bin_elem = pop_from_bin(freed_chunk->prev, true);

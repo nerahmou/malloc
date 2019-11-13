@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/13 13:45:45 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/13 16:23:19 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -30,7 +30,7 @@
 # define MAP_FLAGS (MAP_ANON | MAP_PRIVATE)
 # define MMAP(len) mmap(NULL, len, PROT_OPTS, MAP_FLAGS, -1, 0)
 
-# define MUNMAP(addr, len) munmap(addr, len + SEG_HEAD_SIZE);
+# define MUNMAP(addr, len) munmap(addr, len);
 
 # define PAGE_SIZE getpagesize()
 
@@ -38,7 +38,7 @@
 
 # define ALIGNEMENT 16
 
-# define BINS_NUMBER (SMALL_MAX_SIZE / 16) // 256 cases (32->4112)
+# define BINS_NUMBER (SMALL_MAX_SIZE / 16) - 1// 255 cases (32->4096)
 
 # define BIN_INDEX(size) (size - CHUNK_HEAD_SIZE) / ALIGNEMENT - 1
 
@@ -48,17 +48,21 @@
 
 /*
  * Les MAX_SIZE inclues les HEADERS de CHUNK
+ * 
+ * exemple un malloc(496) sera dans les TINY car:
+ *		- 496 multiple de 16
+ *		- 496 + Header = 512
+ *	un malloc(497) sera dans les SMALL car:
+ *		- 497 est arrondi au multiple de 16 superieur -> 512
+ *		- 512 + header = 528
  */
 # define TINY_MAX_SIZE 512
-# define TINY_MAX_BIN (TINY_MAX_SIZE + CHUNK_HEAD_SIZE)
 # define TINY_REGION_SIZE (TINY_MAX_SIZE * 500)
 
 # define SMALL_MAX_SIZE 4096
-# define SMALL_MAX_BIN (SMALL_MAX_SIZE + CHUNK_HEAD_SIZE)
 # define SMALL_REGION_SIZE (SMALL_MAX_SIZE * 100)
 
 # define LARGE_MAX_SIZE UINT64_MAX - 1
-# define LARGE_MAX_BIN 0
 # define LARGE_REGION_SIZE (SEG_HEAD_SIZE)
 
 
@@ -112,7 +116,10 @@ enum e_region_OFFSET_TYPE{
 /*
  * 
  */
-# define IS_FIRST_CHUNK(seg, size) (seg->u_u.available_space + SEG_HEAD_SIZE) == size
+
+# define AVAILABLE_SPACE(reg) reg->u_u.size - SEG_HEAD_SIZE
+
+# define IS_FIRST_CHUNK(seg, size) seg->u_u.available_space == size
 
 # define CHUNK_IN_SEG(addr, seg, size) addr > seg && addr <= seg + size
 
@@ -120,7 +127,7 @@ enum e_region_OFFSET_TYPE{
 
 # define CHUNK_DATA(addr) &(addr->u_u.data)
 
-# define SET_CHUNK_POS(s, s_size) CH_PTR (s + (s_size - s->u_u.available_space))
+# define SET_CHUNK_POS(s, s_size) CH_PTR (s + (SEG_HEAD_SIZE + s_size - s->u_u.available_space))
 
 # define UPDATE_CHUNK_SIZE(new_size) new_size - CHUNK_HEAD_SIZE
 
@@ -231,7 +238,6 @@ struct	s_heap
 struct s_op
 {
 	size_t		max_chunk_size;
-	size_t		bin_size_limit;
 	size_t		region_size;
 	size_t		offset:56;
 	bool		is_large;

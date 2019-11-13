@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/17 16:24:17 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/13 13:44:47 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/13 15:31:06 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -28,7 +28,7 @@ void	*new_region(t_region **head, t_op g_op, size_t len)
 	if (*head == NULL)
 		*head = new_seg;
 	new_seg->next = NULL;
-	new_seg->u_u.size = len - SEG_HEAD_SIZE; // Gere les deux cas vu que c'est uen union
+	new_seg->u_u.size = len; // Gere les deux cas vu que c'est uen union
 	return (new_seg);
 }
 
@@ -47,7 +47,7 @@ t_region	*get_region(t_op g_op, size_t size)
 	region = *head;
 	while (region)
 	{
-		if (!g_op.is_large && region->u_u.available_space >= size)
+		if (!g_op.is_large && AVAILABLE_SPACE(region) >= size)
 			break;
 		previous_region = region;
 		region = region->next;
