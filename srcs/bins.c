@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/11 15:12:54 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/12 17:21:07 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/13 13:47:53 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -61,7 +61,7 @@ void	update_bins(t_region *region)
 {
 	t_chunk *chunk;
 
-	chunk = (t_chunk*)LARGE_CHUNK_DATA(region);
+	chunk = GET_FIRST_CHUNK(region);
 	while (chunk->size && chunk->in_use == false)
 	{
 		pop_from_bin(chunk, true);
@@ -70,18 +70,18 @@ void	update_bins(t_region *region)
 }
 
 
-void	show_bins(int index_limit)
+void	show_bins()
 {
 	t_chunk *chunk;
 	short i;
 
 	i = 0;
 	write(1, "<<<<<<<<<<\n", 11);
-	while (i < index_limit)
+	while (i < BINS_NUMBER)
 	{
 		write(1, "[", 1);
 		ft_putnbr_base((ALIGNEMENT) * (i + 1) + 16, DECI_BASE_STR, DECI_BASE);
-		write(1, "] :\t", 4);
+		write(1, "] : ", 4);
 		chunk = g_bins[i];
 		while (chunk)
 		{

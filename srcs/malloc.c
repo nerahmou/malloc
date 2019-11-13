@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/17 16:24:17 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/12 13:32:16 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/13 13:44:47 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -69,9 +69,9 @@ void	*place_chunk(t_op g_op, size_t size)
 
 	region = get_region(g_op, size);
 	if (g_op.is_large || region == NULL) //Pas besoin de configuger le chunk
-		return (LARGE_CHUNK_DATA(region));
+		return ((void*)GET_FIRST_CHUNK(region));
 	new_chunk = SET_CHUNK_POS((long)region, g_op.region_size);
-	prev_chunk = (t_chunk*)LARGE_CHUNK_DATA(region);
+	prev_chunk = GET_FIRST_CHUNK(region);
 	while (prev_chunk->next_size != 0)
 		prev_chunk = GET_NEXT_CHUNK(prev_chunk);
 	if (IS_FIRST_CHUNK(region, g_op.region_size) == false)
@@ -95,11 +95,11 @@ void	*malloc(size_t size)
 	i = -1;
 	if (size != 0)
 	{
+		size = GET_REQUIRED_SIZE(size);
 		while (g_op[++i].max_chunk_size)
 		{
 			if (GOOD_region_TYPE(size, g_op[i]))
 			{
-				size = GET_REQUIRED_SIZE(size);
 				addr = place_chunk(g_op[i], size);
 				break;
 			}

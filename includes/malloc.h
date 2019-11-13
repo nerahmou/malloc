@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/12 17:19:59 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/13 13:45:45 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -38,7 +38,7 @@
 
 # define ALIGNEMENT 16
 
-# define BINS_NUMBER (SMALL_MAX_SIZE / 16) - 1
+# define BINS_NUMBER (SMALL_MAX_SIZE / 16) // 256 cases (32->4112)
 
 # define BIN_INDEX(size) (size - CHUNK_HEAD_SIZE) / ALIGNEMENT - 1
 
@@ -50,13 +50,16 @@
  * Les MAX_SIZE inclues les HEADERS de CHUNK
  */
 # define TINY_MAX_SIZE 512
-# define TINY_region_SIZE (TINY_MAX_SIZE * 500)
+# define TINY_MAX_BIN (TINY_MAX_SIZE + CHUNK_HEAD_SIZE)
+# define TINY_REGION_SIZE (TINY_MAX_SIZE * 500)
 
 # define SMALL_MAX_SIZE 4096
-# define SMALL_region_SIZE (SMALL_MAX_SIZE * 100)
+# define SMALL_MAX_BIN (SMALL_MAX_SIZE + CHUNK_HEAD_SIZE)
+# define SMALL_REGION_SIZE (SMALL_MAX_SIZE * 100)
 
 # define LARGE_MAX_SIZE UINT64_MAX - 1
-# define LARGE_size (SEG_HEAD_SIZE)
+# define LARGE_MAX_BIN 0
+# define LARGE_REGION_SIZE (SEG_HEAD_SIZE)
 
 
 # define SEG_HEAD_SIZE sizeof(t_region)
@@ -77,7 +80,7 @@ enum e_region_OFFSET_TYPE{
 /*
  * Recupere le bon region a l'interieur de la heap en fonction en se servant d'un offset definit
  * dans le tableau global g_op*/
-# define GOOD_region_TYPE(size, g_op) (size / g_op.max_chunk_size) == 0
+# define GOOD_region_TYPE(size, g_op) size / (g_op.max_chunk_size + 1) == 0
 
 # define GET_CHUNK_HEADER(addr) CH_PTR (addr - CHUNK_HEAD_SIZE)
 
@@ -113,7 +116,7 @@ enum e_region_OFFSET_TYPE{
 
 # define CHUNK_IN_SEG(addr, seg, size) addr > seg && addr <= seg + size
 
-# define LARGE_CHUNK_DATA(addr) (addr + (addr != NULL))
+# define GET_FIRST_CHUNK(addr) CH_PTR (addr + (addr != NULL))
 
 # define CHUNK_DATA(addr) &(addr->u_u.data)
 
@@ -125,9 +128,9 @@ enum e_region_OFFSET_TYPE{
 # define NEXT_CHUNK(ch) CH_PTR ((long)ch + ch->size)
 
 
-# define IS_PREV_FREE(ch, max) ch->size < max && ch->prev && !ch->prev->in_use // a verifier
+# define IS_PREV_FREE(ch, max) ch->prev  && !ch->prev->in_use && (ch->size + ch->prev->size) <= max // a verifier
 
-# define IS_NEXT_FREE(ch, max) (ch->size < max && ch->next_size && (NEXT_CHUNK(ch))->in_use == false)
+# define IS_NEXT_FREE(ch, max) (ch->next_size && (NEXT_CHUNK(ch))->in_use == false && ch->size + ch->next_size <= max)
 
 /*
 ** INCLUDES
@@ -228,6 +231,7 @@ struct	s_heap
 struct s_op
 {
 	size_t		max_chunk_size;
+	size_t		bin_size_limit;
 	size_t		region_size;
 	size_t		offset:56;
 	bool		is_large;
