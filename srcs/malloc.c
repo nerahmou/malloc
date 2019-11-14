@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/17 16:24:17 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/13 15:31:06 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/14 15:33:28 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -67,9 +67,12 @@ void	*place_chunk(t_op g_op, size_t size)
 	t_chunk		*new_chunk;
 	t_chunk		*prev_chunk;
 
-	new_chunk = get_chunk_from_bin(size, g_op);
-	if (new_chunk)
-		return (CHUNK_DATA(new_chunk));
+	if (g_op.is_large == false)
+	{
+		new_chunk = get_chunk_from_bin(size, g_op.max_chunk_size);
+		if (new_chunk)
+			return (CHUNK_DATA(new_chunk));
+	}
 	region = get_region(g_op, size);
 	if (g_op.is_large || region == NULL) //Pas besoin de configuger le chunk
 		return ((void*)GET_FIRST_CHUNK(region));

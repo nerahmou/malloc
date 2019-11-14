@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/22 15:12:28 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/13 15:41:35 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/14 15:26:24 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -57,7 +57,7 @@ size_t	print_chunks(t_region *region, bool is_large)
 		if (is_large == true || chunk->in_use)
 		{
 			chunk_start = is_large ? (size_t)chunk : (size_t)CHUNK_DATA(chunk);
-			chunk_data_size = is_large ? region->u_u.size/*AVAILABLE_SPACE(region)*/ : CHUNK_DATA_SIZE(chunk);
+			chunk_data_size = is_large ? AVAILABLE_SPACE(region) : CHUNK_DATA_SIZE(chunk);
 			write(1, HEXA_PREFIX, 2);
 			ft_putnbr_base(chunk_start, HEXA_BASE_STR, HEXA_BASE);
 			write(1, " - " HEXA_PREFIX, 5);
@@ -71,13 +71,6 @@ size_t	print_chunks(t_region *region, bool is_large)
 		chunk = GET_NEXT_CHUNK(((is_large || !chunk->next_size) ? NULL : chunk));
 	}
 	return (total);
-}
-
-void	print_total(size_t total)
-{
-	write(1, "Total : ", 8);
-	ft_putnbr_base(total, DECI_BASE_STR, DECI_BASE);
-	write(1, " octets\n>>>>>>>>>>\n", 19);
 }
 
 void	show_alloc_mem()
@@ -99,5 +92,33 @@ void	show_alloc_mem()
 			region = region->next;
 		}
 	}
-	print_total(total);
+	write(1, "Total : ", 8);
+	ft_putnbr_base(total, DECI_BASE_STR, DECI_BASE);
+	write(1, " octets\n>>>>>>>>>>\n\n", 20);
+}
+
+void	show_bins()
+{
+	t_chunk *chunk;
+	short i;
+
+	i = 0;
+	write(1, "<<<<<<<<<<\n", 11);
+	while (i < BINS_NUMBER)
+	{
+		write(1, "[", 1);
+		ft_putnbr_base((ALIGNEMENT) * (i + 1) + 16, DECI_BASE_STR, DECI_BASE);
+		write(1, "] : ", 4);
+		chunk = g_bins[i];
+		while (chunk)
+		{
+			write(1, "{0x", 3);
+			ft_putnbr_base((long)chunk, HEXA_BASE_STR, HEXA_BASE);
+			write(1, "}->", 3);
+			chunk = chunk->next_free;
+		}
+		write(1, "{NULL}\n", 7);
+		i++;
+	}
+	write(1, ">>>>>>>>>>\n", 11);
 }

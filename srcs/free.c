@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/31 16:11:21 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/13 16:19:57 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/14 15:16:16 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -46,7 +46,7 @@ void	free_small(t_region **head, t_region *region, void *addr, t_op g_op)
 			free_region(head, region, g_op);
 		}
 		else
-			push_bin(chunk);
+			push(chunk);
 	}
 }
 

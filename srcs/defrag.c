@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/08 16:30:24 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/13 14:10:25 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/14 14:31:16 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -37,7 +37,8 @@ bool	defrag(t_region *region, t_chunk **chunk, t_op g_op)
 	bin_size_limit = g_op.max_chunk_size;
 	while (IS_PREV_FREE(freed_chunk, bin_size_limit))
 	{
-		bin_elem = pop_from_bin(freed_chunk->prev, true);
+		bin_elem = pop(0, freed_chunk->prev);
+		//bin_elem = pop(freed_chunk->prev, true);
 		bin_elem->size += freed_chunk->size;
 		bin_elem->next_size = freed_chunk->next_size;
 		if (freed_chunk->next_size)//Si on arrive pas dans la zone libre
@@ -46,7 +47,7 @@ bool	defrag(t_region *region, t_chunk **chunk, t_op g_op)
 	}
 	while (IS_NEXT_FREE(freed_chunk, bin_size_limit))
 	{
-		bin_elem = pop_from_bin(NEXT_CHUNK(freed_chunk), true);
+		bin_elem = pop(0, NEXT_CHUNK(freed_chunk));
 		freed_chunk->size += bin_elem->size;
 		freed_chunk->next_size = bin_elem->next_size;
 		if (freed_chunk->next_size)//Si on arrive pas dans la zone libre

@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/13 16:23:19 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/14 15:38:05 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -49,9 +49,14 @@
 /*
  * Les MAX_SIZE inclues les HEADERS de CHUNK
  * 
+ * 32	>=	TINY_MALLOC		<= 512
+ * 528	>=	SMALL_MALLOC	<= 4096
+ * 4096	>	LARGE_MALLOC
+ *
  * exemple un malloc(496) sera dans les TINY car:
  *		- 496 multiple de 16
  *		- 496 + Header = 512
+ *
  *	un malloc(497) sera dans les SMALL car:
  *		- 497 est arrondi au multiple de 16 superieur -> 512
  *		- 512 + header = 528
@@ -88,9 +93,9 @@ enum e_region_OFFSET_TYPE{
 
 # define GET_CHUNK_HEADER(addr) CH_PTR (addr - CHUNK_HEAD_SIZE)
 
-# define GET_NEXT_FREE(chunk) (CH_PTR (bin_elem->next_free))
+# define GET_NEXT_FREE(chunk) (CH_PTR (chunk->next_free))
 
-# define GET_PREV_FREE(chunk) (CH_PTR (bin_elem->u_u.prev_free))
+# define GET_PREV_FREE(chunk) (CH_PTR (chunk->u_u.prev_free))
 
 # define GET_NEXT_CHUNK(chunk) CH_PTR ((long)chunk + CHUNK_SIZE(chunk))
 
@@ -273,13 +278,13 @@ void	free(void *ptr);
 void	free_region(t_region **head, t_region *region, t_op g_op);
 bool	defrag(t_region *region, t_chunk **chunk, t_op g_op);
 void	update_bins(t_region *region);
-t_chunk *pop_from_bin(t_chunk *chunk, bool defrag);
-void	push_bin(t_chunk *chunk);
+t_chunk *pop(size_t size, t_chunk *chunk);
+void	push(t_chunk *chunk);
+t_chunk	*get_chunk_from_bin(size_t, size_t);
 
 void	show_alloc_mem();
 void	show_bins();
 void ft_putnbr_base(size_t nbr, const char *base, size_t base_len);
-t_chunk	*get_chunk_from_bin(size_t size, t_op g_op);
 
 
 #endif
