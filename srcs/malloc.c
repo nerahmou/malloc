@@ -67,6 +67,9 @@ void	*place_chunk(t_op g_op, size_t size)
 	t_chunk		*new_chunk;
 	t_chunk		*prev_chunk;
 
+	new_chunk = get_chunk_from_bin(size, g_op);
+	if (new_chunk)
+		return (CHUNK_DATA(new_chunk));
 	region = get_region(g_op, size);
 	if (g_op.is_large || region == NULL) //Pas besoin de configuger le chunk
 		return ((void*)GET_FIRST_CHUNK(region));

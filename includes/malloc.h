@@ -274,10 +274,12 @@ void	free_region(t_region **head, t_region *region, t_op g_op);
 bool	defrag(t_region *region, t_chunk **chunk, t_op g_op);
 void	update_bins(t_region *region);
 t_chunk *pop_from_bin(t_chunk *chunk, bool defrag);
+void	push_bin(t_chunk *chunk);
 
 void	show_alloc_mem();
 void	show_bins();
 void ft_putnbr_base(size_t nbr, const char *base, size_t base_len);
+t_chunk	*get_chunk_from_bin(size_t size, t_op g_op);
 
 
 #endif

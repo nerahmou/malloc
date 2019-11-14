@@ -46,13 +46,7 @@ void	free_small(t_region **head, t_region *region, void *addr, t_op g_op)
 			free_region(head, region, g_op);
 		}
 		else
-		{
-			index = BIN_INDEX(chunk->size);
-			if (g_bins[index] != NULL)
-				g_bins[index]->u_u.prev_free = chunk;
-			chunk->next_free = g_bins[index];
-			g_bins[index] = chunk;
-		}
+			push_bin(chunk);
 	}
 }
 
