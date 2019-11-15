@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/15 14:40:14 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/15 16:26:20 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -62,13 +62,14 @@
  *		- 512 + header = 528
  */
 # define TINY_MAX_SIZE 512
-# define TINY_REGION_SIZE (TINY_MAX_SIZE * 500)
+//# define TINY_REGION_SIZE (TINY_MAX_SIZE * 500)
+# define TINY_REGION_SIZE (96)
 
 # define SMALL_MAX_SIZE 4096
 # define SMALL_REGION_SIZE (SMALL_MAX_SIZE * 100)
 
 # define LARGE_MAX_SIZE UINT64_MAX - 1
-# define LARGE_REGION_SIZE (SEG_HEAD_SIZE)
+# define LARGE_REGION_SIZE 0
 
 
 # define SEG_HEAD_SIZE sizeof(t_region)
@@ -122,17 +123,17 @@ enum e_region_OFFSET_TYPE{
  * 
  */
 
-# define AVAILABLE_SPACE(reg) reg->u_u.size - SEG_HEAD_SIZE
+# define AVAILABLE_SPACE(reg) reg->size - SEG_HEAD_SIZE
 
-# define IS_FIRST_CHUNK(seg, size) seg->u_u.available_space == size
+# define IS_FIRST_CHUNK(reg, chunk) ((size_t)reg + SEG_HEAD_SIZE) == (size_t)chunk
 
 # define CHUNK_IN_SEG(addr, seg, size) addr > seg && addr <= seg + size
 
-# define GET_FIRST_CHUNK(addr) CH_PTR (addr + (addr != NULL))
+# define GET_FIRST_CHUNK(addr) CH_PTR (addr + 1)
 
 # define CHUNK_DATA(addr) &(addr->u_u.data)
 
-# define SET_CHUNK_POS(s, s_size) CH_PTR (s + (SEG_HEAD_SIZE + s_size - s->u_u.available_space))
+# define SET_CHUNK_POS(s, s_size) CH_PTR ((long)s + (s_size - s->size))
 
 # define UPDATE_CHUNK_SIZE(new_size) new_size - CHUNK_HEAD_SIZE
 
@@ -226,11 +227,7 @@ struct	s_chunk
 struct	s_region
 {
 	t_region	*next;
-	union
-	{
-		size_t		available_space; // For tiny and small
-		size_t		size; //For large chunks
-	} u_u;
+	size_t		size;
 };
 
 struct	s_heap
@@ -280,7 +277,7 @@ bool	defrag(t_region *region, t_chunk **chunk, t_op g_op);
 void	update_bins(t_region *region);
 t_chunk *pop(size_t size, t_chunk *chunk);
 void	push(t_chunk *chunk);
-t_chunk	*get_chunk_from_bin(size_t, size_t);
+t_chunk	*get_chunk_from_bin(size_t, t_op);
 
 void	show_alloc_mem();
 void	show_bins();

@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/22 11:24:43 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/15 14:31:46 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/15 16:17:12 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -21,7 +21,8 @@ int main(int argc, char* argv[]){
 
 	//show_alloc_mem();
 //	show_bins();
-	void *tab[] = {
+
+/*	void *tab[] = {
 		malloc(16),
 		malloc(26),
 		malloc(16),
@@ -29,17 +30,26 @@ int main(int argc, char* argv[]){
 		malloc(16),
 		malloc(59),
 		malloc(159),
-		malloc(1159),
-		malloc(512),
 		malloc(490),
+		malloc(512),
+		malloc(1159),
+		malloc(1159),
 		malloc(4081),
-		malloc(5159),
 		malloc(4096),
-		malloc(1159)
+		malloc(5159)
 	};
-
+*/
+		malloc(16);
+	//	malloc(26);
+	//	malloc(16);
 	show_alloc_mem();
-	free(tab[1]);
+	//malloc(4081);
+	//malloc(4081);
+	//malloc(4081);
+	//malloc(4081),
+	//malloc(4081),
+	show_alloc_mem();
+/*	free(tab[1]);
 	show_alloc_mem();
 	free(tab[0]);
 	free(tab[5]);
@@ -65,10 +75,5 @@ int main(int argc, char* argv[]){
 	free(tab[10]);
 	malloc(25);
 	malloc(4025);
-	/*show_alloc_mem();
-	free(tab[12]);
-	show_alloc_mem();
-	free(tab[0]);
-	*/show_alloc_mem();
-	return 1;
+*/	return 1;
 }

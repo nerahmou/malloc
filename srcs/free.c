@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/31 16:11:21 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/15 14:30:30 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/15 16:20:06 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -19,7 +19,7 @@ void	free_region(t_region **head, t_region *to_munmap, t_op g_op)
 	size_t		size;
 
 	region = *head;
-	size = g_op.is_large ? to_munmap->u_u.size : g_op.region_size;
+	size = g_op.is_large ? to_munmap->size : g_op.region_size;
 	if (*head == to_munmap)
 		*head = to_munmap->next;
 	else

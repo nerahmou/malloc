@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/11 15:12:54 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/14 16:16:08 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/15 16:19:57 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -91,12 +91,16 @@ t_chunk	*split_bin_elem(t_chunk *chunk, size_t bin_size, size_t size)
 	return (chunk);
 }
 
-t_chunk	*get_chunk_from_bin(size_t size, size_t bin_size_limit)
+t_chunk	*get_chunk_from_bin(size_t size, t_op g_op)
 {
 	t_chunk	*chunk;
 	size_t	bin_size;
+	size_t bin_size_limit;
 
+	if (g_op.is_large)
+		return (NULL);
 	bin_size = size;
+	bin_size_limit = g_op.max_chunk_size;
 	chunk = pop(bin_size, NULL);
 	if (chunk == NULL)
 	{

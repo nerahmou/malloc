@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/22 15:12:28 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/14 15:26:24 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/15 16:20:15 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -54,10 +54,10 @@ size_t	print_chunks(t_region *region, bool is_large)
 	chunk = GET_FIRST_CHUNK(region);
 	while (chunk)
 	{
-		if (is_large == true || chunk->in_use)
+		if (chunk->in_use)
 		{
-			chunk_start = is_large ? (size_t)chunk : (size_t)CHUNK_DATA(chunk);
-			chunk_data_size = is_large ? AVAILABLE_SPACE(region) : CHUNK_DATA_SIZE(chunk);
+			chunk_start = (size_t)CHUNK_DATA(chunk);
+			chunk_data_size = CHUNK_DATA_SIZE(chunk);
 			write(1, HEXA_PREFIX, 2);
 			ft_putnbr_base(chunk_start, HEXA_BASE_STR, HEXA_BASE);
 			write(1, " - " HEXA_PREFIX, 5);
@@ -68,9 +68,26 @@ size_t	print_chunks(t_region *region, bool is_large)
 			total += chunk_data_size;
 		}
 		total += chunk_data_size;
-		chunk = GET_NEXT_CHUNK(((is_large || !chunk->next_size) ? NULL : chunk));
-	}
-	return (total);
+		chunk = chunk->next_size == 0 ? NULL : GET_NEXT_CHUNK(chunk);
+
+		/*
+		   if (is_large == true || chunk->in_use)
+		   {
+		   chunk_start = is_large ? (size_t)chunk : (size_t)CHUNK_DATA(chunk);
+		   chunk_data_size = is_large ? AVAILABLE_SPACE(region) : CHUNK_DATA_SIZE(chunk);
+		   write(1, HEXA_PREFIX, 2);
+		   ft_putnbr_base(chunk_start, HEXA_BASE_STR, HEXA_BASE);
+		   write(1, " - " HEXA_PREFIX, 5);
+		   ft_putnbr_base(chunk_start + chunk_data_size, HEXA_BASE_STR, HEXA_BASE);
+		   write(1, " : ", 3);
+		   ft_putnbr_base(chunk_data_size, DECI_BASE_STR, DECI_BASE);
+		   write(1, " octets\n", 8);
+		   total += chunk_data_size;
+		   }
+		   total += chunk_data_size;
+		   chunk = GET_NEXT_CHUNK(((is_large || !chunk->next_size) ? NULL : chunk));
+		   */}
+		return (total);
 }
 
 void	show_alloc_mem()
