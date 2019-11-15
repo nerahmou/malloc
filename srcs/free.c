@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/31 16:11:21 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/14 15:16:16 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/15 14:30:30 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -50,31 +50,54 @@ void	free_small(t_region **head, t_region *region, void *addr, t_op g_op)
 	}
 }
 
-void	free(void *addr)
+t_region	*get_the_region(t_region *region, void *ptr, unsigned char i)
 {
-	t_region	**head;
-	t_region	*region;
-	short		i;
-
-	if (addr != NULL)
+	while (region)
 	{
-		i = 3;
-		while (i--)
+		if (CHUNK_IN_SEG((size_t)ptr, (size_t)region, g_op[i].region_size))
+			break;
+		region = region->next;
+	}
+	return (region);
+}
+
+unsigned char	is_valid_ptr(void *ptr)
+{
+	unsigned char	i;
+	t_region	*region;
+
+	i = 0;
+	while (i < 3)
+	{
+		region = *GET_APPROPRIATE_region_TYPE(g_op[i].offset);
+		while (region)
+		{
+			if (CHUNK_IN_SEG((size_t)ptr, (size_t)region, g_op[i].region_size))
+				return (i);
+			region = region->next;
+		}
+		i++;
+	}
+	return (i);
+}
+
+void	free(void *ptr)
+{
+	t_region		**head;
+	t_region		*region;
+	unsigned char	i;
+
+	if (ptr != NULL)
+	{
+		i = is_valid_ptr(ptr);
+		if (g_op[i].region_name != NULL)
 		{
 			head = GET_APPROPRIATE_region_TYPE(g_op[i].offset);
-			region = *head;
-			while (region)
-			{
-				if (CHUNK_IN_SEG((size_t)addr, (size_t)region, g_op[i].region_size))
-				{
-					if (g_op[i].is_large)
-						FREE_LARGE(head, region, g_op[i]);
-					else
-						free_small(head, region, addr, g_op[i]);
-					return;
-				}
-				region = region->next;
-			}
+			region = get_the_region(*head, ptr, i);
+			if (g_op[i].is_large)
+				FREE_LARGE(head, region, g_op[i]);
+			else
+				free_small(head, region, ptr, g_op[i]);
 		}
 	}
 }

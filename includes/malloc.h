@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/14 16:33:05 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/15 14:40:14 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -287,5 +287,6 @@ void	show_bins();
 void ft_putnbr_base(size_t nbr, const char *base, size_t base_len);
 
 t_chunk	*split_bin_elem(t_chunk *chunk, size_t bin_size, size_t size);
+unsigned char	is_valid_ptr(void*);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/22 11:24:43 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/14 15:42:06 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/15 14:31:46 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -41,6 +41,7 @@ int main(int argc, char* argv[]){
 	show_alloc_mem();
 	free(tab[1]);
 	show_alloc_mem();
+	free(tab[0]);
 	free(tab[5]);
 	show_alloc_mem();
 	free(tab[9]);
@@ -62,10 +63,12 @@ int main(int argc, char* argv[]){
 	free(tab[8]);
 	show_alloc_mem();
 	free(tab[10]);
-	show_alloc_mem();
+	malloc(25);
+	malloc(4025);
+	/*show_alloc_mem();
 	free(tab[12]);
 	show_alloc_mem();
 	free(tab[0]);
-	show_alloc_mem();
+	*/show_alloc_mem();
 	return 1;
 }
