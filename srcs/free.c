@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/31 16:11:21 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/15 16:20:06 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/18 14:26:09 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -19,7 +19,6 @@ void	free_region(t_region **head, t_region *to_munmap, t_op g_op)
 	size_t		size;
 
 	region = *head;
-	size = g_op.is_large ? to_munmap->size : g_op.region_size;
 	if (*head == to_munmap)
 		*head = to_munmap->next;
 	else
@@ -28,18 +27,20 @@ void	free_region(t_region **head, t_region *to_munmap, t_op g_op)
 			region = region->next;
 		region->next = to_munmap->next;
 	}
+	size = g_op.is_large ?
+		to_munmap->space + (GET_FIRST_CHUNK(to_munmap))->header.size :
+		g_op.reg_size;
 	MUNMAP(to_munmap, size);
 }
 
 void	free_small(t_region **head, t_region *region, void *addr, t_op g_op)
 {
 	t_chunk		*chunk;
-	short		index;
 
 	chunk = GET_CHUNK_HEADER(addr);
-	if (chunk->in_use == true)
+	if (chunk->header.in_use == true)
 	{
-		chunk->in_use = false;
+		chunk->header.in_use = false;
 		if (defrag(region, &chunk, g_op))
 		{
 			update_bins(region);
@@ -54,7 +55,7 @@ t_region	*get_the_region(t_region *region, void *ptr, unsigned char i)
 {
 	while (region)
 	{
-		if (CHUNK_IN_SEG((size_t)ptr, (size_t)region, g_op[i].region_size))
+		if (CHUNK_IN_SEG((size_t)ptr, (size_t)region, g_op[i].reg_size))
 			break;
 		region = region->next;
 	}
@@ -66,17 +67,16 @@ unsigned char	is_valid_ptr(void *ptr)
 	unsigned char	i;
 	t_region	*region;
 
-	i = 0;
-	while (i < 3)
+	i = -1;
+	while (++i < 3)
 	{
-		region = *GET_APPROPRIATE_region_TYPE(g_op[i].offset);
+		region = *GET_APPROPRIATE_REGION_TYPE(g_op[i].offset);
 		while (region)
 		{
-			if (CHUNK_IN_SEG((size_t)ptr, (size_t)region, g_op[i].region_size))
+			if (CHUNK_IN_SEG((size_t)ptr, (size_t)region, g_op[i].reg_size))
 				return (i);
 			region = region->next;
 		}
-		i++;
 	}
 	return (i);
 }
@@ -92,7 +92,7 @@ void	free(void *ptr)
 		i = is_valid_ptr(ptr);
 		if (g_op[i].region_name != NULL)
 		{
-			head = GET_APPROPRIATE_region_TYPE(g_op[i].offset);
+			head = GET_APPROPRIATE_REGION_TYPE(g_op[i].offset);
 			region = get_the_region(*head, ptr, i);
 			if (g_op[i].is_large)
 				FREE_LARGE(head, region, g_op[i]);

@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/11 15:12:54 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/15 16:19:57 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/18 14:25:53 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -22,7 +22,7 @@ void	update_bins(t_region *region)
 	t_chunk *chunk;
 
 	chunk = GET_FIRST_CHUNK(region);
-	while (chunk->size && chunk->in_use == false)
+	while (chunk->header.size && chunk->header.in_use == false)
 	{
 		pop(0, chunk);
 		chunk = NEXT_CHUNK(chunk);
@@ -38,7 +38,7 @@ void	push(t_chunk *chunk)
 {
 	short index;
 
-	index = BIN_INDEX(chunk->size);
+	index = BIN_INDEX(chunk->header.size);
 	if (g_bins[index] != NULL)
 		g_bins[index]->u_u.prev_free = chunk;
 	chunk->next_free = g_bins[index];
@@ -53,7 +53,7 @@ t_chunk	*pop(size_t size, t_chunk *chunk)
 	t_chunk			*bin_elem;
 	unsigned char	index;
 
-	size = chunk == NULL ? size : chunk->size;
+	size = chunk == NULL ? size : chunk->header.size;
 	index = BIN_INDEX(size);
 	bin_elem = g_bins[index];
 	if (chunk)
@@ -70,7 +70,7 @@ t_chunk	*pop(size_t size, t_chunk *chunk)
 		bin_elem->u_u.prev_free = NULL;
 		bin_elem->next_free = NULL;
 		if (chunk == NULL)
-			bin_elem->in_use = true;
+			bin_elem->header.in_use = true;
 	}
 	return (bin_elem);
 }
@@ -80,13 +80,13 @@ t_chunk	*split_bin_elem(t_chunk *chunk, size_t bin_size, size_t size)
 	t_chunk	*bin_elem;
 
 	bin_elem = CH_PTR((long)chunk + size);
-	bin_elem->prev = chunk;
-	bin_elem->size = bin_size - size;
-	bin_elem->next_size = chunk->next_size;
-	bin_elem->in_use = false; // voir si utile
-	chunk->size = size;
-	chunk->next_size = bin_elem->size;
-	chunk->in_use = true;
+	bin_elem->header.prev = chunk;
+	bin_elem->header.size = bin_size - size;
+	bin_elem->header.next_size = chunk->header.next_size;
+	bin_elem->header.in_use = false; // voir si utile
+	chunk->header.size = size;
+	chunk->header.next_size = bin_elem->header.size;
+	chunk->header.in_use = true;
 	push(bin_elem);
 	return (chunk);
 }

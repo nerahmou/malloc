@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/15 16:26:20 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/18 14:25:49 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -34,24 +34,26 @@
 
 # define PAGE_SIZE getpagesize()
 
-# define FREE_LARGE(head, region, g_op) free_region(head, region, g_op)
 
 # define ALIGNEMENT 16
 
-# define BINS_NUMBER (SMALL_MAX_SIZE / 16) - 1// 255 cases (32->4096)
-
+# define BINS_NUMBER (unsigned char)((SMALL_MAX_SIZE / 16) - 1)// 255 cases (32->4096)
 # define BIN_INDEX(size) (size - CHUNK_HEAD_SIZE) / ALIGNEMENT - 1
-
 # define TINY_BINS_LIMIT (TINY_MAX_SIZE / ALIGNEMENT) - 1
-
 # define SMALL_BINS_LIMIT (SMALL_MAX_SIZE / ALIGNEMENT) - 1
 
+# define FREE_LARGE(head, region, g_op) free_region(head, region, g_op)
 /*
- * Les MAX_SIZE inclues les HEADERS de CHUNK
- * 
- * 32	>=	TINY_MALLOC		<= 512
- * 528	>=	SMALL_MALLOC	<= 4096
- * 4096	>	LARGE_MALLOC
+ *
+ * 32B	>=	TINY_REGION		<= 512B
+ * 528B	>=	SMALL_REGION	<= 4096B
+ * 5008	>	LARGE_REGION
+ */
+
+
+/* malloc(16)	>=	TINY_MALLOC		<= malloc(496)
+ * malloc(512)	>=	SMALL_MALLOC		<= malloc(4080)
+ * malloc(4096)	>	LARGE_MALLOC
  *
  * exemple un malloc(496) sera dans les TINY car:
  *		- 496 multiple de 16
@@ -61,19 +63,31 @@
  *		- 497 est arrondi au multiple de 16 superieur -> 512
  *		- 512 + header = 528
  */
-# define TINY_MAX_SIZE 512
-//# define TINY_REGION_SIZE (TINY_MAX_SIZE * 500)
-# define TINY_REGION_SIZE (96)
 
-# define SMALL_MAX_SIZE 4096
-# define SMALL_REGION_SIZE (SMALL_MAX_SIZE * 100)
+# define TINY_NEXT_MULT (CHUNK_HEAD_SIZE)
+# define TINY_MAX_SIZE (CHUNK_HEAD_SIZE + 496)
+# define TINY_REGION_SIZE ((TINY_MAX_SIZE << 3) * 300)
 
+# define SMALL_NEXT_MULT (CHUNK_HEAD_SIZE)
+# define SMALL_MAX_SIZE (CHUNK_HEAD_SIZE + 4080)
+# define SMALL_REGION_SIZE (SMALL_MAX_SIZE * 200)
+
+/*
+ * LARGE_NEXT_MULT = 4088; Etant donné qu'il est geré différement:
+ *	(La taille de region est égale au next_multiple), donc on deduit la taille d'un header
+ *
+ * LARGE_REGION_SIZE = 32; 
+ *	Necessaire pour CHUNK_IN_SEG(reg, ptr, LARGE_REGION_SIZE) etant donné qu'il n'y a
+ *	qu'un seul element dans un LARGE_MALLOC, on verifie si ptr est a l'adresse
+ *	du premier chunk.
+ */
+# define LARGE_NEXT_MULT (SMALL_MAX_SIZE)
 # define LARGE_MAX_SIZE UINT64_MAX - 1
-# define LARGE_REGION_SIZE 0
-
+# define LARGE_REGION_SIZE 32
 
 # define SEG_HEAD_SIZE sizeof(t_region)
-# define CHUNK_HEAD_SIZE 16
+# define CHUNK_HEAD_SIZE sizeof(t_header)
+
 # define CH_PTR (t_chunk*)
 /*
  * ENUMS
@@ -100,30 +114,30 @@ enum e_region_OFFSET_TYPE{
 
 # define GET_NEXT_CHUNK(chunk) CH_PTR ((long)chunk + CHUNK_SIZE(chunk))
 
-# define CHUNK_SIZE(chunk) (long) (chunk == NULL ? 0 : chunk->size)
+# define CHUNK_SIZE(chunk) (long) (chunk == NULL ? 0 : chunk->header.size)
 
-# define GET_APPROPRIATE_region_TYPE(offset) (t_region**)(&g_heap.tiny_region + offset)
+# define GET_APPROPRIATE_REGION_TYPE(offset) (t_region**)(&g_heap.tiny_region + offset)
 /*
  * Arrondi au multiple de 16 superieur
  * */
-# define GET_NEXT_MULTIPLE(size) ((size - 1) / 16 * 16 + 16)
+# define GET_NEXT_MULTIPLE(size, mult) ((size - 1) / mult * mult + mult)
 
 /*
  * Retourne la taille totale de l'allocation demandée en incluant le header du chunk
  */
 
-# define GET_REQUIRED_SIZE(size) GET_NEXT_MULTIPLE(size) + CHUNK_HEAD_SIZE
+# define GET_REQUIRED_SIZE(size, mult) GET_NEXT_MULTIPLE(size + SEG_HEAD_SIZE, mult)
 
 # define MOVE_CHUNK_ADDR(chunk, size) chunk + size / ALIGNEMENT
 
-# define CHUNK_DATA_SIZE(chunk) chunk->size + (long)chunk - (long)chunk - CHUNK_HEAD_SIZE
+# define CHUNK_DATA_SIZE(chunk) chunk->header.size + (long)chunk - (long)chunk - CHUNK_HEAD_SIZE
 
 
 /*
  * 
  */
 
-# define AVAILABLE_SPACE(reg) reg->size - SEG_HEAD_SIZE
+# define AVAILABLE_SPACE(reg, size) (reg->space - SEG_HEAD_SIZE) >= size
 
 # define IS_FIRST_CHUNK(reg, chunk) ((size_t)reg + SEG_HEAD_SIZE) == (size_t)chunk
 
@@ -133,17 +147,17 @@ enum e_region_OFFSET_TYPE{
 
 # define CHUNK_DATA(addr) &(addr->u_u.data)
 
-# define SET_CHUNK_POS(s, s_size) CH_PTR ((long)s + (s_size - s->size))
+# define SET_CHUNK_POS(r, r_size) CH_PTR ((long)r + (r_size - r->space) + CHUNK_HEAD_SIZE)
 
 # define UPDATE_CHUNK_SIZE(new_size) new_size - CHUNK_HEAD_SIZE
 
 
-# define NEXT_CHUNK(ch) CH_PTR ((long)ch + ch->size)
+# define NEXT_CHUNK(ch) CH_PTR ((long)ch + ch->header.size)
 
 
-# define IS_PREV_FREE(ch, max) ch->prev  && !ch->prev->in_use && (ch->size + ch->prev->size) <= max // a verifier
+# define IS_PREV_FREE(ch, max) ch->header.prev  && !ch->header.prev->header.in_use && (ch->header.size + ch->header.prev->header.size) <= max // a verifier
 
-# define IS_NEXT_FREE(ch, max) (ch->next_size && (NEXT_CHUNK(ch))->in_use == false && ch->size + ch->next_size <= max)
+# define IS_NEXT_FREE(ch, max) (ch->header.next_size && (NEXT_CHUNK(ch))->header.in_use == false && ch->header.size + ch->header.next_size <= max)
 
 /*
 ** INCLUDES
@@ -175,8 +189,9 @@ void	*large_chunk();
 */
 typedef struct s_private_memory		t_private_memory;
 typedef struct s_heap				t_heap;
-typedef struct s_region			t_region;
+typedef struct s_region				t_region;
 typedef struct s_chunk				t_chunk;
+typedef struct s_header				t_header;
 typedef struct s_op					t_op;
 
 
@@ -209,13 +224,17 @@ typedef struct s_op					t_op;
 **	}
 */
 
-struct	s_chunk
+struct	s_header
 {
 	t_chunk		*prev;
-	size_t		next_size:28; // Meme role qu'un pointeur mais ne prends que 2 octets.
-						 // Utile pour eviter d'avoir un header a 48 octets
-	size_t		size:28;
-	bool		in_use;
+	size_t		size:48;
+	size_t		next_size:15; // Meme role qu'un pointeur mais ne prends que 2 octets.
+	bool		in_use:1;
+};
+
+struct	s_chunk
+{
+	t_header header;
 	union
 	{
 		void *data;
@@ -227,7 +246,7 @@ struct	s_chunk
 struct	s_region
 {
 	t_region	*next;
-	size_t		size;
+	size_t		space;
 };
 
 struct	s_heap
@@ -240,7 +259,7 @@ struct	s_heap
 struct s_op
 {
 	size_t		max_chunk_size;
-	size_t		region_size;
+	size_t		reg_size;
 	size_t		offset:56;
 	bool		is_large;
 	char		*region_name;

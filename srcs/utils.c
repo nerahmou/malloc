@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/22 15:12:28 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/15 16:20:15 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/18 14:28:26 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -43,10 +43,10 @@ void	print_region_info(t_region *region, const char *region_name)
 	write(1, "\n", 1);
 }
 
-size_t	print_chunks(t_region *region, bool is_large)
+size_t	print_chunks(t_region *region)
 {
 	size_t		chunk_start;
-	size_t		chunk_data_size;
+	size_t		data_size;
 	size_t		total;
 	t_chunk		*chunk;
 
@@ -54,40 +54,22 @@ size_t	print_chunks(t_region *region, bool is_large)
 	chunk = GET_FIRST_CHUNK(region);
 	while (chunk)
 	{
-		if (chunk->in_use)
+		if (chunk->header.in_use)
 		{
 			chunk_start = (size_t)CHUNK_DATA(chunk);
-			chunk_data_size = CHUNK_DATA_SIZE(chunk);
+			data_size = CHUNK_DATA_SIZE(chunk);
 			write(1, HEXA_PREFIX, 2);
 			ft_putnbr_base(chunk_start, HEXA_BASE_STR, HEXA_BASE);
 			write(1, " - " HEXA_PREFIX, 5);
-			ft_putnbr_base(chunk_start + chunk_data_size, HEXA_BASE_STR, HEXA_BASE);
+			ft_putnbr_base(chunk_start + data_size, HEXA_BASE_STR, HEXA_BASE);
 			write(1, " : ", 3);
-			ft_putnbr_base(chunk_data_size, DECI_BASE_STR, DECI_BASE);
+			ft_putnbr_base(data_size, DECI_BASE_STR, DECI_BASE);
 			write(1, " octets\n", 8);
-			total += chunk_data_size;
+			total += data_size;
 		}
-		total += chunk_data_size;
-		chunk = chunk->next_size == 0 ? NULL : GET_NEXT_CHUNK(chunk);
-
-		/*
-		   if (is_large == true || chunk->in_use)
-		   {
-		   chunk_start = is_large ? (size_t)chunk : (size_t)CHUNK_DATA(chunk);
-		   chunk_data_size = is_large ? AVAILABLE_SPACE(region) : CHUNK_DATA_SIZE(chunk);
-		   write(1, HEXA_PREFIX, 2);
-		   ft_putnbr_base(chunk_start, HEXA_BASE_STR, HEXA_BASE);
-		   write(1, " - " HEXA_PREFIX, 5);
-		   ft_putnbr_base(chunk_start + chunk_data_size, HEXA_BASE_STR, HEXA_BASE);
-		   write(1, " : ", 3);
-		   ft_putnbr_base(chunk_data_size, DECI_BASE_STR, DECI_BASE);
-		   write(1, " octets\n", 8);
-		   total += chunk_data_size;
-		   }
-		   total += chunk_data_size;
-		   chunk = GET_NEXT_CHUNK(((is_large || !chunk->next_size) ? NULL : chunk));
-		   */}
-		return (total);
+		chunk = chunk->header.next_size == 0 ? NULL : GET_NEXT_CHUNK(chunk);
+	}
+	return (total);
 }
 
 void	show_alloc_mem()
@@ -101,11 +83,11 @@ void	show_alloc_mem()
 	write(1, "<<<<<<<<<\n", 10);
 	while (g_op[++i].region_name)
 	{
-		region = *GET_APPROPRIATE_region_TYPE(g_op[i].offset);
+		region = *GET_APPROPRIATE_REGION_TYPE(g_op[i].offset);
 		while (region)
 		{
 			print_region_info(region, g_op[i].region_name);
-			total += print_chunks(region, g_op[i].is_large);
+			total += print_chunks(region);
 			region = region->next;
 		}
 	}
@@ -117,7 +99,7 @@ void	show_alloc_mem()
 void	show_bins()
 {
 	t_chunk *chunk;
-	short i;
+	unsigned char i;
 
 	i = 0;
 	write(1, "<<<<<<<<<<\n", 11);
