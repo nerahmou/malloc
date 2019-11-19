@@ -1,26 +1,28 @@
 /* ************************************************************************** */
 /*                                                          LE - /            */
 /*                                                              /             */
-/*   calloc.c                                         .::    .:/ .      .::   */
+/*   ft_atoi.c                                        .::    .:/ .      .::   */
 /*                                                 +:+:+   +:    +:  +:+:+    */
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
-/*   Created: 2019/11/19 11:09:09 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/19 19:18:51 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Created: 2017/11/29 13:50:40 by nerahmou     #+#   ##    ##    #+#       */
+/*   Updated: 2017/12/30 19:55:20 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include "malloc.h"
-
-void	*calloc(size_t count, size_t size)
+int		ft_atoi(const char *str)
 {
-	void	*ptr;
+	int sign;
+	int output;
 
-	ft_printf("\tcalloc(%zu, %zu);", count, size);
-	ft_printf("//calloc[%p];\n\t\t", ptr);
-	ptr = malloc(count * size);
-	if (ptr)
-		ft_memset(ptr, 0, GET_NEXT_MULTIPLE(count * size, 16));
-	return (ptr);
+	output = 0;
+	while ((*str >= 9 && *str <= 13) || *str == 32)
+		str++;
+	sign = *str == '-' ? -1 : 1;
+	if (*str == '-' || *str == '+')
+		str++;
+	while (*str >= '0' && *str <= '9')
+		output = (output * 10) + *str++ - '0';
+	return (sign * output);
 }

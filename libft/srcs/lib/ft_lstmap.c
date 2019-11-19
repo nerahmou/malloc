@@ -1,26 +1,38 @@
 /* ************************************************************************** */
 /*                                                          LE - /            */
 /*                                                              /             */
-/*   calloc.c                                         .::    .:/ .      .::   */
+/*   ft_lstmap.c                                      .::    .:/ .      .::   */
 /*                                                 +:+:+   +:    +:  +:+:+    */
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
-/*   Created: 2019/11/19 11:09:09 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/19 19:18:51 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Created: 2017/11/29 13:50:42 by nerahmou     #+#   ##    ##    #+#       */
+/*   Updated: 2017/11/29 13:50:42 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include "malloc.h"
+#include "libft.h"
 
-void	*calloc(size_t count, size_t size)
+t_list		*ft_lstmap(t_list *lst, t_list *(*f)(t_list *elem))
 {
-	void	*ptr;
+	t_list	*new;
+	t_list	*tmp;
+	t_list	*begin;
 
-	ft_printf("\tcalloc(%zu, %zu);", count, size);
-	ft_printf("//calloc[%p];\n\t\t", ptr);
-	ptr = malloc(count * size);
-	if (ptr)
-		ft_memset(ptr, 0, GET_NEXT_MULTIPLE(count * size, 16));
-	return (ptr);
+	if (!lst || !f)
+		return (NULL);
+	tmp = f(lst);
+	if (!(new = ft_lstnew(tmp->content, tmp->content_size)))
+		return (NULL);
+	begin = new;
+	lst = lst->next;
+	while (lst)
+	{
+		tmp = f(lst);
+		if (!(new->next = ft_lstnew(tmp->content, tmp->content_size)))
+			return (NULL);
+		new = new->next;
+		lst = lst->next;
+	}
+	return (begin);
 }

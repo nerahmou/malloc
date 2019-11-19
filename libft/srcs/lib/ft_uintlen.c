@@ -1,26 +1,29 @@
 /* ************************************************************************** */
 /*                                                          LE - /            */
 /*                                                              /             */
-/*   calloc.c                                         .::    .:/ .      .::   */
+/*   nbrlen.c                                         .::    .:/ .      .::   */
 /*                                                 +:+:+   +:    +:  +:+:+    */
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
-/*   Created: 2019/11/19 11:09:09 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/19 19:18:51 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Created: 2018/01/04 14:29:45 by nerahmou     #+#   ##    ##    #+#       */
+/*   Updated: 2018/01/15 22:16:55 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include "malloc.h"
+#include "libft.h"
 
-void	*calloc(size_t count, size_t size)
+int		ft_uintlen(uintmax_t n, int base)
 {
-	void	*ptr;
+	int length;
 
-	ft_printf("\tcalloc(%zu, %zu);", count, size);
-	ft_printf("//calloc[%p];\n\t\t", ptr);
-	ptr = malloc(count * size);
-	if (ptr)
-		ft_memset(ptr, 0, GET_NEXT_MULTIPLE(count * size, 16));
-	return (ptr);
+	length = 0;
+	if (n == 0)
+		length++;
+	while (n)
+	{
+		length++;
+		n = n / base;
+	}
+	return (length);
 }

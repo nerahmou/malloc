@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/31 16:11:21 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/19 13:30:00 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/19 19:43:37 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -66,6 +66,7 @@ unsigned char	is_valid_ptr(void *ptr)
 {
 	unsigned char	i;
 	t_region	*region;
+	t_chunk *chunk;
 
 	i = -1;
 	while (++i < 3)
@@ -74,10 +75,14 @@ unsigned char	is_valid_ptr(void *ptr)
 		while (region)
 		{
 			if (CHUNK_IN_SEG((size_t)ptr, (size_t)region, g_op[i].reg_size))
+			{
+				chunk = GET_CHUNK_HEADER(ptr);
 				return (i);
+			}
 			region = region->next;
 		}
 	}
+	ft_printf("//[FREE PAS TROUVE]\n");
 	return (i);
 }
 
@@ -87,6 +92,7 @@ void	free(void *ptr)
 	t_region		*region;
 	unsigned char	i;
 
+	ft_printf("\t\t\tfree((void*)%p);", ptr);
 	if (ptr != NULL)
 	{
 		i = is_valid_ptr(ptr);

@@ -1,26 +1,39 @@
 /* ************************************************************************** */
 /*                                                          LE - /            */
 /*                                                              /             */
-/*   calloc.c                                         .::    .:/ .      .::   */
+/*   ft_itoa.c                                        .::    .:/ .      .::   */
 /*                                                 +:+:+   +:    +:  +:+:+    */
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
-/*   Created: 2019/11/19 11:09:09 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/19 19:18:51 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Created: 2017/11/29 13:50:41 by nerahmou     #+#   ##    ##    #+#       */
+/*   Updated: 2017/12/29 20:11:13 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include "malloc.h"
+#include "libft.h"
 
-void	*calloc(size_t count, size_t size)
+char			*ft_itoa(int n)
 {
-	void	*ptr;
+	int		abs;
+	int		length;
+	char	*tab;
 
-	ft_printf("\tcalloc(%zu, %zu);", count, size);
-	ft_printf("//calloc[%p];\n\t\t", ptr);
-	ptr = malloc(count * size);
-	if (ptr)
-		ft_memset(ptr, 0, GET_NEXT_MULTIPLE(count * size, 16));
-	return (ptr);
+	if (n == -2147483648)
+		return (ft_strdup("-2147483648"));
+	abs = ft_abs(n);
+	length = ft_intlen(n, 10);
+	if (!(tab = ft_strnew(length)))
+		return (NULL);
+	while (--length > 0)
+	{
+		tab[length] = (abs % 10) + '0';
+		abs = abs / 10;
+	}
+	if (n < 0)
+		tab[0] = '-';
+	else
+		tab[0] = abs + '0';
+	tab[-1] = 0;
+	return (tab);
 }

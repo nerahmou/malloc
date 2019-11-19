@@ -1,26 +1,39 @@
 /* ************************************************************************** */
 /*                                                          LE - /            */
 /*                                                              /             */
-/*   calloc.c                                         .::    .:/ .      .::   */
+/*   wcharlen.c                                       .::    .:/ .      .::   */
 /*                                                 +:+:+   +:    +:  +:+:+    */
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
-/*   Created: 2019/11/19 11:09:09 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/19 19:18:51 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Created: 2018/01/04 11:26:12 by nerahmou     #+#   ##    ##    #+#       */
+/*   Updated: 2018/01/15 23:23:54 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include "malloc.h"
+#include "libft.h"
 
-void	*calloc(size_t count, size_t size)
+int	ft_wcharlen(wchar_t c)
 {
-	void	*ptr;
+	int length;
 
-	ft_printf("\tcalloc(%zu, %zu);", count, size);
-	ft_printf("//calloc[%p];\n\t\t", ptr);
-	ptr = malloc(count * size);
-	if (ptr)
-		ft_memset(ptr, 0, GET_NEXT_MULTIPLE(count * size, 16));
-	return (ptr);
+	length = 0;
+	if (c < 0 || c > 0x10FFFF || ((c >= 0xD800) && (c <= 0xDFFF)))
+		length = -1;
+	else if (c < 0x80)
+		length = 1;
+	else if (c <= 255 && MB_CUR_MAX == 1)
+		length = 1;
+	else if (c > 127 && MB_CUR_MAX > 1)
+	{
+		if (c < 0x800)
+			length = 2;
+		else if (c < 0x10000)
+			length = 3;
+		else if (c < 0x110000)
+			length = 4;
+	}
+	else
+		length = -1;
+	return (length);
 }

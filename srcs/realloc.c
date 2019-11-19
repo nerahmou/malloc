@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/14 16:19:14 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/19 13:25:00 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/19 19:29:32 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -77,20 +77,42 @@ void	*realloc(void *ptr, size_t size)
 	unsigned char	i;
 	t_chunk			*chunk;
 
+	ft_printf("\t\trealloc(%p, %zu);\n", ptr, size);
 	if (ptr == NULL)
-		return (malloc(size));
+	{
+		ft_printf("//PTR NULL			: %p\n\n", ptr);
+		show_alloc_mem();
+		void *addr = malloc(size);
+		show_alloc_mem();
+		return (addr);
+	}
 	i = is_valid_ptr(ptr);
 	if (g_op[i].region_name == NULL)
-		return (NULL);
+	{
+		ft_printf("//MAUVAISE ADDRESS	: %p\n\n", ptr);
+		show_alloc_mem();
+		void *addr = malloc(size);
+		show_alloc_mem();
+		return (addr);
+		//return (malloc(size));
+	}
 	if (size == 0)
+	{
+		show_bins(70);
 		free(ptr);
+		show_bins(70);
+	}
 	else
 	{
 		chunk = GET_CHUNK_HEADER(ptr);
 		if (size > CHUNK_DATA_SIZE(chunk))
 		{
 			if (g_op[i].is_large)
+			{
+				//ft_printf("realloc(%p, %zu);\n", ptr, size);
 				return (realloc_large(i, chunk, ptr, size));
+			}
+		//	ft_printf("realloc(%p, %zu);\n", ptr, size);
 			return (realloc_small(chunk, ptr, g_op[i], size));
 		}
 	}

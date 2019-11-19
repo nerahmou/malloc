@@ -1,26 +1,34 @@
 /* ************************************************************************** */
 /*                                                          LE - /            */
 /*                                                              /             */
-/*   calloc.c                                         .::    .:/ .      .::   */
+/*   ft_strsub.c                                      .::    .:/ .      .::   */
 /*                                                 +:+:+   +:    +:  +:+:+    */
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
-/*   Created: 2019/11/19 11:09:09 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/19 19:18:51 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Created: 2017/11/29 13:50:51 by nerahmou     #+#   ##    ##    #+#       */
+/*   Updated: 2017/11/29 13:50:51 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include "malloc.h"
+#include "libft.h"
 
-void	*calloc(size_t count, size_t size)
+char	*ft_strsub(char const *s, unsigned int start, size_t len)
 {
-	void	*ptr;
+	char	*tab;
+	size_t	i;
 
-	ft_printf("\tcalloc(%zu, %zu);", count, size);
-	ft_printf("//calloc[%p];\n\t\t", ptr);
-	ptr = malloc(count * size);
-	if (ptr)
-		ft_memset(ptr, 0, GET_NEXT_MULTIPLE(count * size, 16));
-	return (ptr);
+	if (s)
+	{
+		if (start > (size_t)ft_strlen(s))
+			return (NULL);
+		if (!(tab = (char*)malloc(len + 1)))
+			return (NULL);
+		i = 0;
+		while (i < len && s[start])
+			tab[i++] = s[start++];
+		tab[i] = 0;
+		return (tab);
+	}
+	return (NULL);
 }

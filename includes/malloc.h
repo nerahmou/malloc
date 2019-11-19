@@ -6,12 +6,13 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/19 14:31:09 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/19 19:07:48 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #ifndef MALLOC_H
+extern int compteur;
 
 /*
 ** DEFINES
@@ -170,6 +171,7 @@ enum e_region_OFFSET_TYPE{
 # include <sys/mman.h>
 # include <sys/resource.h>
 # include <unistd.h>
+# include "libft.h"
 
 /*
  * PROTOTYPES
@@ -302,7 +304,7 @@ t_chunk	*get_chunk_from_bin(t_chunk *, size_t, t_op);
 
 void	show_alloc_mem();
 void	show_bins();
-void ft_putnbr_base(size_t nbr, const char *base, size_t base_len);
+//void ft_putnbr_base(size_t nbr, const char *base, size_t base_len);
 
 t_chunk	*split_bin_elem(t_chunk *chunk, size_t bin_size, size_t size);
 unsigned char	is_valid_ptr(void*);

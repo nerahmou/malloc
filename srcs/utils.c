@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/22 15:12:28 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/19 13:26:04 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/19 17:00:43 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -50,7 +50,7 @@ void*	ft_memcpy(void *s1, const void *s2, size_t n)
 	return (s1);
 }
 
-void ft_putnbr_base(size_t nbr, const char *base, size_t base_len)
+/*void ft_putnbr_base(size_t nbr, const char *base, size_t base_len)
 {
 	if (nbr >= base_len)
 	{
@@ -60,7 +60,7 @@ void ft_putnbr_base(size_t nbr, const char *base, size_t base_len)
 	else
 		write(1, &(base[nbr]), 1);
 }
-
+*/
 void	show_bins(size_t type)
 {
 	t_chunk *chunk;

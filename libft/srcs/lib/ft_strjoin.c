@@ -1,26 +1,36 @@
 /* ************************************************************************** */
 /*                                                          LE - /            */
 /*                                                              /             */
-/*   calloc.c                                         .::    .:/ .      .::   */
+/*   ft_strjoin.c                                     .::    .:/ .      .::   */
 /*                                                 +:+:+   +:    +:  +:+:+    */
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
-/*   Created: 2019/11/19 11:09:09 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/19 19:18:51 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Created: 2017/11/29 13:50:48 by nerahmou     #+#   ##    ##    #+#       */
+/*   Updated: 2017/11/29 13:50:48 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include "malloc.h"
+#include "libft.h"
 
-void	*calloc(size_t count, size_t size)
+char	*ft_strjoin(const char *s1, const char *s2)
 {
-	void	*ptr;
+	int		i;
+	int		length;
+	char	*tab;
 
-	ft_printf("\tcalloc(%zu, %zu);", count, size);
-	ft_printf("//calloc[%p];\n\t\t", ptr);
-	ptr = malloc(count * size);
-	if (ptr)
-		ft_memset(ptr, 0, GET_NEXT_MULTIPLE(count * size, 16));
-	return (ptr);
+	if (s1 && s2)
+	{
+		i = 0;
+		length = ft_strlen(s1) + ft_strlen(s2);
+		if (!(tab = (char*)malloc(length + 1)))
+			return (NULL);
+		while (*s1)
+			tab[i++] = *s1++;
+		while (*s2)
+			tab[i++] = *s2++;
+		tab[i] = 0;
+		return (tab);
+	}
+	return (NULL);
 }

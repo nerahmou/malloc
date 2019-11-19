@@ -1,26 +1,34 @@
 /* ************************************************************************** */
 /*                                                          LE - /            */
 /*                                                              /             */
-/*   calloc.c                                         .::    .:/ .      .::   */
+/*   ft_atoierr.c                                     .::    .:/ .      .::   */
 /*                                                 +:+:+   +:    +:  +:+:+    */
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
-/*   Created: 2019/11/19 11:09:09 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/19 19:18:51 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Created: 2018/03/05 12:56:26 by nerahmou     #+#   ##    ##    #+#       */
+/*   Updated: 2018/03/05 12:56:28 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include "malloc.h"
+#include "libft.h"
 
-void	*calloc(size_t count, size_t size)
+int		ft_atoierr(const char *str)
 {
-	void	*ptr;
+	int sign;
+	int output;
 
-	ft_printf("\tcalloc(%zu, %zu);", count, size);
-	ft_printf("//calloc[%p];\n\t\t", ptr);
-	ptr = malloc(count * size);
-	if (ptr)
-		ft_memset(ptr, 0, GET_NEXT_MULTIPLE(count * size, 16));
-	return (ptr);
+	output = -1;
+	while ((*str >= 9 && *str <= 13) || *str == 32)
+		str++;
+	sign = *str == '-' ? -1 : 1;
+	if (*str == '-' || *str == '+')
+		str++;
+	if (*str >= '0' && *str <= '9')
+		output = 0;
+	else
+		return (-1);
+	while (*str >= '0' && *str <= '9')
+		output = (output * 10) + *str++ - '0';
+	return (sign * output);
 }

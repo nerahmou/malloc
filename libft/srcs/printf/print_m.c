@@ -1,26 +1,33 @@
 /* ************************************************************************** */
 /*                                                          LE - /            */
 /*                                                              /             */
-/*   calloc.c                                         .::    .:/ .      .::   */
+/*   print_m.c                                        .::    .:/ .      .::   */
 /*                                                 +:+:+   +:    +:  +:+:+    */
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
-/*   Created: 2019/11/19 11:09:09 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/19 19:18:51 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Created: 2018/01/05 22:04:00 by nerahmou     #+#   ##    ##    #+#       */
+/*   Updated: 2018/01/17 13:58:24 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include "malloc.h"
+#include "ft_printf.h"
 
-void	*calloc(size_t count, size_t size)
+void	print_m(t_suitcase *s_c)
 {
-	void	*ptr;
-
-	ft_printf("\tcalloc(%zu, %zu);", count, size);
-	ft_printf("//calloc[%p];\n\t\t", ptr);
-	ptr = malloc(count * size);
-	if (ptr)
-		ft_memset(ptr, 0, GET_NEXT_MULTIPLE(count * size, 16));
-	return (ptr);
+	if (s_c->type)
+	{
+		if (s_c->is_minus)
+		{
+			s_c->ret += ft_putchar(s_c->type);
+			while (--s_c->width > 0)
+				s_c->ret += ft_putchar(' ');
+		}
+		else
+		{
+			while (s_c->width-- > 1)
+				s_c->ret += s_c->is_zero ? ft_putchar('0') : ft_putchar(' ');
+			s_c->ret += ft_putchar(s_c->type);
+		}
+	}
 }

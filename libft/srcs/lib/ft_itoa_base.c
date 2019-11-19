@@ -1,26 +1,35 @@
 /* ************************************************************************** */
 /*                                                          LE - /            */
 /*                                                              /             */
-/*   calloc.c                                         .::    .:/ .      .::   */
+/*   ft_itoa_base.c                                   .::    .:/ .      .::   */
 /*                                                 +:+:+   +:    +:  +:+:+    */
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
-/*   Created: 2019/11/19 11:09:09 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/19 19:18:51 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Created: 2017/12/26 23:43:32 by nerahmou     #+#   ##    ##    #+#       */
+/*   Updated: 2017/12/31 16:20:39 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include "malloc.h"
+#include "libft.h"
 
-void	*calloc(size_t count, size_t size)
+char	*ft_itoa_base(int value, int base)
 {
-	void	*ptr;
+	int				length;
+	unsigned int	abs;
+	char			*output;
 
-	ft_printf("\tcalloc(%zu, %zu);", count, size);
-	ft_printf("//calloc[%p];\n\t\t", ptr);
-	ptr = malloc(count * size);
-	if (ptr)
-		ft_memset(ptr, 0, GET_NEXT_MULTIPLE(count * size, 16));
-	return (ptr);
+	if (base == 10)
+		return (ft_itoa(value));
+	abs = ft_abs(value);
+	length = ft_intlen(abs, base);
+	if (!(output = (char *)malloc(sizeof(char) * length + 1)))
+		return (NULL);
+	output[length] = 0;
+	while (--length >= 0)
+	{
+		output[length] = abs % base > 9 ? abs % base + 55 : abs % base + 48;
+		abs /= base;
+	}
+	return (output);
 }

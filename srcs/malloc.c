@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/17 16:24:17 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/19 15:40:39 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/19 19:12:11 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -101,17 +101,23 @@ void	*place_chunk(t_op g_op, size_t size)
 void	*malloc(size_t size)
 {
 	unsigned char	i;
+	void *addr;
 
-//	write(1, "s", 1);
-	return (0);
 	i = -1;
+
+	ft_printf("malloc(%zu);", size);
+	addr = NULL;
 	if (size != 0)
 	{
 		size = GET_REQUIRED_SIZE(size, 16);
 		while (g_op[++i].max_chunk_size)
 			if (GOOD_region_TYPE(size, g_op[i]))
-				return (place_chunk(g_op[i], size));
+			{
+				addr = place_chunk(g_op[i], size);
+				ft_printf("\t//malloc[%p];\n", addr);
+				return (addr);
+			}
 	}
-	return (NULL);
+	return (addr);
 }
 

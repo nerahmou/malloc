@@ -6,7 +6,7 @@
 #    By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2019/10/08 11:37:09 by nerahmou     #+#   ##    ##    #+#        #
-#    Updated: 2019/11/19 15:40:21 by nerahmou    ###    #+. /#+    ###.fr      #
+#    Updated: 2019/11/19 17:38:56 by nerahmou    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
@@ -20,20 +20,24 @@ CC := gcc
 RM += -r
 
 ifeq ($(DEBUG),1)
-	CFLAGS := -g3 -Wall -Wextra -Wpadded -fPIC  -fsanitize=address
+	CFLAGS := -g3 -Wall -Wextra -Wpadded -fPIC
 else
-	CFLAGS := -Wall -Wextra -Werror -Wpadded  -fPIC -fsanitize=address
+	CFLAGS := -Wall -Wextra -Werror -Wpadded  -fPIC
 endif
 ifeq ($(HOSTTYPE),)
-HOSTTYPE := $(shell uname -m)_$(shell uname -s)
+	HOSTTYPE := $(shell uname -m)_$(shell uname -s)
 endif
 
+LFTDIR = ./libft/
+LIB=$(LFTDIR)libft.a
 
-HEADERS_DIR := includes
+
+HEADERS_DIR := includes# -I libft/includes/
+LIB_HEADER := libft/includes/
 SRCS_DIR := srcs
 OBJS_DIR := obj
 
-HEADERS := $(addprefix $(HEADERS_DIR)/,malloc.h)
+HEADERS := $(addprefix $(HEADERS_DIR)/, malloc.h )
 SRCS := $(addprefix $(SRCS_DIR)/,	malloc.c\
 									realloc.c\
 									calloc.c\
@@ -50,26 +54,29 @@ LINK_NAME := libft_malloc.so
 
 all: $(NAME)
 
-$(NAME): $(OBJS)
-	@echo "Link object files" 1>&2
-	$(CC) -shared $(CFLAGS) $^ -o $(NAME)
-	ln -s $(NAME) $(LINK_NAME)
-# 2> /dev/null || true
+$(NAME): $(LIB) $(OBJS)
+	@echo "Link object files"
+	$(CC) -shared $(CFLAGS) $^ -L $(LFTDIR) -lft -o $(NAME)
+	ln -s $(NAME) $(LINK_NAME) 2> /dev/null || true
 
 $(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c $(HEADERS) | $(OBJS_DIR)
-	@echo "Compile $< in $@" 1>&2
-	$(CC) $(CFLAGS) -I$(HEADERS_DIR) -c $< -o $@ 
+	@echo "Compile $< in $@"
+	$(CC) $(CFLAGS) -I $(HEADERS_DIR) -I $(LIB_HEADER) -c $< -o $@ 
 
 $(OBJS_DIR):
-	@echo "Create $@ directory" 1>&2
+	@echo "Create $@ directory"
 	mkdir $@
 
+$(LIB):
+	make -C $(LFTDIR)
+
 clean:
-	@echo "Clean" 1>&2
+	@echo "Clean"
 	$(RM) $(OBJS_DIR)
 
 fclean: clean
-	@echo "Fclean" 1>&2
+	@echo "Fclean"
 	$(RM) $(NAME) $(LINK_NAME)
+	make -C $(LFTDIR) fclean
 
 re: fclean all
