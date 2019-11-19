@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/17 16:24:17 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/18 14:25:52 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/18 15:00:33 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -84,7 +84,7 @@ void	*place_chunk(t_op g_op, size_t size)
 	t_chunk		*new_chunk;
 	size_t		region_size;
 
-	new_chunk = get_chunk_from_bin(size, g_op);
+	new_chunk = get_chunk_from_bin(NULL, size, g_op);
 	if (new_chunk)
 		return (CHUNK_DATA(new_chunk));
 	region = get_region(g_op, &size, &region_size);

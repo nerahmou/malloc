@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/18 14:25:49 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/19 11:49:02 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -114,7 +114,7 @@ enum e_region_OFFSET_TYPE{
 
 # define GET_NEXT_CHUNK(chunk) CH_PTR ((long)chunk + CHUNK_SIZE(chunk))
 
-# define CHUNK_SIZE(chunk) (long) (chunk == NULL ? 0 : chunk->header.size)
+# define CHUNK_SIZE(chunk) (size_t) (chunk == NULL ? 0 : chunk->header.size)
 
 # define GET_APPROPRIATE_REGION_TYPE(offset) (t_region**)(&g_heap.tiny_region + offset)
 /*
@@ -130,7 +130,7 @@ enum e_region_OFFSET_TYPE{
 
 # define MOVE_CHUNK_ADDR(chunk, size) chunk + size / ALIGNEMENT
 
-# define CHUNK_DATA_SIZE(chunk) chunk->header.size + (long)chunk - (long)chunk - CHUNK_HEAD_SIZE
+# define CHUNK_DATA_SIZE(chunk) (chunk->header.size - CHUNK_HEAD_SIZE)
 
 
 /*
@@ -158,6 +158,8 @@ enum e_region_OFFSET_TYPE{
 # define IS_PREV_FREE(ch, max) ch->header.prev  && !ch->header.prev->header.in_use && (ch->header.size + ch->header.prev->header.size) <= max // a verifier
 
 # define IS_NEXT_FREE(ch, max) (ch->header.next_size && (NEXT_CHUNK(ch))->header.in_use == false && ch->header.size + ch->header.next_size <= max)
+
+# define IS_SPLITTABLE(chunk, size) (long)CHUNK_SIZE(chunk) - (long)size >= 32
 
 /*
 ** INCLUDES
@@ -296,7 +298,7 @@ bool	defrag(t_region *region, t_chunk **chunk, t_op g_op);
 void	update_bins(t_region *region);
 t_chunk *pop(size_t size, t_chunk *chunk);
 void	push(t_chunk *chunk);
-t_chunk	*get_chunk_from_bin(size_t, t_op);
+t_chunk	*get_chunk_from_bin(t_chunk *, size_t, t_op);
 
 void	show_alloc_mem();
 void	show_bins();
@@ -304,5 +306,8 @@ void ft_putnbr_base(size_t nbr, const char *base, size_t base_len);
 
 t_chunk	*split_bin_elem(t_chunk *chunk, size_t bin_size, size_t size);
 unsigned char	is_valid_ptr(void*);
+t_region	*get_the_region(t_region *region, void *ptr, unsigned char i);
+void	*ft_memcpy(void*, const void*, size_t);
+void	*ft_memset(void*, int, size_t);
 
 #endif

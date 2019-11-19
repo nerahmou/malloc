@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/14 16:19:14 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/18 14:14:20 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/19 11:11:58 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -15,63 +15,83 @@
 
 t_chunk	*merge_chunks(t_chunk *first_chunk, t_chunk *second_chunk)
 {
-	first_chunk->size += second_chunk->size;
-	first_chunk->next_size = second_chunk->next_size;
-	if (second_chunk->next_size)
-		(GET_NEXT_CHUNK(second_chunk))->prev = first_chunk;
+	if (first_chunk == NULL || second_chunk == NULL)
+		return (NULL);
+	first_chunk->header.size += second_chunk->header.size;
+	first_chunk->header.next_size = second_chunk->header.next_size;
+	if (second_chunk->header.next_size)
+		(GET_NEXT_CHUNK(second_chunk))->header.prev = first_chunk;
 	return (first_chunk);
 }
 
-t_chunk	*realloc_large(void *ptr, size_t size)
+void	*rellocate_chunk(void *ptr, size_t size, size_t needed_size)
 {
-	t_chunk *new_chunk;
+	void	*data;
 
-	new_chunk = malloc(size);
-	if (new_chunk)
-		;//memmove(CHUNK_DATA(new_chunk), ptr, size);
-	free(ptr);
-	return (new_chunk);
+	data = malloc(size);
+	if (data)
+	{
+		ft_memcpy(data, ptr, size - needed_size);
+		free(ptr);
+	}
+	return (data);
+}
+
+void	*realloc_large(unsigned char i, t_chunk *chunk, void *ptr, size_t size)
+{
+	size_t		needed_size;
+	t_region	**head;
+	t_region	*region;
+	
+	head = GET_APPROPRIATE_REGION_TYPE(g_op[i].offset);
+	region = get_the_region(*head, ptr, i);
+	needed_size = size - CHUNK_DATA_SIZE(chunk);
+	if (AVAILABLE_SPACE(region, size))
+		return (ptr);
+	return (rellocate_chunk(ptr, size, needed_size));
+}
+
+void	*realloc_small(t_chunk *chunk, void *ptr, t_op g_op, size_t size)
+{
+	t_chunk *next_chunk;
+	size_t	needed_size;
+
+	needed_size = GET_NEXT_MULTIPLE(size - CHUNK_DATA_SIZE(chunk), 16);
+	next_chunk = GET_NEXT_CHUNK(chunk);
+	if ((CHUNK_SIZE(next_chunk) == needed_size || IS_SPLITTABLE(next_chunk, needed_size))
+			&& CHUNK_SIZE(chunk) + needed_size <= g_op.max_chunk_size)
+	{
+		next_chunk = get_chunk_from_bin(next_chunk, needed_size, g_op);
+		chunk = merge_chunks(chunk, next_chunk);
+	}
+	else
+		return (rellocate_chunk(ptr, size, needed_size));
+	if (chunk == NULL)
+		return (rellocate_chunk(ptr, size, needed_size));
+	return (ptr);
 }
 
 void	*realloc(void *ptr, size_t size)
 {
-	t_chunk *chunk;
-	t_chunk *new_chunk;
-	t_chunk *bin_elem;
+	unsigned char	i;
+	t_chunk			*chunk;
 
-	// verifier ptr est valide
 	if (ptr == NULL)
 		return (malloc(size));
-	if (g_op[is_valid_ptr(ptr)].region_name == NULL)
-		return (ptr);
+	i = is_valid_ptr(ptr);
+	if (g_op[i].region_name == NULL)
+		return (NULL);
 	if (size == 0)
-	{
 		free(ptr);
-		return (malloc(size));
-	}
-	chunk = GET_CHUNK_HEADER(ptr);
-	size = GET_REQUIRED_SIZE(size);
-	if (size == chunk->size)
-		return (ptr);
-	if (size > SMALL_MAX_SIZE)
-		return (realloc_large(chunk, size));
-	if (chunk->size - size <= sizeof(t_chunk))
+	else
 	{
-		chunk = split_bin_elem(chunk, chunk->size, size);
-		return (ptr);
-	}
-	if (size <= (chunk->size + chunk->next_size) + sizeof(t_chunk))
-	{
-		bin_elem = pop(0, GET_NEXT_CHUNK(chunk));
-		if (bin_elem == NULL)
+		chunk = GET_CHUNK_HEADER(ptr);
+		if (size > CHUNK_DATA_SIZE(chunk))
 		{
-			new_chunk = malloc(size);
-			//memmove(CHUNK_DATA(new_chunk), ptr, size);
-			free(ptr);
+			if (g_op[i].is_large)
+				return (realloc_large(i, chunk, ptr, size));
+			return (realloc_small(chunk, ptr, g_op[i], size));
 		}
-		if ((size - chunk->size) - bin_elem->size != 0)
-			bin_elem = split_bin_elem(bin_elem, bin_elem->size, size - chunk->size);
-		chunk = merge_chunks(chunk, bin_elem);
 	}
-	return (NULL);
+	return (ptr);
 }

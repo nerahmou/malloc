@@ -1,46 +1,24 @@
 /* ************************************************************************** */
 /*                                                          LE - /            */
 /*                                                              /             */
-/*   main.c                                           .::    .:/ .      .::   */
+/*   calloc.c                                         .::    .:/ .      .::   */
 /*                                                 +:+:+   +:    +:  +:+:+    */
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
-/*   Created: 2019/10/22 11:24:43 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/19 12:16:23 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Created: 2019/11/19 11:09:09 by nerahmou     #+#   ##    ##    #+#       */
+/*   Updated: 2019/11/19 12:19:23 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
-
 #include "malloc.h"
-#include "free.h"
-#include <stdio.h>
 
-int main(int argc, char* argv[]){
-	char *a = malloc(32);
-	void *b = malloc(50);
-	show_alloc_mem();
-	ft_memset(a, 41, 32);
-	free(a);
-	void *d = calloc(4, 6);
-	show_alloc_mem();
-	/*void *tab[255] = {
+void	*calloc(size_t count, size_t size)
+{
+	void	*ptr;
 
-		malloc(16),
-		malloc(26),
-		malloc(16),
-		malloc(36),
-		malloc(16),
-		malloc(59),
-		malloc(159),
-		malloc(490),
-		malloc(512),
-		malloc(1159),
-		malloc(1159),
-		malloc(4081),
-		malloc(4096),
-		malloc(5159)
-	};*/
-
-	return 1;
+	ptr = malloc(count * size);
+	if (ptr)
+		ft_memset(ptr, 0, GET_NEXT_MULTIPLE(count * size, 16));
+	return (ptr);
 }

@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/08 16:30:24 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/18 14:25:54 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/18 14:34:58 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -23,7 +23,7 @@ bool	unused_region(t_region *region)
 	return (chunk->header.size == 0);
 }
 
-t_chunk	*merge_previous(t_chunk *freed_chunk)
+t_chunk	*merge_prev_free(t_chunk *freed_chunk)
 {
 	t_chunk	*bin_elem;
 
@@ -35,7 +35,7 @@ t_chunk	*merge_previous(t_chunk *freed_chunk)
 	return (bin_elem);
 }
 
-t_chunk	*merge_next(t_chunk *freed_chunk)
+t_chunk	*merge_next_free(t_chunk *freed_chunk)
 {
 	t_chunk	*bin_elem;
 
@@ -56,9 +56,9 @@ bool	defrag(t_region *region, t_chunk **chunk, t_op g_op)
 	freed_chunk = *chunk;
 	bin_size_limit = g_op.max_chunk_size;
 	while (IS_PREV_FREE(freed_chunk, bin_size_limit))
-		freed_chunk = merge_previous(freed_chunk);
+		freed_chunk = merge_prev_free(freed_chunk);
 	while (IS_NEXT_FREE(freed_chunk, bin_size_limit))
-		freed_chunk = merge_next(freed_chunk);
+		freed_chunk = merge_next_free(freed_chunk);
 	*chunk = freed_chunk;
 	return (unused_region(region));
 }
