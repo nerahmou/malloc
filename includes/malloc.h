@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/19 11:49:02 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/19 14:31:09 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -165,7 +165,7 @@ enum e_region_OFFSET_TYPE{
 ** INCLUDES
 */
 
-# include <stdlib.h>
+//# include <stdlib.h>
 # include <stdbool.h>
 # include <sys/mman.h>
 # include <sys/resource.h>

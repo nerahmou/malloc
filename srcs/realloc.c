@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/14 16:19:14 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/19 11:11:58 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/19 13:25:00 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -58,8 +58,9 @@ void	*realloc_small(t_chunk *chunk, void *ptr, t_op g_op, size_t size)
 
 	needed_size = GET_NEXT_MULTIPLE(size - CHUNK_DATA_SIZE(chunk), 16);
 	next_chunk = GET_NEXT_CHUNK(chunk);
-	if ((CHUNK_SIZE(next_chunk) == needed_size || IS_SPLITTABLE(next_chunk, needed_size))
-			&& CHUNK_SIZE(chunk) + needed_size <= g_op.max_chunk_size)
+	if ((CHUNK_SIZE(next_chunk) == needed_size
+			|| IS_SPLITTABLE(next_chunk, needed_size))
+				&& CHUNK_SIZE(chunk) + needed_size <= g_op.max_chunk_size)
 	{
 		next_chunk = get_chunk_from_bin(next_chunk, needed_size, g_op);
 		chunk = merge_chunks(chunk, next_chunk);

@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/22 11:24:43 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/19 12:16:23 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/19 14:28:31 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -17,13 +17,13 @@
 #include <stdio.h>
 
 int main(int argc, char* argv[]){
-	char *a = malloc(32);
-	void *b = malloc(50);
-	show_alloc_mem();
-	ft_memset(a, 41, 32);
-	free(a);
-	void *d = calloc(4, 6);
-	show_alloc_mem();
+//	char *a = malloc(32);
+//	void *b = malloc(50);
+//	show_alloc_mem();
+//	ft_memset(a, 41, 32);
+//	free(a);
+//	void *d = calloc(4, 6);
+//	show_alloc_mem();
 	/*void *tab[255] = {
 
 		malloc(16),

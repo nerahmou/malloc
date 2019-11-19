@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/31 16:11:21 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/18 14:26:09 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/19 13:30:00 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -33,11 +33,11 @@ void	free_region(t_region **head, t_region *to_munmap, t_op g_op)
 	MUNMAP(to_munmap, size);
 }
 
-void	free_small(t_region **head, t_region *region, void *addr, t_op g_op)
+void	free_small(t_region **head, t_region *region, void *ptr, t_op g_op)
 {
 	t_chunk		*chunk;
 
-	chunk = GET_CHUNK_HEADER(addr);
+	chunk = GET_CHUNK_HEADER(ptr);
 	if (chunk->header.in_use == true)
 	{
 		chunk->header.in_use = false;
