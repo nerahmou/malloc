@@ -6,13 +6,14 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/17 16:24:17 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/19 19:12:11 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/20 18:36:33 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "malloc.h"
 #include <stdio.h>
+bool debug=0;
 
 /*
  * LARGE_size = REQUIRED_SIZE + SEG_HEAD_SIZE;
@@ -42,9 +43,9 @@ t_region	*get_region(t_op g_op, size_t *size, size_t *reg_size)
 	t_region	*previous_region;
 
 	previous_region = NULL;
-	head = GET_APPROPRIATE_REGION_TYPE(g_op.offset);
+	head = APPROPRIATE_REGION_TYPE(g_op.offset);
 	region = *head;
-	*reg_size = g_op.is_large ? GET_REQUIRED_SIZE(*size, 4096) : g_op.reg_size;
+	*reg_size = g_op.is_large ? REQUIRED_SIZE(*size, 4096) : g_op.reg_size;
 	while (region)
 	{
 		if (AVAILABLE_SPACE(region, *size))
@@ -69,9 +70,9 @@ t_chunk	*place_in_region(t_region *region, size_t region_size, size_t size)
 	new = SET_CHUNK_POS(region, region_size);
 	if (IS_FIRST_CHUNK(region, new) == false)
 	{
-		prev_chunk = GET_FIRST_CHUNK(region);
+		prev_chunk = FIRST_CHUNK(region);
 		while (prev_chunk->header.next_size != 0)
-			prev_chunk = GET_NEXT_CHUNK(prev_chunk);
+			prev_chunk = NEXT_CHUNK(prev_chunk);
 		prev_chunk->header.next_size = size;
 		(new)->header.prev = prev_chunk;
 	}
@@ -105,18 +106,20 @@ void	*malloc(size_t size)
 
 	i = -1;
 
-	ft_printf("malloc(%zu);", size);
+	if (debug)ft_printf("malloc(%zu);", size);
 	addr = NULL;
 	if (size != 0)
 	{
-		size = GET_REQUIRED_SIZE(size, 16);
+		size = REQUIRED_SIZE(size, 16);
 		while (g_op[++i].max_chunk_size)
-			if (GOOD_region_TYPE(size, g_op[i]))
+		{
+			if (GOOD_REGION_TYPE(size, g_op[i]))
 			{
 				addr = place_chunk(g_op[i], size);
-				ft_printf("\t//malloc[%p];\n", addr);
+				if (debug)ft_printf("\t//malloc[%p];\n", addr);
 				return (addr);
 			}
+}
 	}
 	return (addr);
 }

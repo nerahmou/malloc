@@ -6,12 +6,12 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/11 15:12:54 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/19 12:15:21 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/20 19:55:52 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include "malloc.h"
+#include "free.h"
 
 /*
  * utilisé lors de la defragmentation afin de retirer tous les element presents
@@ -21,7 +21,7 @@ void	update_bins(t_region *region)
 {
 	t_chunk *chunk;
 
-	chunk = GET_FIRST_CHUNK(region);
+	chunk = FIRST_CHUNK(region);
 	while (chunk->header.size && chunk->header.in_use == false)
 	{
 		pop(0, chunk);
@@ -63,13 +63,13 @@ t_chunk	*pop(size_t size, t_chunk *chunk)
 	if (bin_elem)
 	{
 		if (bin_elem->u_u.prev_free)
-			GET_PREV_FREE(bin_elem)->next_free = bin_elem->next_free;
+			PREV_FREE(bin_elem)->next_free = bin_elem->next_free;
 		if (bin_elem->next_free)
-			GET_NEXT_FREE(bin_elem)->u_u.prev_free = bin_elem->u_u.prev_free;
+			NEXT_FREE(bin_elem)->u_u.prev_free = bin_elem->u_u.prev_free;
 		else
 			g_bins[index] = bin_elem->next_free;
-		ft_memset(CHUNK_DATA(bin_elem), 0, 16);
-		if (chunk == NULL)
+		/*ft_memset(CHUNK_DATA(bin_elem), 0, 16);
+		*/if (chunk == NULL)
 			bin_elem->header.in_use = true;
 	}
 	return (bin_elem);

@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/22 11:24:43 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/19 14:28:31 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/20 19:28:21 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -24,8 +24,9 @@ int main(int argc, char* argv[]){
 //	free(a);
 //	void *d = calloc(4, 6);
 //	show_alloc_mem();
-	/*void *tab[255] = {
-
+	if (argv[1])
+		debug = 1;
+	void *tab[255] = {
 		malloc(16),
 		malloc(26),
 		malloc(16),
@@ -39,8 +40,45 @@ int main(int argc, char* argv[]){
 		malloc(1159),
 		malloc(4081),
 		malloc(4096),
-		malloc(5159)
-	};*/
+		malloc(5159),
+	};
+/*	int i = -1;
+		show_alloc_mem();
+	while (tab[++i])
+	{
+		free(tab[i]);
+		show_alloc_mem();
+			show_bins(70);
+}
 
+	show_alloc_mem();
+*/
+	show_alloc_mem();
+	free(tab[0]);
+	show_alloc_mem();
+	free(tab[2]);
+	show_alloc_mem();
+	free(tab[4]);
+	show_alloc_mem();
+	free(tab[6]);
+	show_alloc_mem();
+	free(tab[8]);
+	show_alloc_mem();
+	free(tab[10]);
+	show_alloc_mem();
+	free(tab[12]);
+	show_alloc_mem();
+	free(tab[1]);
+	show_alloc_mem();
+	free(tab[3]);
+	show_alloc_mem();
+	free(tab[5]);
+	show_alloc_mem();
+	free(tab[7]);
+	show_alloc_mem();
+	free(tab[9]);
+	show_alloc_mem();
+	free(tab[11]);
+	show_alloc_mem();
 	return 1;
 }

@@ -6,7 +6,7 @@
 #    By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2019/10/08 11:37:09 by nerahmou     #+#   ##    ##    #+#        #
-#    Updated: 2019/11/19 17:38:56 by nerahmou    ###    #+. /#+    ###.fr      #
+#    Updated: 2019/11/20 18:15:54 by nerahmou    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
@@ -37,7 +37,7 @@ LIB_HEADER := libft/includes/
 SRCS_DIR := srcs
 OBJS_DIR := obj
 
-HEADERS := $(addprefix $(HEADERS_DIR)/, malloc.h )
+HEADERS := $(addprefix $(HEADERS_DIR)/, malloc.h free.h)
 SRCS := $(addprefix $(SRCS_DIR)/,	malloc.c\
 									realloc.c\
 									calloc.c\
@@ -80,3 +80,12 @@ fclean: clean
 	make -C $(LFTDIR) fclean
 
 re: fclean all
+
+test:
+	make DEBUG=1 ;echo '#include "malloc.h"\n\nint main()\n{' > test.c ; ./run.sh emacs >> test.c ; echo "\nreturn 0;}" >> test.c;
+	gcc -g3 -std=c99 -I includes -I libft/includes test.c libft_malloc.so && ./a.out > output.txt; vi output.txt
+
+emacs:
+	make DEBUG=1
+	./run.sh emacs
+
