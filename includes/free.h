@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/05 15:37:35 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/20 18:22:59 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/21 10:16:52 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -19,9 +19,9 @@
 
 # define FREE_LARGE(head, region, g_op) free_region(head, region, g_op)
 
-# define NEXT_FREE(chunk) (CH_PTR (chunk->next_free))
+# define NEXT_FREE(chunk) ((chunk->next_free))
 
-# define PREV_FREE(chunk) (CH_PTR (chunk->u_u.prev_free))
+# define PREV_FREE(chunk) ((chunk->u_u.prev_free))
 # define IS_PREV_FREE(ch) PREV_CHUNK(ch) && IN_USE(PREV_CHUNK(ch)) == false// a verifier
 
 

@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/22 15:12:28 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/20 19:21:22 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/21 10:18:47 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -24,14 +24,14 @@ t_op g_op[4] = {
 	{0, 0, 0, NULL, NULL}
 };
 
-void	show_bins(size_t type)
+void	show_bins(size_t nb)
 {
 	t_chunk *chunk;
 	unsigned char i;
 
 	i = 0;
 	ft_putchar('\n');
-	while (i < type)
+	while (i < nb && i < 255)
 	{
 		ft_printf(BOLD"[" );
 		ft_putnbr_base((ALIGNEMENT) * (i + 1) + 16, DECI_BASE_STR, DECI_BASE);

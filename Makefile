@@ -6,7 +6,7 @@
 #    By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2019/10/08 11:37:09 by nerahmou     #+#   ##    ##    #+#        #
-#    Updated: 2019/11/20 18:15:54 by nerahmou    ###    #+. /#+    ###.fr      #
+#    Updated: 2019/11/21 09:42:55 by nerahmou    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
@@ -32,7 +32,7 @@ LFTDIR = ./libft/
 LIB=$(LFTDIR)libft.a
 
 
-HEADERS_DIR := includes# -I libft/includes/
+HEADERS_DIR := includes
 LIB_HEADER := libft/includes/
 SRCS_DIR := srcs
 OBJS_DIR := obj

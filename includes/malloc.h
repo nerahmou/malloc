@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/20 19:20:08 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/21 16:01:31 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -89,7 +89,8 @@
 # define PROT_OPTS (PROT_READ | PROT_WRITE)
 # define MAP_FLAGS (MAP_ANON | MAP_PRIVATE)
 # define MMAP(len) mmap(NULL, len, PROT_OPTS, MAP_FLAGS, -1, 0)
-# define MUNMAP(addr, len) munmap(addr, len);
+# define MUNMAP(addr, len) munmap(addr, len)
+# define MUNMAP_FAILED -1
 
 # define PAGE_SIZE getpagesize()
 
@@ -122,7 +123,7 @@
 
 # define NEXT_MULTIPLE(size, mult) ((size - 1) / mult * mult + mult)
 
-# define REQUIRED_SIZE(size, mult) NEXT_MULTIPLE(size + CHUNK_HEAD_SIZE, mult)
+# define REQUIRED_SIZE(size, mult) NEXT_MULTIPLE(size + CHUNK_HEAD_SIZE, mult) //Verifier si chunk_head ou REG_HEAD
 
 # define MOVE_CHUNK_ADDR(chunk, size) chunk + size / ALIGNEMENT
 
@@ -194,6 +195,8 @@ struct	s_header
 	t_chunk		*prev;
 	size_t		size:48;
 	size_t		next_size:15; // Meme role qu'un pointeur mais ne prends que 2 octets.
+	//size_t		size;
+	//size_t		next_size:63; // Meme role qu'un pointeur mais ne prends que 2 octets.
 	bool		in_use:1;
 };
 
