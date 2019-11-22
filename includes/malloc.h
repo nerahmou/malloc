@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/21 16:01:31 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/22 17:39:51 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -76,7 +76,6 @@
 
 # define MALLOC_H
 
-# define CHUNK_SIZE(chunk) (chunk == NULL ? 0 : chunk->header.size)
 
 # define DECI_BASE 10
 # define HEXA_BASE 16
@@ -103,8 +102,8 @@
 # define CHUNK_HEAD_SIZE sizeof(t_header)
 
 # define CH_PTR (t_chunk*)
-# define TINY_MAX_SIZE (CHUNK_HEAD_SIZE + 496)
-# define SMALL_MAX_SIZE (CHUNK_HEAD_SIZE + 4080)
+# define TINY_MAX_SIZE (CHUNK_HEAD_SIZE + 496) // 512
+# define SMALL_MAX_SIZE (CHUNK_HEAD_SIZE + 4080) // 4096
 # define LARGE_MAX_SIZE UINT64_MAX - 1
 
 # define TINY_REGION_SIZE ((TINY_MAX_SIZE << 3) * 300)
@@ -117,7 +116,9 @@
 
 # define PREV_CHUNK(chunk) chunk->header.prev
 
-# define NEXT_CHUNK(chunk) (CH_PTR ((long)chunk + CHUNK_SIZE(chunk)))
+# define CHUNK_SIZE(chunk) chunk->header.size
+
+# define NEXT_CHUNK(chunk) (CH_PTR ((size_t)chunk + CHUNK_SIZE(chunk)))
 
 # define APPROPRIATE_REGION_TYPE(offset) (t_region**)(&g_heap.tiny_region + offset)
 
@@ -140,7 +141,7 @@
 
 # define CHUNK_DATA(addr) &(addr->u_u.data)
 
-# define SET_CHUNK_POS(r, r_size) CH_PTR ((long)r + (r_size - r->space) + REG_HEAD_SIZE/*CHUNK_HEAD_SIZE*/)
+# define SET_CHUNK_POS(r, r_size) CH_PTR ((size_t)r + (r_size - r->space) + REG_HEAD_SIZE/*CHUNK_HEAD_SIZE*/)
 
 //# define IS_PREV_FREE(ch, max) ch->header.prev  && !ch->header.prev->header.in_use && (ch->header.size + ch->header.prev->header.size) <= max // a verifier
 
@@ -193,10 +194,10 @@ enum e_region_OFFSET_TYPE{
 struct	s_header
 {
 	t_chunk		*prev;
-	size_t		size:48;
-	size_t		next_size:15; // Meme role qu'un pointeur mais ne prends que 2 octets.
-	//size_t		size;
-	//size_t		next_size:63; // Meme role qu'un pointeur mais ne prends que 2 octets.
+	//size_t		size:48;
+	//size_t		next_size:15; // Meme role qu'un pointeur mais ne prends que 2 octets.
+	size_t		size;
+	size_t		next_size; // Meme role qu'un pointeur mais ne prends que 2 octets.
 	bool		in_use:1;
 };
 

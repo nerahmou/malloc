@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/11 15:12:54 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/21 16:41:20 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/22 17:12:25 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -121,7 +121,7 @@ t_chunk	*get_chunk_from_bin(t_chunk *chunk, size_t size, t_op g_op)
 			bin_size += ALIGNEMENT;
 		}
 	}
-	return (split_bin_elem(bin_elem, bin_size, size));
+	return (/*split_bin_elem(bin_elem, bin_size, size)*/bin_elem);
 }
 
 

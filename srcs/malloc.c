@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/17 16:24:17 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/21 17:21:50 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/22 17:37:39 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -15,6 +15,42 @@
 #include <stdio.h>
 bool debug=0;
 
+t_chunk	*place_in_region(t_region *region, size_t region_size, size_t size)
+{
+	t_chunk		*prev_chunk;
+	t_chunk		*new;
+
+	new = SET_CHUNK_POS(region, region_size);
+	//if (new == (t_chunk*)0x100502ba0)
+		////////ft_printf("chunk_pos=[%p]| region=[%p] | region_size=[%zu] | region_space=[%zu]| REG_HEAD_SIZE=[%zu]\n", SET_CHUNK_POS(region, region_size), region, region_size,region->space, REG_HEAD_SIZE);
+	if (IS_FIRST_CHUNK(region, new) == false)
+	{
+		//////////ft_printf("\nPAS PREMIER\n");
+		prev_chunk = FIRST_CHUNK(region);
+		while (prev_chunk->header.next_size != 0)
+			{
+				if (NEXT_SIZE(prev_chunk) != CHUNK_SIZE(NEXT_CHUNK(prev_chunk)))
+				{		
+					//show_alloc_mem();
+						ft_printf("\nchunk1=[%p]\nchunk2=[%p]\nsize1=[%zu]\nnext_size1=[%zu]\nnext_size2[%zu]\nin_use[%i]",
+						prev_chunk,
+						NEXT_CHUNK(prev_chunk),
+						CHUNK_SIZE(prev_chunk),
+						NEXT_SIZE(prev_chunk),
+						CHUNK_SIZE(NEXT_CHUNK(prev_chunk)),
+						IN_USE(NEXT_CHUNK(prev_chunk)));
+				exit(1);}
+				prev_chunk = NEXT_CHUNK(prev_chunk);
+			}
+		prev_chunk->header.next_size = size;
+		new->header.prev = prev_chunk;
+	}
+	new->header.size = size;
+	new->header.next_size = 0;
+	new->header.in_use = true;
+	region->space -= size;
+	return (new);
+}
 /*
  * LARGE_size = REQUIRED_SIZE + SEG_HEAD_SIZE;
  */
@@ -32,89 +68,57 @@ void	*new_region(t_region **head, size_t len)
 	return (new_seg);
 }
 
+
 /*
  * get_region():	Find and return a region with enough space for the 
  *					size. If not found, call new_region()
  */
-t_region	*get_region(t_op g_op, size_t *size, size_t *reg_size)
+t_region	*get_region(t_op g_op, size_t size)
 {
 	t_region	**head;
 	t_region	*region;
 	t_region	*previous_region;
+	size_t		region_size;
 
 	previous_region = NULL;
 	head = APPROPRIATE_REGION_TYPE(g_op.offset);
 	region = *head;
-	*reg_size = g_op.is_large ? REQUIRED_SIZE(*size, 4096) : g_op.reg_size;
+	region_size = g_op.is_large ? REQUIRED_SIZE(size, 4096) : g_op.reg_size;
 	while (region)
 	{
-		if (AVAILABLE_SPACE(region, *size))
+		if (AVAILABLE_SPACE(region, size))
 			return (region);
 		previous_region = region;
 		region = region->next;
 	}
 	if (region == NULL)
 	{	
-		region = new_region(head, *reg_size);
+		region = new_region(head, region_size);
 		if (previous_region != NULL)
 			previous_region->next = region;
 	}
 	return (region);
 }
 
-t_chunk	*place_in_region(t_region *region, size_t region_size, size_t size)
-{
-	t_chunk		*prev_chunk;
-	t_chunk		*new;
-
-	new = SET_CHUNK_POS(region, region_size);
-	//if (new == (t_chunk*)0x100502ba0)
-		//////ft_printf("chunk_pos=[%p]| region=[%p] | region_size=[%zu] | region_space=[%zu]| REG_HEAD_SIZE=[%zu]\n", SET_CHUNK_POS(region, region_size), region, region_size,region->space, REG_HEAD_SIZE);
-	if (IS_FIRST_CHUNK(region, new) == false)
-	{
-		////////ft_printf("\nPAS PREMIER\n");
-		prev_chunk = FIRST_CHUNK(region);
-		while (prev_chunk->header.next_size != 0)
-			{
-				if (NEXT_SIZE(prev_chunk) != CHUNK_SIZE(NEXT_CHUNK(prev_chunk)))
-				{		
-					/*show_alloc_mem();
-						ft_printf("\nchunk1=[%p]\nchunk2=[%p]\nsize1=[%zu]\nnext_size1=[%zu]\nnext_size2[%zu]\nin_use[%i]",
-						prev_chunk,
-						NEXT_CHUNK(prev_chunk),
-						CHUNK_SIZE(prev_chunk),
-						NEXT_SIZE(prev_chunk),
-						CHUNK_SIZE(NEXT_CHUNK(prev_chunk)),
-						IN_USE(NEXT_CHUNK(prev_chunk)));
-				exit(1);*/}
-				prev_chunk = NEXT_CHUNK(prev_chunk);
-			}
-		prev_chunk->header.next_size = size;
-		(new)->header.prev = prev_chunk;
-	}
-	return (new);
-}
 
 void	*place_chunk(t_op g_op, size_t size)
 {
-	t_region	*region;
 	t_chunk		*new_chunk;
+	t_region	*region;
 	size_t		region_size;
 
-	//new_chunk = get_chunk_from_bin(NULL, size, g_op);
-	/*if (new_chunk)
+
+	/*new_chunk = get_chunk_from_bin(NULL, size, g_op);
+	if (new_chunk)
 	{
-		//////ft_printf("FROM BIN\n");
+		//ft_printf("FROM BIN\n");
 		return (CHUNK_DATA(new_chunk));
 	}*/
-	region = get_region(g_op, &size, &region_size);
+	region = get_region(g_op, size);
 	if (region == NULL)
 		return (NULL);
+	region_size = g_op.is_large ? REQUIRED_SIZE(size, 4096) : g_op.reg_size;
 	new_chunk = place_in_region(region, region_size, size);
-	new_chunk->header.size = size;
-	new_chunk->header.next_size = 0;
-	new_chunk->header.in_use = true;
-	region->space -= size;
 	return (CHUNK_DATA(new_chunk));
 }
 
@@ -125,7 +129,7 @@ void	*malloc(size_t size)
 
 	i = -1;
 
-	ft_printf("malloc(%zu);", size);
+	//ft_printf("malloc(%zu);", size);
 	addr = NULL;
 	if (size != 0)
 	{
@@ -135,7 +139,7 @@ void	*malloc(size_t size)
 			if (GOOD_REGION_TYPE(size, g_op[i]))
 			{
 				addr = place_chunk(g_op[i], size);
-				ft_printf("\t//malloc[%p] size:(%zu);\n", addr, size);
+				//ft_printf("\t//malloc[%p] size:(%zu);\n", addr, size);
 				return (addr);
 			}
 }
