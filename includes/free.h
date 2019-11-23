@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/05 15:37:35 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/23 15:06:50 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/23 19:32:53 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -17,7 +17,7 @@
 # include "malloc.h"
 
 
-# define FREE_LARGE(head, region, g_op) free_region(head, region, g_op)
+//# define FREE_LARGE(head, region) free_region(head, region)
 
 # define NEXT_FREE(chunk) ((chunk->next_free))
 
@@ -34,8 +34,8 @@
 ******************FREE****************
 */
 void	free(void *ptr);
-void	free_region(t_region **head, t_region *region, t_op g_op);
-bool	defrag(t_region *region, t_chunk **chunk, t_op g_op);
+void	free_region(t_region **head, t_region *region);
+bool	defrag(t_region *region, t_chunk **chunk);
 void	update_bins(t_region *region);
 t_chunk *pop(size_t size, t_chunk *chunk);
 void	show_bins();
@@ -46,7 +46,7 @@ void	push(t_chunk *chunk);
  * Corbeilles utilisé pour stocker l'addresse des malloc free pour les
  * reutiliser sans parcourir l'ensemble d'un region
  */
-extern t_chunk	*g_bins[/*BINS_NUMBER*/255];
+//extern t_chunk	*g_bins[/*BINS_NUMBER*/255];
 
 
 #endif

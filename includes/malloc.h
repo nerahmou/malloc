@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/23 15:39:26 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/23 19:57:49 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -101,37 +101,33 @@
 
 # define ALIGNEMENT 16
 
+# define REG_HEAD_SIZE		sizeof(t_region)
+# define CHUNK_HEAD_SIZE	sizeof(t_header)
+
 # define BINS_NUMBER (unsigned char)((SMALL_MAX_SIZE / 16) - 1)// 255 cases (32->4096)
 # define BIN_INDEX(size) (size - CHUNK_HEAD_SIZE) / ALIGNEMENT - 1
 
-# define REG_HEAD_SIZE sizeof(t_region)
-# define CHUNK_HEAD_SIZE sizeof(t_header)
 
 # define CH_PTR (t_chunk*)
-# define TINY_MAX_SIZE (CHUNK_HEAD_SIZE + 496) // 512
-# define SMALL_MAX_SIZE (CHUNK_HEAD_SIZE + 4080) // 4096
-# define LARGE_MAX_SIZE UINT64_MAX - 1
+# define TINY_MAX_SIZE 1024//(CHUNK_HEAD_SIZE + 496) // 512
+# define SMALL_MAX_SIZE 8192//(CHUNK_HEAD_SIZE + 4080) // 4096
 
 //# define TINY_REGION_SIZE ((TINY_MAX_SIZE << 3) * 300)
-# define TINY_REGION_SIZE 4096 * 50//((TINY_MAX_SIZE << 3) * 300)
-# define SMALL_REGION_SIZE /*(SMALL_MAX_SIZE * 200)*/ 4096 *100 
+# define TINY_REGION_SIZE 4096 * 512//((TINY_MAX_SIZE << 3) * 300)
+# define SMALL_REGION_SIZE /*(SMALL_MAX_SIZE * 200)*/ 4096 * 4096
 # define LARGE_REGION_SIZE (REG_HEAD_SIZE + CHUNK_HEAD_SIZE)
 
-# define GOOD_REGION_TYPE(size, g_op) size / (g_op.max_chunk_size + 1) == 0
-
-# define CHUNK_HEADER(addr) CH_PTR ((size_t)addr - CHUNK_HEAD_SIZE)
+# define CHUNK_HEADER(addr) (t_chunk*)((size_t)addr - CHUNK_HEAD_SIZE)
 
 # define PREV_CHUNK(chunk) chunk->header.prev
 
 # define CHUNK_SIZE(chunk) chunk->header.size
 
-# define NEXT_CHUNK(chunk) (CH_PTR ((size_t)chunk + CHUNK_SIZE(chunk)))
-
-# define APPROPRIATE_REGION_TYPE(offset) (t_region**)(&g_heap.tiny_region + offset)
+# define NEXT_CHUNK(chunk) ((t_chunk*)((size_t)chunk + CHUNK_SIZE(chunk)))
 
 # define NEXT_MULTIPLE(size, mult) ((size - 1) / mult * mult + mult)
 
-# define REQUIRED_SIZE(size, mult) NEXT_MULTIPLE(size + CHUNK_HEAD_SIZE, mult) //Verifier si chunk_head ou REG_HEAD
+# define REQUIRED_SIZE(size, head_size ,mult) NEXT_MULTIPLE(size + head_size, mult)
 
 # define MOVE_CHUNK_ADDR(chunk, size) chunk + size / ALIGNEMENT
 
@@ -141,14 +137,14 @@
 
 # define IN_REGION(addr, seg, size) addr > seg && addr <= (size_t)seg + size
 
-# define FIRST_CHUNK(reg) CH_PTR ((size_t)reg + REG_HEAD_SIZE)
+# define FIRST_CHUNK(reg) (t_chunk*) ((size_t)reg + REG_HEAD_SIZE)
 
 //# define IS_FIRST_CHUNK(reg, chunk) ((size_t)reg + REG_HEAD_SIZE) == (size_t)chunk
 # define IS_FIRST_CHUNK(reg, chunk) FIRST_CHUNK(reg) == chunk
 
 # define CHUNK_DATA(addr) &(addr->u_u.data)
 
-# define SET_CHUNK_POS(r, r_size) CH_PTR ((size_t)r + (r_size - r->space) + REG_HEAD_SIZE/*CHUNK_HEAD_SIZE*/)
+# define SET_CHUNK_POS(r, r_size) (t_chunk*)((size_t)r + (r_size - r->space) + REG_HEAD_SIZE/*CHUNK_HEAD_SIZE*/)
 
 //# define IS_PREV_FREE(ch, max) ch->header.prev  && !ch->header.prev->header.in_use && (ch->header.size + ch->header.prev->header.size) <= max // a verifier
 
@@ -172,12 +168,10 @@
 **				comprenant: les tinies, les smalls et les larges
 ** - t_chunk: Un troncon de memoire comprenant: Metadata + data
 */
-typedef struct s_private_memory		t_private_memory;
 typedef struct s_heap				t_heap;
 typedef struct s_region				t_region;
 typedef struct s_chunk				t_chunk;
 typedef struct s_header				t_header;
-typedef struct s_op					t_op;
 
 /*
  * ENUMS
@@ -188,31 +182,31 @@ typedef struct s_op					t_op;
 enum e_region_OFFSET_TYPE{
 	TINY_region_OFFSET,
 	SMALL_region_OFFSET,
-	LARGE_region_OFFSET
+	LARGE_region_OFFSET,
+	NB_ELEMS
 };
 
 
 struct	s_header
 {
 	t_chunk		*prev;
-	t_chunk		*next;
 	//size_t		size:48;
 	//size_t		next_size:15; // Meme role qu'un pointeur mais ne prends que 2 octets.
-	size_t		a;
 	size_t		size;
-	size_t		next_size/*:63*/; // Meme role qu'un pointeur mais ne prends que 2 octets.
-	size_t		in_use/*:1*/;
+	size_t		next_size; // Meme role qu'un pointeur mais ne prends que 2 octets.
+	size_t		in_use;
 };
 
 struct	s_chunk
 {
 	t_header header;
-	union
+	void	*data;
+	/*union
 	{
 		void *data;
 		void *prev_free;
 	} u_u;
-	void *next_free;
+	void *next_free;*/
 };
 
 struct	s_region
@@ -228,33 +222,25 @@ struct	s_heap
 	t_region			*large_region;
 };
 
-struct s_op
-{
-	size_t		max_chunk_size;
-	size_t		reg_size;
-	size_t		offset;
-	/*bool*/
-	size_t		is_large;
-	char		*region_name;
-};
 /*
 *****************GLOBAL_VARS****************
 */
 
-extern t_heap	g_heap;
-extern t_op		g_op[4];
-extern bool		debug;
+/*extern*/ t_heap	g_heap;
+/*extern*/ bool		debug;
 
 void	show_alloc_mem(void);
 void	*malloc(size_t size);
 void	*small_chunk();
 void	*large_chunk();
 void	*realloc(void *ptr, size_t size);
-t_chunk	*get_chunk_from_bin(t_chunk *, size_t, t_op);
+t_chunk	*get_chunk_from_bin(t_chunk *, size_t);
 void	show_alloc_mem();
-unsigned char	is_valid_ptr(void*);
-t_region	*get_the_region(t_region *region, void *ptr, unsigned char i);
+t_region**	is_valid_ptr(void*);
+t_region	*get_the_region(t_region *region, void *ptr);
 void	*ft_memcpy(void*, const void*, size_t);
 void	*ft_memset(void*, int, size_t);
 
+size_t round_up(size_t size, size_t to_round);
+size_t required(size_t size, size_t head, size_t mult);
 #endif

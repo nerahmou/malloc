@@ -6,7 +6,7 @@
 #    By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2019/10/08 11:37:09 by nerahmou     #+#   ##    ##    #+#        #
-#    Updated: 2019/11/21 09:42:55 by nerahmou    ###    #+. /#+    ###.fr      #
+#    Updated: 2019/11/23 19:48:00 by nerahmou    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
@@ -16,13 +16,13 @@
 
 ########################### VARS ############################
 DEBUG := 0
-CC := gcc
+CC := cc
 RM += -r
 
 ifeq ($(DEBUG),1)
-	CFLAGS := -g3 -Wall -Wextra -Wpadded -fPIC
+	CFLAGS := -Wall -Wextra# -Wpadded# -fPIC
 else
-	CFLAGS := -Wall -Wextra -Werror -Wpadded  -fPIC
+	CFLAGS := -Wall -Wextra -Werror# -Wpadded#  -fPIC
 endif
 ifeq ($(HOSTTYPE),)
 	HOSTTYPE := $(shell uname -m)_$(shell uname -s)
@@ -42,9 +42,6 @@ SRCS := $(addprefix $(SRCS_DIR)/,	malloc.c\
 									realloc.c\
 									calloc.c\
 									free.c\
-									bins.c\
-									defrag.c\
-									show_alloc_mem.c\
 									utils.c)
 OBJS := $(addprefix $(OBJS_DIR)/,$(notdir $(SRCS:.c=.o)))
 

@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/22 15:12:28 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/23 15:35:10 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/23 19:56:09 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -15,16 +15,9 @@
 
 t_heap	g_heap = {NULL, NULL, NULL};
 
-t_chunk	*g_bins[/*BINS_NUMBER*/255] = {0};
+//t_chunk	*g_bins[/*BINS_NUMBER*/255] = {0};
 
-t_op g_op[4] = {
-	{TINY_MAX_SIZE, TINY_REGION_SIZE, TINY_region_OFFSET, false, "TINY "},
-	{SMALL_MAX_SIZE, SMALL_REGION_SIZE, SMALL_region_OFFSET, false, "SMALL"},
-	{LARGE_MAX_SIZE, LARGE_REGION_SIZE, LARGE_region_OFFSET, true, "LARGE"},
-	{0, 0, 0, false, NULL}
-};
-
-void	show_bins(size_t nb)
+/*void	show_bins(size_t nb)
 {
 	t_chunk *chunk;
 	unsigned char i;
@@ -48,3 +41,4 @@ void	show_bins(size_t nb)
 		i++;
 	}
 }
+*/

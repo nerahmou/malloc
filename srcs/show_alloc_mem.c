@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/19 13:22:49 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/21 13:59:22 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/23 18:17:52 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -72,7 +72,7 @@ void	show_alloc_mem()
 	total = 0;
 	i = -1;
 	ft_putchar('\n');
-	while (g_op[++i].region_name)
+	/*while (g_op[++i].region_name)
 	{
 		region = *APPROPRIATE_REGION_TYPE(g_op[i].offset);
 		while (region)
@@ -82,7 +82,7 @@ void	show_alloc_mem()
 			region = region->next;
 		}
 	}
-
+*/
 	ft_printf("\nTotal : ");
 	ft_putnbr_base(total, DECI_BASE_STR, DECI_BASE);
 	ft_printf(" octets\n\n");

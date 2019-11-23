@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/11 15:12:54 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/22 17:12:25 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/23 18:16:46 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -98,16 +98,16 @@ t_chunk	*split_bin_elem(t_chunk *chunk, size_t bin_size, size_t size)
 	return (chunk);
 }
 
-t_chunk	*get_chunk_from_bin(t_chunk *chunk, size_t size, t_op g_op)
+t_chunk	*get_chunk_from_bin(t_chunk *chunk, size_t size)
 {
 	t_chunk	*bin_elem;
 	size_t	bin_size;
 	size_t	bin_size_limit;
 
-	if (g_op.is_large)
-		return (NULL);
+	//if (g_op.is_large)
+//		return (NULL);
 	bin_size = chunk == NULL ? size : chunk->header.size;
-	bin_size_limit = g_op.max_chunk_size;
+	//bin_size_limit = g_op.max_chunk_size;
 	bin_elem = pop(bin_size, chunk);
 	////ft_printf("bin[%p]|bin_size[%zu]|size[%zu]|bin_limit[%zu]\n", bin_elem, bin_size, size, bin_size_limit);
 	if (bin_elem == NULL && chunk == NULL)
