@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/05 15:37:35 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/21 10:16:52 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/23 15:06:50 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -46,7 +46,7 @@ void	push(t_chunk *chunk);
  * Corbeilles utilisé pour stocker l'addresse des malloc free pour les
  * reutiliser sans parcourir l'ensemble d'un region
  */
-extern t_chunk	*g_bins[BINS_NUMBER];
+extern t_chunk	*g_bins[/*BINS_NUMBER*/255];
 
 
 #endif

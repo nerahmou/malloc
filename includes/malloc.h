@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/14 10:24:51 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/22 17:39:51 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/23 15:39:26 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -75,6 +75,12 @@
 */
 
 # define MALLOC_H
+# include <stdbool.h>
+# include <sys/mman.h>
+# include <sys/resource.h>
+# include <unistd.h>
+# include "libft.h"
+
 
 
 # define DECI_BASE 10
@@ -106,8 +112,9 @@
 # define SMALL_MAX_SIZE (CHUNK_HEAD_SIZE + 4080) // 4096
 # define LARGE_MAX_SIZE UINT64_MAX - 1
 
-# define TINY_REGION_SIZE ((TINY_MAX_SIZE << 3) * 300)
-# define SMALL_REGION_SIZE (SMALL_MAX_SIZE * 200)
+//# define TINY_REGION_SIZE ((TINY_MAX_SIZE << 3) * 300)
+# define TINY_REGION_SIZE 4096 * 50//((TINY_MAX_SIZE << 3) * 300)
+# define SMALL_REGION_SIZE /*(SMALL_MAX_SIZE * 200)*/ 4096 *100 
 # define LARGE_REGION_SIZE (REG_HEAD_SIZE + CHUNK_HEAD_SIZE)
 
 # define GOOD_REGION_TYPE(size, g_op) size / (g_op.max_chunk_size + 1) == 0
@@ -158,12 +165,6 @@
 /*
 ** INCLUDES
 */
-# include <stdbool.h>
-# include <sys/mman.h>
-# include <sys/resource.h>
-# include <unistd.h>
-# include "libft.h"
-
 /*
 ** TYPE_DEFS
 ** - t_heap: Structure global gerant la memoire
@@ -194,11 +195,13 @@ enum e_region_OFFSET_TYPE{
 struct	s_header
 {
 	t_chunk		*prev;
+	t_chunk		*next;
 	//size_t		size:48;
 	//size_t		next_size:15; // Meme role qu'un pointeur mais ne prends que 2 octets.
+	size_t		a;
 	size_t		size;
-	size_t		next_size; // Meme role qu'un pointeur mais ne prends que 2 octets.
-	bool		in_use:1;
+	size_t		next_size/*:63*/; // Meme role qu'un pointeur mais ne prends que 2 octets.
+	size_t		in_use/*:1*/;
 };
 
 struct	s_chunk
@@ -229,8 +232,9 @@ struct s_op
 {
 	size_t		max_chunk_size;
 	size_t		reg_size;
-	size_t		offset:56;
-	bool		is_large;
+	size_t		offset;
+	/*bool*/
+	size_t		is_large;
 	char		*region_name;
 };
 /*
