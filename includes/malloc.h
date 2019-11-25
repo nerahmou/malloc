@@ -89,9 +89,9 @@
 
 # define HEXA_PREFIX "0x"
 
-//# define PROT_OPTS (PROT_READ | PROT_WRITE)
-//# define MAP_FLAGS (MAP_ANON | MAP_PRIVATE)
-//# define MMAP(len) mmap(NULL, len, PROT_OPTS, MAP_FLAGS, -1, 0)
+# define PROT_OPTS (PROT_READ | PROT_WRITE)
+# define MAP_FLAGS (MAP_ANON | MAP_PRIVATE)
+# define MMAP(len) mmap(NULL, len, PROT_OPTS, MAP_FLAGS, -1, 0)
 # define MUNMAP(addr, len) munmap(addr, len)
 # define MUNMAP_FAILED -1
 
@@ -100,7 +100,7 @@
 //# define ALIGNEMENT 16
 
 # define REG_HEAD_SIZE		sizeof(t_region)
-# define CHUNK_HEAD_SIZE	32//sizeof(t_chunk) / 2
+# define CHUNK_HEAD_SIZE	(sizeof(t_chunk) - sizeof(void*))
 
 
 
@@ -129,16 +129,16 @@
 
 # define AVAILABLE_SPACE(reg, size) (reg->space - REG_HEAD_SIZE) >= size
 
-# define IN_REGION(addr, seg, size) addr > seg && addr <= (size_t)seg + size
+# define IN_REGION(addr, seg, size) addr > (void*)seg && (size_t)addr <= (size_t)seg + size
 
 # define FIRST_CHUNK(reg) (t_chunk*) ((size_t)reg + REG_HEAD_SIZE)
 
 //# define IS_FIRST_CHUNK(reg, chunk) ((size_t)reg + REG_HEAD_SIZE) == (size_t)chunk
-# define IS_FIRST_CHUNK(reg, chunk) FIRST_CHUNK(reg) == chunk
+# define IS_FIRST_CHUNK(reg, chunk) (FIRST_CHUNK(reg) == chunk)
 
 # define CHUNK_DATA(addr) &(addr->data)
 
-# define SET_CHUNK_POS(r, r_size) (t_chunk*)((size_t)r + (r_size - r->space) + REG_HEAD_SIZE/*CHUNK_HEAD_SIZE*/)
+# define SET_CHUNK_POS(r, r_size) (t_chunk*)((size_t)r + REG_HEAD_SIZE + (r_size - r->space))
 
 //# define IS_PREV_FREE(ch, max) ch->header.prev  && !ch->header.prev->header.in_use && (ch->header.size + ch->header.prev->header.size) <= max // a verifier
 
@@ -181,20 +181,12 @@ enum e_region_OFFSET_TYPE{
 
 struct	s_chunk
 {
-	//size_t		size:48;
-	//size_t		next_size:15; // Meme role qu'un pointeur mais ne prends que 2 octets.
 	t_chunk		*prev;
-	t_chunk		*next;
-	size_t		size;
-	//size_t		next_size; // Meme role qu'un pointeur mais ne prends que 2 octets.
-	size_t		in_use;
+	size_t		next_size; // Meme role qu'un pointeur mais ne prends que 2 octets.
+	size_t		size:42;
+	size_t		in_use:1;
+	void		*d;
 	void		*data;
-	/*union
-	{
-		void *data;
-		void *prev_free;
-	} u_u;
-	void *next_free;*/
 };
 
 struct	s_region
@@ -208,7 +200,6 @@ struct	s_heap
 	t_region			*tiny_region;
 	t_region			*small_region;
 	t_region			*large_region;
-	t_region			*useless;
 };
 
 /*

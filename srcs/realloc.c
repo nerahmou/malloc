@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/14 16:19:14 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/25 11:49:21 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/25 14:15:59 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -76,21 +76,15 @@ void	*realloc(void *ptr, size_t size)
 {
 	t_chunk			*chunk = NULL;
 	void *addr = NULL;
-	//ft_printf("realloc(%p, %zu);\n\t", ptr, size);
 	if (ptr == NULL)
-	{
-		////ft_printf("realloc(%p, %zu);\n\t", ptr, size);
-		addr = malloc(size);
-		return (addr);
-	}
+		return (malloc(size));
 	if (is_valid_ptr(ptr) == NULL)
 		return (NULL);
-	//chunk = CHUNK_HEADER(ptr);
-	chunk = (t_chunk*)((size_t)ptr - CHUNK_HEAD_SIZE);
+	chunk = CHUNK_HEADER(ptr);
 	if (size > chunk->size - CHUNK_HEAD_SIZE)
 	{
 		addr = malloc(size);
-		memmove(addr, ptr, chunk->size - CHUNK_HEAD_SIZE);
+		memmove(addr, ptr, DATA_SIZE(chunk));
 		free(ptr);
 		return addr;
 			/*return (realloc_large(i, chunk, ptr, size));

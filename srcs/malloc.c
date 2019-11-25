@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/17 16:24:17 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/25 11:50:21 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/25 14:15:38 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -27,22 +27,25 @@ t_chunk	*place_in_region(t_region *region, size_t size)
 		region_size = SMALL_REGION_SIZE;
 	else
 		region_size = region->space;
-	new = (t_chunk*)((size_t)region + REG_HEAD_SIZE + (region_size - region->space));
-	if ((size_t)new != (size_t)region + REG_HEAD_SIZE)
+	new = SET_CHUNK_POS(region, region_size);
+	if (!IS_FIRST_CHUNK(region, new))
 	{
-		prev_chunk = (t_chunk*)((size_t)region + REG_HEAD_SIZE);
-		while (prev_chunk->next != NULL)
-			prev_chunk = prev_chunk->next;
-		prev_chunk->next = new;
+		prev_chunk = FIRST_CHUNK(region);
+		while (prev_chunk->next_size != 0)
+		{
+			if (prev_chunk->next_size != (NEXT_CHUNK(prev_chunk))->size)
+				ft_printf("KO");
+			prev_chunk = NEXT_CHUNK(prev_chunk);
+		}
+		prev_chunk->next_size = new->size;
 		new->prev = prev_chunk;
 	}
 	else
 		new->prev = NULL;
 	new->size = size;
-	new->next = NULL;
+	new->next_size = 0;
 	new->in_use = true;
 	region->space -= size;
-	//new->next_size = 0;
 	return (new);
 }
 
@@ -53,7 +56,7 @@ void	*new_region(t_region **head, size_t len)
 {
 	t_region	*new_region = NULL;
 
-	new_region = mmap(NULL, len, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
+	new_region = MMAP(len);
 	if (new_region == MAP_FAILED)
 		return (NULL);
 	if (*head == NULL)
@@ -88,18 +91,14 @@ t_region	*get_region(size_t size)
 	}
 	else
 	{
-		region_size = required(size, REG_HEAD_SIZE, 4096);
+		region_size = REQUIRED_SIZE(size, REG_HEAD_SIZE, 4096);
 		head = &(g_heap.large_region);
 	}
 	region = *head;
 	while (region)
 	{
-		if (region->space - REG_HEAD_SIZE >= size)
-		{
-			if (head == &(g_heap.large_region))
-				ft_printf("PROBLEM\n");
+		if (AVAILABLE_SPACE(region, size))
 			return (region);
-		}
 		previous_region = region;
 		region = region->next;
 	}
@@ -125,30 +124,15 @@ void	*place_chunk(size_t size)
 	return (&(new_chunk->data));
 }
 
-size_t round_up(size_t size, size_t to_round)
-{
-	return (((size + to_round - 1) & (0xFFFFFFFFFFFFFFFF - (to_round - 1))));
-}
-
-size_t required(size_t size, size_t head, size_t mult)
-{
-	return (round_up(size + head, mult));
-}
-
 void	*malloc(size_t size)
 {
-
-	//ft_printf("malloc(%zu)\n", size);
 	void *addr;
 
 	addr = NULL;
 	if (size == 0)
-		size = 16;
-	if (size != 0)
-	{
-		size = required(size, CHUNK_HEAD_SIZE, 16);
-		addr = place_chunk(size);
-	}
+		++size;
+	size = REQUIRED_SIZE(size, CHUNK_HEAD_SIZE, 16);
+	addr = place_chunk(size);
 	return (addr);
 }
 

@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/31 16:11:21 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/25 11:48:35 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/25 14:15:48 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -18,7 +18,6 @@ void	free_region(t_region **head, t_region *to_munmap)
 	t_region	*region = NULL;
 	size_t		size;
 
-	//return;
 	region = *head;
 	if (*head == to_munmap)
 		*head = to_munmap->next;
@@ -42,9 +41,8 @@ void	free_small(t_region **head, t_region *region, void *ptr)
 {
 	t_chunk		*chunk = NULL;
 
-	chunk = (t_chunk*)((size_t)ptr - CHUNK_HEAD_SIZE);
+	chunk = CHUNK_HEADER(ptr);
 	chunk->in_use = false;
-	//chunk = CHUNK_ptr);
 //	if (chunk->in_use == true)
 //	{
 		/*if (defrag(region, &chunk, g_op))
@@ -61,7 +59,7 @@ t_region	*get_the_region(t_region *region, void *ptr)
 {
 	while (region)
 	{
-		if ((size_t)region < (size_t)ptr && (size_t)region + region->space >= (size_t)ptr)
+		if (IN_REGION(ptr, region, region->space))
 			break;
 		region = region->next;
 	}
@@ -79,7 +77,7 @@ t_region	**is_valid_ptr(void *ptr)
 	i = -1;
 	while (++i < 3)
 	{
-		head = (&g_heap.tiny_region + i); //*APPROPRIATE_REGION_TYPE(g_op[i].offset);
+		head = (&g_heap.tiny_region + i);
 		if (i == 2)
 			region_size = LARGE_REGION_SIZE;
 		else if (i == 1)
@@ -89,22 +87,19 @@ t_region	**is_valid_ptr(void *ptr)
 		region = *head;
 		while (region)
 		{
-			if ((size_t)region < (size_t)ptr && (size_t)region + region_size >= (size_t)ptr)
+			if (IN_REGION(ptr, region, region_size))
 			{
-				chunk = (t_chunk*)((size_t)region + REG_HEAD_SIZE);
-				while (chunk)
+				chunk = FIRST_CHUNK(region);
+				while (chunk->size)
 				{
-					if ((void*)&(chunk->data) == ptr)
-					{
+					if (&(chunk->data) == ptr)
 						return (head);
-					}
-					chunk = chunk->next;//NEXT_CHUNK(prev_chunk);
+					chunk = NEXT_CHUNK(chunk);
 				}
 			}
 			region = region->next;
 		}
 	}
-	//ft_printf("//[FREE PAS TROUVE]\n");
 	return (NULL);
 }
 
@@ -114,7 +109,6 @@ void	free(void *ptr)
 	t_region		*region = NULL;
 	unsigned char	i;
 	
-	//ft_printf("free(%p);", ptr);
 	if (ptr != NULL)
 	{
 		head = is_valid_ptr(ptr);
@@ -125,10 +119,7 @@ void	free(void *ptr)
 				free_region(head, region);
 			else if (head == &(g_heap.tiny_region) || head == &(g_heap.small_region))
 				free_small(head, region, ptr);
-			else
-				ft_printf("FREE_PROBLEME\n");
 			return ;
 		}
 	}
-	//ft_printf("PAS_TROUVE2\n");
 }
