@@ -6,7 +6,7 @@
 #    By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2019/10/08 11:37:09 by nerahmou     #+#   ##    ##    #+#        #
-#    Updated: 2019/11/23 19:48:00 by nerahmou    ###    #+. /#+    ###.fr      #
+#    Updated: 2019/11/25 11:39:07 by nerahmou    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
@@ -20,9 +20,14 @@ CC := cc
 RM += -r
 
 ifeq ($(DEBUG),1)
-	CFLAGS := -Wall -Wextra# -Wpadded# -fPIC
+	CFLAGS := -Wall -Wextra -Wpadded -fPIC
 else
-	CFLAGS := -Wall -Wextra -Werror# -Wpadded#  -fPIC
+	CFLAGS := -g -Wall -Wextra -Werror -Wpadded -fPIC -pedantic -Wcast-align\
+		-Wcast-qual -Wdisabled-optimization -Wformat=2\
+		-Winit-self -Wuninitialized -Wmissing-include-dirs\
+		-Wredundant-decls -Wshadow\
+		-fstrict-overflow -Wstrict-overflow=5 -Wundef -Wno-unused\
+		-Wno-variadic-macros -Wno-parentheses -fdiagnostics-show-option
 endif
 ifeq ($(HOSTTYPE),)
 	HOSTTYPE := $(shell uname -m)_$(shell uname -s)
@@ -42,7 +47,8 @@ SRCS := $(addprefix $(SRCS_DIR)/,	malloc.c\
 									realloc.c\
 									calloc.c\
 									free.c\
-									utils.c)
+									utils.c\
+									show_alloc_mem.c)
 OBJS := $(addprefix $(OBJS_DIR)/,$(notdir $(SRCS:.c=.o)))
 
 NAME := libft_malloc_$(HOSTTYPE).so
@@ -77,12 +83,3 @@ fclean: clean
 	make -C $(LFTDIR) fclean
 
 re: fclean all
-
-test:
-	make DEBUG=1 ;echo '#include "malloc.h"\n\nint main()\n{' > test.c ; ./run.sh emacs >> test.c ; echo "\nreturn 0;}" >> test.c;
-	gcc -g3 -std=c99 -I includes -I libft/includes test.c libft_malloc.so && ./a.out > output.txt; vi output.txt
-
-emacs:
-	make DEBUG=1
-	./run.sh emacs
-

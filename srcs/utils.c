@@ -6,14 +6,14 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/22 15:12:28 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/23 19:56:09 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/25 10:06:07 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "malloc.h"
 
-t_heap	g_heap = {NULL, NULL, NULL};
+t_heap	g_heap = {NULL, NULL, NULL, NULL};
 
 //t_chunk	*g_bins[/*BINS_NUMBER*/255] = {0};
 

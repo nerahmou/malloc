@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/22 11:24:43 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/23 18:01:54 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/25 11:15:48 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -17,13 +17,8 @@
 #include <stdio.h>
 
 int main(int argc, char* argv[]){
-//	char *a = malloc(32);
-//	void *b = malloc(50);
-//	show_alloc_mem();
-//	ft_memset(a, 41, 32);
-//	free(a);
-//	void *d = calloc(4, 6);
-//	show_alloc_mem();
+	
+	
 	if (argv[1])
 		debug = 1;
 	void *tab[255] = {
@@ -36,14 +31,14 @@ int main(int argc, char* argv[]){
 		malloc(159),
 		malloc(490),
 		malloc(512),
-		malloc(1159),
-		malloc(1159),
+		malloc(992),
 		malloc(4081),
 		malloc(4096),
 		malloc(5159),
+		malloc(8160),
 	};
-	/*show_alloc_mem();
-	free(tab[0]);
+	show_alloc_mem();
+	/*free(tab[0]);
 	show_alloc_mem();
 	free(tab[0]);
 	show_alloc_mem();
@@ -68,15 +63,9 @@ int main(int argc, char* argv[]){
 	free(tab[7]);
 	show_alloc_mem();
 	free(tab[9]);
-	show_alloc_em();
+	show_alloc_mem();
 	free(tab[11]);
 	show_alloc_mem();
 	*/
-	free(tab[11]);
-	show_alloc_mem();
-	free(tab[12]);
-	show_alloc_mem();
-	free(tab[13]);
-	show_alloc_mem();
 	return 1;
 }

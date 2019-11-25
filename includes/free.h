@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/05 15:37:35 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/23 19:32:53 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/25 10:21:23 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -29,6 +29,8 @@
 /*Inferieur a la taille maximal de la categorie de bins*/
 # define INF_MAX_BIN(ch1, ch2, max) CHUNK_SIZE(ch1) + CHUNK_SIZE(ch2) <= max // a verifier
 
+# define BINS_NUMBER (unsigned char)((SMALL_MAX_SIZE / 16) - 1)// 255 cases (32->4096)
+# define BIN_INDEX(size) (size - CHUNK_HEAD_SIZE) / ALIGNEMENT - 1
 
 /*
 ******************FREE****************

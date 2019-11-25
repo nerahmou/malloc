@@ -6,19 +6,19 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/19 13:22:49 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/23 18:17:52 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/25 11:09:50 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "malloc.h"
 
-void	print_region_info(t_region *region, const char *region_name)
+void	print_region_info(t_region *region, unsigned char i)
 {
-	/*ft_printf(UNDERLINE BOLD "%s : " GREEN HEXA_PREFIX, region_name);
+	ft_printf(UNDERLINE BOLD "%i : " GREEN HEXA_PREFIX, i);
 	ft_putnbr_base((long)region, HEXA_BASE_STR, HEXA_BASE);
 	ft_printf("\n{eoc}");
-	*/ft_printf("%s : ", region_name);
+	ft_printf("%i : ", i);
 	ft_putnbr_base((long)region, HEXA_BASE_STR, HEXA_BASE);
 	ft_printf("\n");
 }
@@ -34,9 +34,9 @@ size_t	print_chunks(t_region *region)
 	chunk = FIRST_CHUNK(region);
 	while (chunk)
 	{
-		if (chunk->header.in_use)
+		if (chunk->in_use)
 		{
-	/*		chunk_start = (size_t)CHUNK_DATA(chunk);
+			chunk_start = (size_t)CHUNK_DATA(chunk);
 			data_size = DATA_SIZE(chunk);
 			ft_printf( "\t" BOLD BLUE HEXA_PREFIX);
 			ft_putnbr_base(chunk_start, HEXA_BASE_STR, HEXA_BASE);
@@ -45,7 +45,7 @@ size_t	print_chunks(t_region *region)
 			ft_printf(RES_COLOR " : " BOLD);
 			ft_putnbr_base(data_size, DECI_BASE_STR, DECI_BASE);
 			ft_printf(RES_COLOR ITALIC " octets\n" RES_COLOR);
-	*/		chunk_start = (size_t)CHUNK_DATA(chunk);
+			chunk_start = (size_t)CHUNK_DATA(chunk);
 			data_size = DATA_SIZE(chunk);
 			ft_printf( "\t" );
 			ft_putnbr_base(chunk_start, HEXA_BASE_STR, HEXA_BASE);
@@ -54,11 +54,10 @@ size_t	print_chunks(t_region *region)
 			ft_printf(" : ");
 			ft_putnbr_base(data_size, DECI_BASE_STR, DECI_BASE);
 			ft_printf(" octets\n");
-			
-
 			total += data_size;
 		}
-		chunk = chunk->header.next_size == 0 ? NULL : NEXT_CHUNK(chunk);
+		//chunk = chunk->next_size == 0 ? NULL : NEXT_CHUNK(chunk);
+		chunk = chunk->next;
 	}
 	return (total);
 }
@@ -72,21 +71,21 @@ void	show_alloc_mem()
 	total = 0;
 	i = -1;
 	ft_putchar('\n');
-	/*while (g_op[++i].region_name)
+	while (++i < 3)
 	{
-		region = *APPROPRIATE_REGION_TYPE(g_op[i].offset);
+		region = *(&g_heap.tiny_region + i); //*APPROPRIATE_REGION_TYPE(g_op[i].offset);
 		while (region)
 		{
-			print_region_info(region, g_op[i].region_name);
+			print_region_info(region, i);
 			total += print_chunks(region);
 			region = region->next;
 		}
 	}
-*/
+
 	ft_printf("\nTotal : ");
 	ft_putnbr_base(total, DECI_BASE_STR, DECI_BASE);
 	ft_printf(" octets\n\n");
-/*	ft_printf(BOLD UNDERLINE"\nTotal : ");
+	ft_printf(BOLD UNDERLINE"\nTotal : ");
 	ft_putnbr_base(total, DECI_BASE_STR, DECI_BASE);
 	ft_printf(" octets\n\n" RES_COLOR);
-*/}
+}
