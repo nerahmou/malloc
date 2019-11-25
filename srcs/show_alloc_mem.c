@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/19 13:22:49 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/25 12:11:29 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/25 15:31:02 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -32,7 +32,7 @@ size_t	print_chunks(t_region *region)
 
 	total = 0;
 	chunk = FIRST_CHUNK(region);
-	while (chunk)
+	while (chunk->size)
 	{
 		if (chunk->in_use)
 		{
@@ -56,7 +56,7 @@ size_t	print_chunks(t_region *region)
 			ft_printf(" octets\n");
 			total += data_size;
 		}
-		chunk = chunk->next_size == 0 ? NULL : NEXT_CHUNK(chunk);
+		chunk = NEXT_CHUNK(chunk);
 	}
 	return (total);
 }

@@ -107,8 +107,8 @@
 # define TINY_MAX_SIZE 1024//(CHUNK_HEAD_SIZE + 496) // 512
 # define SMALL_MAX_SIZE 8192//(CHUNK_HEAD_SIZE + 4080) // 4096
 
-# define TINY_REGION_SIZE 4096 * 512//((TINY_MAX_SIZE << 3) * 300)
-# define SMALL_REGION_SIZE 4096 * 4096/*(SMALL_MAX_SIZE * 200)*/ 
+# define TINY_REGION_SIZE 4096 * 512  //((TINY_MAX_SIZE << 3) * 300)
+# define SMALL_REGION_SIZE 4096 * 4096 //(SMALL_MAX_SIZE * 200)
 # define LARGE_REGION_SIZE (REG_HEAD_SIZE + CHUNK_HEAD_SIZE)
 
 # define CHUNK_HEADER(addr) (t_chunk*)((size_t)addr - CHUNK_HEAD_SIZE)
@@ -165,6 +165,7 @@
 typedef struct s_heap				t_heap;
 typedef struct s_region				t_region;
 typedef struct s_chunk				t_chunk;
+typedef struct s_freed				t_freed;
 
 /*
  * ENUMS
@@ -179,13 +180,22 @@ enum e_region_OFFSET_TYPE{
 	NB_ELEMS
 };
 
+struct	s_freed
+{
+	t_chunk		*prev;
+	t_chunk		*next;
+	size_t		size;
+	size_t		in_use;
+	t_freed		*prev_freed;
+	t_freed		*next_freed;
+};
+
 struct	s_chunk
 {
 	t_chunk		*prev;
-	size_t		next_size; // Meme role qu'un pointeur mais ne prends que 2 octets.
-	size_t		size:42;
-	size_t		in_use:1;
-	void		*d;
+	t_chunk		*next;
+	size_t		size;
+	size_t		in_use;
 	void		*data;
 };
 

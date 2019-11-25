@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/31 16:11:21 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/25 14:15:48 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/25 16:26:47 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -43,8 +43,6 @@ void	free_small(t_region **head, t_region *region, void *ptr)
 
 	chunk = CHUNK_HEADER(ptr);
 	chunk->in_use = false;
-//	if (chunk->in_use == true)
-//	{
 		/*if (defrag(region, &chunk, g_op))
 		{
 			update_bins(region);
@@ -52,7 +50,6 @@ void	free_small(t_region **head, t_region *region, void *ptr)
 		}
 		else
 			push(chunk);*/
-//	}
 }
 
 t_region	*get_the_region(t_region *region, void *ptr)
@@ -94,7 +91,7 @@ t_region	**is_valid_ptr(void *ptr)
 				{
 					if (&(chunk->data) == ptr)
 						return (head);
-					chunk = NEXT_CHUNK(chunk);
+					chunk = chunk->next;
 				}
 			}
 			region = region->next;

@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/17 16:24:17 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/25 14:15:38 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/25 16:22:43 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -31,19 +31,15 @@ t_chunk	*place_in_region(t_region *region, size_t size)
 	if (!IS_FIRST_CHUNK(region, new))
 	{
 		prev_chunk = FIRST_CHUNK(region);
-		while (prev_chunk->next_size != 0)
-		{
-			if (prev_chunk->next_size != (NEXT_CHUNK(prev_chunk))->size)
-				ft_printf("KO");
-			prev_chunk = NEXT_CHUNK(prev_chunk);
-		}
-		prev_chunk->next_size = new->size;
+		while (prev_chunk->next != NULL)
+			prev_chunk = prev_chunk->next;
+		prev_chunk->next = new;
 		new->prev = prev_chunk;
 	}
 	else
 		new->prev = NULL;
 	new->size = size;
-	new->next_size = 0;
+	new->next = NULL;
 	new->in_use = true;
 	region->space -= size;
 	return (new);
