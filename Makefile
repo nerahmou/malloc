@@ -6,12 +6,12 @@
 #    By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2019/10/08 11:37:09 by nerahmou     #+#   ##    ##    #+#        #
-#    Updated: 2019/11/25 11:39:07 by nerahmou    ###    #+. /#+    ###.fr      #
+#    Updated: 2019/11/25 18:05:42 by nerahmou    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
 
-.PHONY: all, clean, fclean, re, main_test
+.PHONY: all, clean, fclean, re
 .SUFFIXES:
 
 ########################### VARS ############################
@@ -22,12 +22,7 @@ RM += -r
 ifeq ($(DEBUG),1)
 	CFLAGS := -Wall -Wextra -Wpadded -fPIC
 else
-	CFLAGS := -g -Wall -Wextra -Werror -Wpadded -fPIC -pedantic -Wcast-align\
-		-Wcast-qual -Wdisabled-optimization -Wformat=2\
-		-Winit-self -Wuninitialized -Wmissing-include-dirs\
-		-Wredundant-decls -Wshadow\
-		-fstrict-overflow -Wstrict-overflow=5 -Wundef -Wno-unused\
-		-Wno-variadic-macros -Wno-parentheses -fdiagnostics-show-option
+	CFLAGS := -g3 -Wall -Wextra -Werror -Wpadded -fPIC
 endif
 ifeq ($(HOSTTYPE),)
 	HOSTTYPE := $(shell uname -m)_$(shell uname -s)
@@ -48,6 +43,8 @@ SRCS := $(addprefix $(SRCS_DIR)/,	malloc.c\
 									calloc.c\
 									free.c\
 									utils.c\
+									defrag.c\
+									bins.c\
 									show_alloc_mem.c)
 OBJS := $(addprefix $(OBJS_DIR)/,$(notdir $(SRCS:.c=.o)))
 

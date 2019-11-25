@@ -6,19 +6,18 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/22 11:24:43 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/25 15:29:50 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/25 17:51:49 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 
-#include "malloc.h"
 #include "free.h"
+#include "malloc.h"
 #include <stdio.h>
 
 int main(int argc, char* argv[]){
 	
-	printf("%zu", CHUNK_HEAD_SIZE);
 	if (argv[1])
 		debug = 1;
 	void *tab[255] = {
@@ -38,12 +37,15 @@ int main(int argc, char* argv[]){
 		malloc(8160),
 	};
 	show_alloc_mem();
-/*	free(tab[0]);
-	show_alloc_mem();
 	free(tab[0]);
+	show_bins(50);
 	show_alloc_mem();
 	free(tab[2]);
+	show_bins(50);
 	show_alloc_mem();
+	free(tab[1]);
+	show_bins(50);
+	/*show_alloc_mem();
 	free(tab[4]);
 	show_alloc_mem();
 	free(tab[6]);
@@ -66,6 +68,6 @@ int main(int argc, char* argv[]){
 	show_alloc_mem();
 	free(tab[11]);
 	show_alloc_mem();
-*/	
+	*/
 	return 1;
 }

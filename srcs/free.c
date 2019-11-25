@@ -6,12 +6,13 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/31 16:11:21 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/25 16:26:47 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/25 17:54:02 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "free.h"
+#include "malloc.h"
 
 void	free_region(t_region **head, t_region *to_munmap)
 {
@@ -43,13 +44,13 @@ void	free_small(t_region **head, t_region *region, void *ptr)
 
 	chunk = CHUNK_HEADER(ptr);
 	chunk->in_use = false;
-		/*if (defrag(region, &chunk, g_op))
-		{
-			update_bins(region);
-			free_region(head, region, g_op);
-		}
-		else
-			push(chunk);*/
+	if (defrag(region, &chunk))
+	{
+		update_bins(region);
+		//free_region(head, region);
+	}
+	else
+		push(chunk);
 }
 
 t_region	*get_the_region(t_region *region, void *ptr)
