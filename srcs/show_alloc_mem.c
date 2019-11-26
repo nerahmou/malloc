@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/19 13:22:49 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/25 15:31:02 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/26 17:50:11 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -15,10 +15,10 @@
 
 void	print_region_info(t_region *region, unsigned char i)
 {
-	ft_printf(UNDERLINE BOLD "%i : " GREEN HEXA_PREFIX, i);
-	ft_putnbr_base((long)region, HEXA_BASE_STR, HEXA_BASE);
-	ft_printf("\n{eoc}");
-	ft_printf("%i : ", i);
+	/*ft_printf(UNDERLINE BOLD "%i : " GREEN HEXA_PREFIX, i);
+	*/ft_putnbr_base((long)region, HEXA_BASE_STR, HEXA_BASE);
+	/*ft_printf("\n{eoc}");
+	*/ft_printf("%i : ", i);
 	ft_putnbr_base((long)region, HEXA_BASE_STR, HEXA_BASE);
 	ft_printf("\n");
 }
@@ -38,14 +38,14 @@ size_t	print_chunks(t_region *region)
 		{
 			chunk_start = (size_t)CHUNK_DATA(chunk);
 			data_size = DATA_SIZE(chunk);
-			ft_printf( "\t" BOLD BLUE HEXA_PREFIX);
-			ft_putnbr_base(chunk_start, HEXA_BASE_STR, HEXA_BASE);
-			ft_printf(RES_COLOR " - " BOLD RED HEXA_PREFIX);
-			ft_putnbr_base(chunk_start + data_size, HEXA_BASE_STR, HEXA_BASE);
-			ft_printf(RES_COLOR " : " BOLD);
-			ft_putnbr_base(data_size, DECI_BASE_STR, DECI_BASE);
-			ft_printf(RES_COLOR ITALIC " octets\n" RES_COLOR);
-			chunk_start = (size_t)CHUNK_DATA(chunk);
+			/*ft_printf( "\t" BOLD BLUE HEXA_PREFIX);
+			*/ft_putnbr_base(chunk_start, HEXA_BASE_STR, HEXA_BASE);
+			/*t_printf(RES_COLOR " - " BOLD RED HEXA_PREFIX);
+			*/ft_putnbr_base(chunk_start + data_size, HEXA_BASE_STR, HEXA_BASE);
+			/*ft_printf(RES_COLOR " : " BOLD);
+			*/ft_putnbr_base(data_size, DECI_BASE_STR, DECI_BASE);
+			/*ft_printf(RES_COLOR ITALIC " octets\n" RES_COLOR);
+			*/chunk_start = (size_t)CHUNK_DATA(chunk);
 			data_size = DATA_SIZE(chunk);
 			ft_printf( "\t" );
 			ft_putnbr_base(chunk_start, HEXA_BASE_STR, HEXA_BASE);
@@ -84,7 +84,7 @@ void	show_alloc_mem()
 	ft_printf("\nTotal : ");
 	ft_putnbr_base(total, DECI_BASE_STR, DECI_BASE);
 	ft_printf(" octets\n\n");
-	ft_printf(BOLD UNDERLINE"\nTotal : ");
-	ft_putnbr_base(total, DECI_BASE_STR, DECI_BASE);
-	ft_printf(" octets\n\n" RES_COLOR);
-}
+	/*ft_printf(BOLD UNDERLINE"\nTotal : ");
+	*/ft_putnbr_base(total, DECI_BASE_STR, DECI_BASE);
+	/*ft_printf(" octets\n\n" RES_COLOR);
+*/}

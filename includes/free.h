@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/05 15:37:35 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/25 17:59:47 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/26 18:27:52 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -39,7 +39,8 @@ void	free(void *ptr);
 void	free_region(t_region **head, t_region *region);
 bool	defrag(t_region *region, t_chunk **chunk);
 void	update_bins(t_region *region);
-t_chunk *pop(size_t size, t_chunk *chunk);
+t_chunk *pop(size_t size);
+t_chunk *pop_specific(t_freed *chunk);
 void	show_bins();
 t_chunk	*split_bin_elem(t_chunk *chunk, size_t bin_size, size_t size);
 void	push(t_freed *chunk);

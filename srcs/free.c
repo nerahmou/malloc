@@ -5,8 +5,8 @@
 /*                                                 +:+:+   +:    +:  +:+:+    */
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
-/*   Created: 2019/10/31 16:11:21 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/25 17:54:02 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Created: 2019/11/26 13:54:48 by nerahmou     #+#   ##    ##    #+#       */
+/*   Updated: 2019/11/26 18:38:09 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -17,7 +17,7 @@
 void	free_region(t_region **head, t_region *to_munmap)
 {
 	t_region	*region = NULL;
-	size_t		size;
+	size_t		len;
 
 	region = *head;
 	if (*head == to_munmap)
@@ -29,13 +29,13 @@ void	free_region(t_region **head, t_region *to_munmap)
 		region->next = to_munmap->next;
 	}
 	if (head == &(g_heap.large_region))
-		size = to_munmap->space + ((t_chunk*)((size_t)to_munmap + REG_HEAD_SIZE))->size;
+		len = to_munmap->space + ((t_chunk*)((size_t)to_munmap + REG_HEAD_SIZE))->size;
 	else if (head == &(g_heap.small_region))
-		size = SMALL_REGION_SIZE;
+		len = SMALL_REGION_SIZE;
 	else
-		size = TINY_REGION_SIZE;
-	if (MUNMAP(to_munmap, size) == MUNMAP_FAILED)
-			;////ft_printf("munmap() failed: addr=[%p] | len=[%zu]\n", to_munmap, size);
+		len = TINY_REGION_SIZE;
+	if (MUNMAP(to_munmap, len) == MUNMAP_FAILED)
+			ft_printf("munmap() failed: addr=[%p] | len=[%zu]\n", to_munmap, len);
 }
 
 void	free_small(t_region **head, t_region *region, void *ptr)
@@ -44,23 +44,34 @@ void	free_small(t_region **head, t_region *region, void *ptr)
 
 	chunk = CHUNK_HEADER(ptr);
 	chunk->in_use = false;
-	if (defrag(region, &chunk))
+	if (unused_region(region))
 	{
 		update_bins(region);
-		//free_region(head, region);
+		free_region(head, region);
 	}
-	else
-		push(chunk);
-}
+	/*if (defrag(region, &chunk))
+	{
+		update_bins(region);
+		free_region(head, region);
+	}
+	*/else
+		push((t_freed*)chunk);
 
-t_region	*get_the_region(t_region *region, void *ptr)
+		}
+
+t_region	*get_the_region(t_region *region, void *ptr, size_t region_size)
 {
+	//ft_printf("region=[%p]\n", region);
 	while (region)
 	{
-		if (IN_REGION(ptr, region, region->space))
-			break;
+		if (IN_REGION(ptr, region, region_size))
+		{
+	//		ft_printf("OK\n");
+			return (region);
+		}
 		region = region->next;
 	}
+	//ft_printf("Ko\n");
 	return (region);
 }
 
@@ -105,19 +116,24 @@ void	free(void *ptr)
 {
 	t_region		**head = NULL;
 	t_region		*region = NULL;
-	unsigned char	i;
-	
+	size_t	region_size;
+
 	if (ptr != NULL)
 	{
 		head = is_valid_ptr(ptr);
 		if (head)
 		{
-			region = get_the_region(*head, ptr);
+			if (head == &(g_heap.tiny_region))
+				region_size = TINY_REGION_SIZE;
+			else if (head == &(g_heap.small_region))
+				region_size = SMALL_REGION_SIZE;
+			else
+				region_size = LARGE_REGION_SIZE;
+			region = get_the_region(*head, ptr, region_size);
 			if (head == &(g_heap.large_region))
 				free_region(head, region);
 			else if (head == &(g_heap.tiny_region) || head == &(g_heap.small_region))
 				free_small(head, region, ptr);
-			return ;
 		}
 	}
 }

@@ -185,7 +185,6 @@ struct	s_freed
 	t_chunk		*next;
 	size_t		size;
 	size_t		in_use;
-	t_freed		*prev_freed;
 	t_freed		*next_freed;
 };
 
@@ -223,11 +222,8 @@ void	*malloc(size_t size);
 void	*small_chunk();
 void	*large_chunk();
 void	*realloc(void *ptr, size_t size);
-t_chunk	*get_chunk_from_bin(t_chunk *, size_t);
+void	*get_chunk_from_bin(size_t);
 void	show_alloc_mem();
 t_region**	is_valid_ptr(void*);
-t_region	*get_the_region(t_region *region, void *ptr);
-
-size_t round_up(size_t size, size_t to_round);
-size_t required(size_t size, size_t head, size_t mult);
+t_region	*get_the_region(t_region *region, void *ptr, size_t size);
 #endif

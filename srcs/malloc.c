@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/17 16:24:17 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/25 17:31:22 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/26 18:59:40 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -129,7 +129,9 @@ void	*malloc(size_t size)
 	if (size == 0)
 		++size;
 	size = REQUIRED_SIZE(size, CHUNK_HEAD_SIZE, 16);
-	addr = place_chunk(size);
+	addr = get_chunk_from_bin(size);
+	if (addr == NULL)
+		addr = place_chunk(size);
 	return (addr);
 }
 

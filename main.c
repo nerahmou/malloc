@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/22 11:24:43 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/25 17:51:49 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/26 18:50:30 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -14,7 +14,6 @@
 
 #include "free.h"
 #include "malloc.h"
-#include <stdio.h>
 
 int main(int argc, char* argv[]){
 	
@@ -24,7 +23,7 @@ int main(int argc, char* argv[]){
 		malloc(16),
 		malloc(26),
 		malloc(16),
-		malloc(36),
+		/*malloc(36),
 		malloc(16),
 		malloc(59),
 		malloc(159),
@@ -35,16 +34,11 @@ int main(int argc, char* argv[]){
 		malloc(4096),
 		malloc(5159),
 		malloc(8160),
-	};
-	show_alloc_mem();
+*/	};
 	free(tab[0]);
-	show_bins(50);
-	show_alloc_mem();
 	free(tab[2]);
-	show_bins(50);
-	show_alloc_mem();
 	free(tab[1]);
-	show_bins(50);
+	//show_bins(10);
 	/*show_alloc_mem();
 	free(tab[4]);
 	show_alloc_mem();
