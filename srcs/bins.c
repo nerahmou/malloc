@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/11 15:12:54 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/26 19:03:20 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/26 19:43:31 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -17,7 +17,7 @@ t_chunk	*split_bin_elem(t_chunk *chunk, size_t bin_size, size_t size)
 {
 	t_chunk	*bin_elem;
 
-	if (chunk == NULL || bin_size == size)
+	if (chunk == NULL)
 		return (chunk);
 	bin_elem = (t_chunk*)((long)chunk + size);
 	bin_elem->prev = chunk;
@@ -26,8 +26,8 @@ t_chunk	*split_bin_elem(t_chunk *chunk, size_t bin_size, size_t size)
 	bin_elem->in_use = false;
 	chunk->size = size;
 	chunk->next = bin_elem;
-	chunk->in_use = true;
 	chunk->prev->next = chunk;
+	chunk->in_use = true;
 	push((t_freed*)bin_elem);
 	return (chunk);
 }
@@ -38,8 +38,6 @@ void	*get_chunk_from_bin(size_t size)
 	size_t	bin_size;
 	size_t	bin_size_limit;
 
-	//ft_printf("get_chunk commenté\n");
-	//return NULL;
 	if (size > SMALL_MAX_SIZE)
 		return (NULL);
 	bin_size = size;
@@ -49,24 +47,17 @@ void	*get_chunk_from_bin(size_t size)
 		bin_size_limit = SMALL_MAX_SIZE;
 	bin_elem = pop(size);
 	if (bin_elem)
-	{
-		//ft_printf("reutilisé\n");
 		return (&bin_elem->data);
-	}/*if (bin_elem == NULL && chunk == NULL)
+	bin_size += 32;
+	while (bin_size <= bin_size_limit)
 	{
-		bin_size += 32;
-		while (bin_size <= bin_size_limit)
-		{
-			//bin_elem = pop(bin_size, chunk);
-			if (bin_elem != NULL)
-				break ;
-			bin_size += 16;
-		}
-	}*/
-	return (/*split_bin_elem(bin_elem, bin_size, size)*/bin_elem);
+		bin_elem = pop(bin_size);
+		if (bin_elem)
+			return (&bin_elem->data);
+		bin_size += 16;
+	}
+	return (split_bin_elem(bin_elem, bin_size, size));
 }
-
-
 
 /*
  * utilisé lors de la defragmentation afin de retirer tous les element presents
@@ -76,18 +67,13 @@ void	update_bins(t_region *region)
 {
 	t_chunk *chunk;
 
-	//ft_printf("*******************UPDATE*************************");
 	chunk = FIRST_CHUNK(region);
 	while (chunk)
 	{
-		//show_bins(10);
-		//ft_printf("\t\t%p\n", chunk);
 		pop_specific((t_freed*)chunk);
 		chunk = chunk->next;
-		//ft_printf("\t\t%p\n", chunk);
 	}
-	//	show_bins(10);
-	}
+}
 
 /*
  * Parcours la liste d'une bin et retourne l'element correspondant au chunk
