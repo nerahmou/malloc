@@ -6,7 +6,7 @@
 #    By: nerahmou <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/07 09:17:07 by nerahmou          #+#    #+#              #
-#    Updated: 2019/11/19 17:40:53 by nerahmou    ###    #+. /#+    ###.fr      #
+#    Updated: 2019/11/27 16:51:10 by nerahmou    ###    #+. /#+    ###.fr      #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,7 +24,7 @@ _IYELLOW=$'\x1b[43m
 NAME := libft.a
 AR += rcs
 CC := gcc
-CFLAGS := -g3 -Wall -Wextra -Werror
+CFLAGS := -Wall -Wextra -Werror
 PATH_OBJ := ./objs/
 PATH_SRC := ./srcs/
 INCS := ./includes/

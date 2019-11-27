@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/26 13:54:48 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/26 19:33:55 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/27 17:31:35 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -55,17 +55,12 @@ void	free_small(t_region **head, t_region *region, void *ptr)
 
 t_region	*get_the_region(t_region *region, void *ptr, size_t region_size)
 {
-	//ft_printf("region=[%p]\n", region);
 	while (region)
 	{
 		if (IN_REGION(ptr, region, region_size))
-		{
-	//		ft_printf("OK\n");
 			return (region);
-		}
 		region = region->next;
 	}
-	//ft_printf("Ko\n");
 	return (region);
 }
 
@@ -78,6 +73,7 @@ t_region	**is_valid_ptr(void *ptr)
 	size_t			region_size;
 
 	i = -1;
+	//ft_printf("is_valid_ptr(): addr=[%p]\n", ptr);
 	while (++i < 3)
 	{
 		head = (&g_heap.tiny_region + i);
@@ -88,10 +84,14 @@ t_region	**is_valid_ptr(void *ptr)
 		else
 			region_size = TINY_REGION_SIZE;
 		region = *head;
+		//ft_printf("\tis_valid_ptr(): = [%i]\n", i);
 		while (region)
 		{
+			//if (i == 1)
+			//	ft_printf("\t\tis_valid_ptr(): [%i] ptr=[%p]|region=[%p]|region_size=[%zu]\n",i, ptr, region, region_size);
 			if (IN_REGION(ptr, region, region_size))
 			{
+		//		ft_printf("\t\tis_valid_ptr(): IN_REGION\n");
 				chunk = FIRST_CHUNK(region);
 				while (chunk->size)
 				{

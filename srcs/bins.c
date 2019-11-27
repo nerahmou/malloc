@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/11 15:12:54 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/26 19:43:31 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/27 17:51:38 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -17,16 +17,15 @@ t_chunk	*split_bin_elem(t_chunk *chunk, size_t bin_size, size_t size)
 {
 	t_chunk	*bin_elem;
 
-	if (chunk == NULL)
+	if (chunk == NULL || bin_size == size)
 		return (chunk);
-	bin_elem = (t_chunk*)((long)chunk + size);
+	bin_elem = (t_chunk*)((size_t)chunk + size);
 	bin_elem->prev = chunk;
 	bin_elem->size = bin_size - size;
 	bin_elem->next = chunk->next;
 	bin_elem->in_use = false;
 	chunk->size = size;
 	chunk->next = bin_elem;
-	chunk->prev->next = chunk;
 	chunk->in_use = true;
 	push((t_freed*)bin_elem);
 	return (chunk);
@@ -96,7 +95,7 @@ void	push(t_freed *chunk)
 t_chunk	*pop_specific(t_freed *chunk)
 {
 	t_freed			*bin_elem;
-	t_freed			*prev_bin_elem = NULL;
+	t_freed			*prev_bin_elem;
 	unsigned		index;
 
 	index = BIN_INDEX(chunk->size);
@@ -111,7 +110,7 @@ t_chunk	*pop_specific(t_freed *chunk)
 		if (g_bins[index] == bin_elem)
 			g_bins[index] = bin_elem->next_freed;
 		else
-			prev_bin_elem->next_freed = bin_elem->next_freed;//bin_elem->prev_freed->next_freed = bin_elem->next_freed;
+			prev_bin_elem->next_freed = bin_elem->next_freed;
 		bin_elem->next_freed = 0;
 	}
 	return ((t_chunk*)bin_elem);

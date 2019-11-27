@@ -6,7 +6,7 @@
 #    By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2019/10/08 11:37:09 by nerahmou     #+#   ##    ##    #+#        #
-#    Updated: 2019/11/25 18:05:42 by nerahmou    ###    #+. /#+    ###.fr      #
+#    Updated: 2019/11/27 16:52:20 by nerahmou    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
@@ -20,9 +20,9 @@ CC := cc
 RM += -r
 
 ifeq ($(DEBUG),1)
-	CFLAGS := -Wall -Wextra -Wpadded -fPIC
+	CFLAGS := -O2 -Wall -Wextra -Wpadded -fPIC
 else
-	CFLAGS := -g3 -Wall -Wextra -Werror -Wpadded -fPIC
+	CFLAGS := -O2 -Wall -Wextra -Werror -Wpadded -fPIC
 endif
 ifeq ($(HOSTTYPE),)
 	HOSTTYPE := $(shell uname -m)_$(shell uname -s)

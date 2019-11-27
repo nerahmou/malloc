@@ -149,7 +149,7 @@
 //# define IS_NEXT_FREE(ch, max) (ch->header.next_size && (GET_NEXT_CHUNK(ch))->header.in_use == false && ch->header.size + ch->header.next_size <= max)
 	//&& ch->header.size + ch->header.next_size <= max)
 
-# define IS_SPLITTABLE(chunk, size) (long)CHUNK_SIZE(chunk) - (long)size >= 32
+# define IS_SPLITTABLE(chunk, size) (long)CHUNK_SIZE(chunk) - (long)size >= 48
 
 /*
 ** INCLUDES

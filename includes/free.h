@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/05 15:37:35 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/26 18:27:52 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/27 11:36:40 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -31,6 +31,7 @@
 
 # define BINS_NUMBER (unsigned short)((SMALL_MAX_SIZE / 16) - 2)
 # define BIN_INDEX(size) (size - CHUNK_HEAD_SIZE) / 16 - 1
+# define MIN_BIN_SIZE 48
 
 /*
 ******************FREE****************
