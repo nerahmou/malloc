@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/17 16:24:17 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/27 14:18:01 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/28 17:22:06 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -14,7 +14,6 @@
 #include "malloc.h"
 #include <stdio.h>
 
-bool debug=0;
 
 t_chunk	*place_in_region(t_region *region, size_t size)
 {
@@ -28,10 +27,10 @@ t_chunk	*place_in_region(t_region *region, size_t size)
 		region_size = SMALL_REGION_SIZE;
 	else
 		region_size = region->space;
-	new = SET_CHUNK_POS(region, region_size);
-	if (!IS_FIRST_CHUNK(region, new))
+	new = (t_chunk*)((size_t)region + REG_HEAD_SIZE + (region_size - region->space));
+	if (!(new == (t_chunk*)((size_t)region + REG_HEAD_SIZE)))
 	{
-		prev_chunk = FIRST_CHUNK(region);
+		prev_chunk = (t_chunk*)((size_t)region + REG_HEAD_SIZE);
 		while (prev_chunk->next != NULL)
 			prev_chunk = prev_chunk->next;
 		prev_chunk->next = new;
@@ -53,7 +52,7 @@ void	*new_region(t_region **head, size_t len)
 {
 	t_region	*new_region = NULL;
 
-	new_region = MMAP(len);
+	new_region = mmap(NULL, len, PROT_OPTS, MAP_FLAGS, -1, 0);
 	if (new_region == MAP_FAILED)
 		return (NULL);
 	if (*head == NULL)
@@ -88,13 +87,13 @@ t_region	*get_region(size_t size)
 	}
 	else
 	{
-		region_size = REQUIRED_SIZE(size, REG_HEAD_SIZE, 4096);
+		region_size = required_size(size, REG_HEAD_SIZE, 4096);
 		head = &(g_heap.large_region);
 	}
 	region = *head;
 	while (region)
 	{
-		if (AVAILABLE_SPACE(region, size))
+		if (region->space - REG_HEAD_SIZE >= size)
 			return (region);
 		previous_region = region;
 		region = region->next;
@@ -128,7 +127,7 @@ void	*malloc(size_t size)
 	addr = NULL;
 	if (size == 0)
 		++size;
-	size = REQUIRED_SIZE(size, CHUNK_HEAD_SIZE, 16);
+	size = required_size(size, CHUNK_HEAD_SIZE, 16);
 	addr = get_chunk_from_bin(size);
 	if (addr == NULL)
 		addr = place_chunk(size);

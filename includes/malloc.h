@@ -91,18 +91,14 @@
 
 # define PROT_OPTS (PROT_READ | PROT_WRITE)
 # define MAP_FLAGS (MAP_ANON | MAP_PRIVATE)
-# define MMAP(len) mmap(NULL, len, PROT_OPTS, MAP_FLAGS, -1, 0)
-# define MUNMAP(addr, len) munmap(addr, len)
 # define MUNMAP_FAILED -1
 
 # define PAGE_SIZE getpagesize()
 
-//# define ALIGNEMENT 16
+# define ALIGNEMENT 16
 
-# define REG_HEAD_SIZE		sizeof(t_region)
-# define CHUNK_HEAD_SIZE	(sizeof(t_chunk) - sizeof(void*))
-
-
+# define REG_HEAD_SIZE sizeof(t_region)
+# define CHUNK_HEAD_SIZE (sizeof(t_chunk) - sizeof(void*))
 
 # define TINY_MAX_SIZE 1024//(CHUNK_HEAD_SIZE + 496) // 512
 # define SMALL_MAX_SIZE 8192//(CHUNK_HEAD_SIZE + 4080) // 4096
@@ -110,46 +106,6 @@
 # define TINY_REGION_SIZE 4096 * 512  //((TINY_MAX_SIZE << 3) * 300)
 # define SMALL_REGION_SIZE 4096 * 4096 //(SMALL_MAX_SIZE * 200)
 # define LARGE_REGION_SIZE (REG_HEAD_SIZE + CHUNK_HEAD_SIZE)
-
-# define CHUNK_HEADER(addr) (t_chunk*)((size_t)addr - CHUNK_HEAD_SIZE)
-
-# define PREV_CHUNK(chunk) chunk->prev
-
-# define CHUNK_SIZE(chunk) chunk->size
-
-# define NEXT_CHUNK(chunk) ((t_chunk*)((size_t)chunk + CHUNK_SIZE(chunk)))
-
-# define NEXT_MULTIPLE(size, mult) ((size - 1) / mult * mult + mult)
-
-# define REQUIRED_SIZE(size, head_size ,mult) NEXT_MULTIPLE(size + head_size, mult)
-
-# define MOVE_CHUNK_ADDR(chunk, size) chunk + size / ALIGNEMENT
-
-# define DATA_SIZE(chunk) (chunk->size - CHUNK_HEAD_SIZE)
-
-# define AVAILABLE_SPACE(reg, size) (reg->space - REG_HEAD_SIZE) >= size
-
-# define IN_REGION(addr, seg, size) addr > (void*)seg && (size_t)addr <= (size_t)seg + size
-
-# define FIRST_CHUNK(reg) (t_chunk*) ((size_t)reg + REG_HEAD_SIZE)
-
-//# define IS_FIRST_CHUNK(reg, chunk) ((size_t)reg + REG_HEAD_SIZE) == (size_t)chunk
-# define IS_FIRST_CHUNK(reg, chunk) (FIRST_CHUNK(reg) == chunk)
-
-# define CHUNK_DATA(addr) &(addr->data)
-
-# define SET_CHUNK_POS(r, r_size) (t_chunk*)((size_t)r + REG_HEAD_SIZE + (r_size - r->space))
-
-//# define IS_PREV_FREE(ch, max) ch->header.prev  && !ch->header.prev->header.in_use && (ch->header.size + ch->header.prev->header.size) <= max // a verifier
-
-# define IN_USE(ch) ch->in_use == true
-
-
-
-//# define IS_NEXT_FREE(ch, max) (ch->header.next_size && (GET_NEXT_CHUNK(ch))->header.in_use == false && ch->header.size + ch->header.next_size <= max)
-	//&& ch->header.size + ch->header.next_size <= max)
-
-# define IS_SPLITTABLE(chunk, size) (long)CHUNK_SIZE(chunk) - (long)size >= 48
 
 /*
 ** INCLUDES
@@ -226,4 +182,10 @@ void	*get_chunk_from_bin(size_t);
 void	show_alloc_mem();
 t_region**	is_valid_ptr(void*);
 t_region	*get_the_region(t_region *region, void *ptr, size_t size);
+
+size_t	next_multiple(size_t size, size_t mult);
+
+size_t	required_size(size_t size, size_t header_size, size_t mult);
+
+
 #endif

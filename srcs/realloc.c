@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/14 16:19:14 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/27 18:11:27 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/28 17:22:33 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -49,8 +49,8 @@ void	*realloc_large(t_region **head, t_chunk *chunk, void *ptr, size_t size)
 	else
 		region_size = LARGE_REGION_SIZE;
 	region = get_the_region(*head, ptr, region_size);
-	needed_size = size - DATA_SIZE(chunk);
-	if (region_size == LARGE_REGION_SIZE && AVAILABLE_SPACE(region, needed_size))
+	needed_size = size - (chunk->size - CHUNK_HEAD_SIZE);
+	if (region_size == LARGE_REGION_SIZE && (region->space - REG_HEAD_SIZE) >= needed_size)
 	{
 		chunk->size += needed_size;
 		region->space -= needed_size;
@@ -81,11 +81,11 @@ void	*realloc_small(t_region **head, t_chunk *chunk, void *ptr, size_t size)
 		max_size = SMALL_MAX_SIZE;
 		region_size = SMALL_REGION_SIZE;
 	}
-	size = NEXT_MULTIPLE(size, 16);
+	size = next_multiple(size, 16);
 	region = get_the_region(*head, ptr, region_size);
-	needed_size = size - DATA_SIZE(chunk);
+	needed_size = size - (chunk->size - CHUNK_HEAD_SIZE);
 	next_chunk = chunk->next;
-	if (next_chunk == NULL && AVAILABLE_SPACE(region, needed_size))
+	if (next_chunk == NULL && (region->space - REG_HEAD_SIZE) >= needed_size)
 	{
 		chunk->size += needed_size;
 		region->space -= needed_size;
@@ -98,7 +98,7 @@ void	*realloc_small(t_region **head, t_chunk *chunk, void *ptr, size_t size)
 	else if (next_chunk && next_chunk->in_use == false &&(long)next_chunk->size - (long)needed_size >= MIN_BIN_SIZE && chunk->size + needed_size <= max_size)
 	{
 		next_chunk = pop_specific((t_freed*)next_chunk);
-		next_chunk = split_bin_elem(next_chunk, next_chunk->size, needed_size);
+		//next_chunk = split_bin_elem(next_chunk, next_chunk->size, needed_size);
 		chunk = merge_chunks(chunk, next_chunk);
 	}
 	else
@@ -119,7 +119,7 @@ void	*realloc(void *ptr, size_t size)
 	head = is_valid_ptr(ptr);
 	if (head == NULL)
 		return (NULL);
-	chunk = CHUNK_HEADER(ptr);
+	chunk = (t_chunk*)((size_t)ptr - CHUNK_HEAD_SIZE);
 	if (size > chunk->size - CHUNK_HEAD_SIZE)
 	{
 		if (chunk->size <= SMALL_MAX_SIZE)

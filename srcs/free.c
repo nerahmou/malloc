@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/26 13:54:48 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/27 17:31:35 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/28 17:21:24 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -34,7 +34,7 @@ void	free_region(t_region **head, t_region *to_munmap)
 		len = SMALL_REGION_SIZE;
 	else
 		len = TINY_REGION_SIZE;
-	if (MUNMAP(to_munmap, len) == MUNMAP_FAILED)
+	if (munmap(to_munmap, len) == MUNMAP_FAILED)
 			ft_printf("munmap() failed: addr=[%p] | len=[%zu]\n", to_munmap, len);
 }
 
@@ -42,7 +42,7 @@ void	free_small(t_region **head, t_region *region, void *ptr)
 {
 	t_chunk		*chunk = NULL;
 
-	chunk = CHUNK_HEADER(ptr);
+	chunk = (t_chunk*)((size_t)ptr - CHUNK_HEAD_SIZE);
 	chunk->in_use = false;
 	if (defrag(region, &chunk))
 	{
@@ -53,11 +53,17 @@ void	free_small(t_region **head, t_region *region, void *ptr)
 		push((t_freed*)chunk);
 }
 
+bool	ptr_in_region(void *ptr, t_region *region, size_t reg_size)
+{
+	return (ptr > (void*)region && (size_t)ptr <= (size_t)region + reg_size);
+}
+
+
 t_region	*get_the_region(t_region *region, void *ptr, size_t region_size)
 {
 	while (region)
 	{
-		if (IN_REGION(ptr, region, region_size))
+		if (ptr_in_region(ptr, region, region_size))
 			return (region);
 		region = region->next;
 	}
@@ -73,7 +79,6 @@ t_region	**is_valid_ptr(void *ptr)
 	size_t			region_size;
 
 	i = -1;
-	//ft_printf("is_valid_ptr(): addr=[%p]\n", ptr);
 	while (++i < 3)
 	{
 		head = (&g_heap.tiny_region + i);
@@ -89,10 +94,10 @@ t_region	**is_valid_ptr(void *ptr)
 		{
 			//if (i == 1)
 			//	ft_printf("\t\tis_valid_ptr(): [%i] ptr=[%p]|region=[%p]|region_size=[%zu]\n",i, ptr, region, region_size);
-			if (IN_REGION(ptr, region, region_size))
+			if (ptr_in_region(ptr, region, region_size))
 			{
 		//		ft_printf("\t\tis_valid_ptr(): IN_REGION\n");
-				chunk = FIRST_CHUNK(region);
+				chunk = (t_chunk*)((size_t)region + REG_HEAD_SIZE);
 				while (chunk->size)
 				{
 					if (&(chunk->data) == ptr)

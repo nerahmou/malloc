@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/11 15:12:54 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/27 17:51:38 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/28 17:20:00 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -66,7 +66,7 @@ void	update_bins(t_region *region)
 {
 	t_chunk *chunk;
 
-	chunk = FIRST_CHUNK(region);
+	chunk = (t_chunk*)((size_t)region + REG_HEAD_SIZE);
 	while (chunk)
 	{
 		pop_specific((t_freed*)chunk);
@@ -83,7 +83,7 @@ void	push(t_freed *chunk)
 {
 	short index;
 
-	index = BIN_INDEX(chunk->size);
+	index = (chunk->size - CHUNK_HEAD_SIZE) / 16 - 1;
 	chunk->next_freed = g_bins[index];
 	g_bins[index] = chunk;
 }
@@ -98,7 +98,7 @@ t_chunk	*pop_specific(t_freed *chunk)
 	t_freed			*prev_bin_elem;
 	unsigned		index;
 
-	index = BIN_INDEX(chunk->size);
+	index = (chunk->size - CHUNK_HEAD_SIZE) / 16 - 1;
 	bin_elem = g_bins[index];
 	while (bin_elem && bin_elem != chunk)
 	{
@@ -123,14 +123,14 @@ t_chunk	*pop(size_t size)
 	t_freed			*prev_bin_elem = NULL;
 	unsigned short	index;
 
-	index = BIN_INDEX(size);
+	index = (size - CHUNK_HEAD_SIZE) / 16 - 1;
 	bin_elem = g_bins[index];
 	if (bin_elem)
 	{
 		if (g_bins[index] == bin_elem)
 			g_bins[index] = bin_elem->next_freed;
 		else
-			prev_bin_elem->next_freed = bin_elem->next_freed;//bin_elem->prev_freed->next_freed = bin_elem->next_freed;
+			prev_bin_elem->next_freed = bin_elem->next_freed;
 		bin_elem->in_use = true;
 		bin_elem->next_freed=0;
 	}
