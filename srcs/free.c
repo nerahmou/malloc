@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/26 13:54:48 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/28 17:21:24 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/28 17:52:42 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -50,7 +50,7 @@ void	free_small(t_region **head, t_region *region, void *ptr)
 		free_region(head, region);
 	}
 	else
-		push((t_freed*)chunk);
+		push(chunk);
 }
 
 bool	ptr_in_region(void *ptr, t_region *region, size_t reg_size)

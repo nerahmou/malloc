@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/08 16:30:24 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/28 17:20:53 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/28 17:49:19 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -28,7 +28,7 @@ t_chunk	*merge_prev_free(t_chunk *freed_chunk)
 {
 	t_chunk	*bin_elem;
 
-	bin_elem = pop_specific((t_freed*)freed_chunk->prev);
+	bin_elem = pop_specific((t_chunk*)freed_chunk->prev);
 	bin_elem->size += freed_chunk->size;
 	bin_elem->next = freed_chunk->next;
 	if (freed_chunk->next)
@@ -40,7 +40,7 @@ t_chunk	*merge_next_free(t_chunk *freed_chunk)
 {
 	t_chunk	*bin_elem;
 
-	bin_elem = pop_specific((t_freed*)freed_chunk->next);
+	bin_elem = pop_specific((t_chunk*)freed_chunk->next);
 	freed_chunk->size += bin_elem->size;
 	freed_chunk->next = bin_elem->next;
 	if (/*freed_chunk->next*/bin_elem->next)

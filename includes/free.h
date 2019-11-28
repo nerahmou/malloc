@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/05 15:37:35 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/28 17:25:43 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/28 17:49:44 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -27,16 +27,16 @@ void	free_region(t_region **head, t_region *region);
 bool	defrag(t_region *region, t_chunk **chunk);
 void	update_bins(t_region *region);
 t_chunk *pop(size_t size);
-t_chunk *pop_specific(t_freed *chunk);
+t_chunk *pop_specific(t_chunk *chunk);
 void	show_bins();
 t_chunk	*split_bin_elem(t_chunk *chunk, size_t bin_size, size_t size);
-void	push(t_freed *chunk);
+void	push(t_chunk *chunk);
 
 /*
  * Corbeilles utilisé pour stocker l'addresse des malloc free pour les
  * reutiliser sans parcourir l'ensemble d'un region
  */
-t_freed	*g_bins[BINS_NUMBER];
+t_chunk	*g_bins[BINS_NUMBER];
 
 
 #endif

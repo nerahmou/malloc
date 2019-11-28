@@ -120,7 +120,6 @@
 typedef struct s_heap				t_heap;
 typedef struct s_region				t_region;
 typedef struct s_chunk				t_chunk;
-typedef struct s_freed				t_freed;
 
 /*
  * ENUMS
@@ -133,15 +132,6 @@ enum e_region_OFFSET_TYPE{
 	SMALL_region_OFFSET,
 	LARGE_region_OFFSET,
 	NB_ELEMS
-};
-
-struct	s_freed
-{
-	t_chunk		*prev;
-	t_chunk		*next;
-	size_t		size;
-	size_t		in_use;
-	t_freed		*next_freed;
 };
 
 struct	s_chunk

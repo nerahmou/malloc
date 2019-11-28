@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/11 15:12:54 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/28 17:20:00 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/28 17:51:27 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -27,7 +27,7 @@ t_chunk	*split_bin_elem(t_chunk *chunk, size_t bin_size, size_t size)
 	chunk->size = size;
 	chunk->next = bin_elem;
 	chunk->in_use = true;
-	push((t_freed*)bin_elem);
+	push((t_chunk*)bin_elem);
 	return (chunk);
 }
 
@@ -69,7 +69,7 @@ void	update_bins(t_region *region)
 	chunk = (t_chunk*)((size_t)region + REG_HEAD_SIZE);
 	while (chunk)
 	{
-		pop_specific((t_freed*)chunk);
+		pop_specific((t_chunk*)chunk);
 		chunk = chunk->next;
 	}
 }
@@ -79,12 +79,12 @@ void	update_bins(t_region *region)
  * Sinon NULL
  */
 
-void	push(t_freed *chunk)
+void	push(t_chunk *chunk)
 {
 	short index;
 
 	index = (chunk->size - CHUNK_HEAD_SIZE) / 16 - 1;
-	chunk->next_freed = g_bins[index];
+	chunk->data = g_bins[index];
 	g_bins[index] = chunk;
 }
 /*
@@ -92,10 +92,10 @@ void	push(t_freed *chunk)
  * Le chunk est != Null si s'est un chunk precis que nous souhaitons retirer de la bin
  */
 
-t_chunk	*pop_specific(t_freed *chunk)
+t_chunk	*pop_specific(t_chunk *chunk)
 {
-	t_freed			*bin_elem;
-	t_freed			*prev_bin_elem;
+	t_chunk			*bin_elem;
+	t_chunk			*prev_bin_elem;
 	unsigned		index;
 
 	index = (chunk->size - CHUNK_HEAD_SIZE) / 16 - 1;
@@ -103,15 +103,15 @@ t_chunk	*pop_specific(t_freed *chunk)
 	while (bin_elem && bin_elem != chunk)
 	{
 		prev_bin_elem = bin_elem;
-		bin_elem = bin_elem->next_freed;
+		bin_elem = bin_elem->data;
 	}
 	if (bin_elem)
 	{
 		if (g_bins[index] == bin_elem)
-			g_bins[index] = bin_elem->next_freed;
+			g_bins[index] = bin_elem->data;
 		else
-			prev_bin_elem->next_freed = bin_elem->next_freed;
-		bin_elem->next_freed = 0;
+			prev_bin_elem->data = bin_elem->data;
+		bin_elem->data = 0;
 	}
 	return ((t_chunk*)bin_elem);
 
@@ -119,8 +119,8 @@ t_chunk	*pop_specific(t_freed *chunk)
 
 t_chunk	*pop(size_t size)
 {
-	t_freed			*bin_elem;
-	t_freed			*prev_bin_elem = NULL;
+	t_chunk			*bin_elem;
+	t_chunk			*prev_bin_elem = NULL;
 	unsigned short	index;
 
 	index = (size - CHUNK_HEAD_SIZE) / 16 - 1;
@@ -128,11 +128,11 @@ t_chunk	*pop(size_t size)
 	if (bin_elem)
 	{
 		if (g_bins[index] == bin_elem)
-			g_bins[index] = bin_elem->next_freed;
+			g_bins[index] = bin_elem->data;
 		else
-			prev_bin_elem->next_freed = bin_elem->next_freed;
+			prev_bin_elem->data = bin_elem->data;
 		bin_elem->in_use = true;
-		bin_elem->next_freed=0;
+		bin_elem->data=0;
 	}
 	return ((t_chunk*)bin_elem);
 }

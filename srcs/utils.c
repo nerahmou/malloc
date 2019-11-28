@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/22 15:12:28 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/28 17:19:00 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/28 17:52:52 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -14,11 +14,11 @@
 #include "free.h"
 
 t_heap	g_heap = {NULL, NULL, NULL};
-t_freed	*g_bins[BINS_NUMBER] = {NULL};
+t_chunk	*g_bins[BINS_NUMBER] = {NULL};
 
 void	show_bins(size_t nb)
 {
-	t_freed *chunk;
+	t_chunk *chunk;
 	unsigned short i;
 
 	i = 0;
@@ -34,7 +34,7 @@ void	show_bins(size_t nb)
 			ft_printf(BOLD GREEN"{0x" );
 			ft_putnbr_base((long)chunk, HEXA_BASE_STR, HEXA_BASE);
 			ft_printf("}->" );
-			chunk = chunk->next_freed;
+			chunk = chunk->data;
 		}
 		ft_printf(BOLD RED"{NULL}\n" RES_COLOR);
 		i++;
