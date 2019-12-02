@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/22 15:12:28 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/12/02 18:48:33 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/12/02 19:33:26 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -39,11 +39,6 @@ void	show_bins(size_t nb)
 		ft_printf(BOLD RED"{NULL}\n" RES_COLOR);
 		i++;
 	}
-}
-
-size_t	next_multiple(size_t size, size_t mult)
-{
-	return (((size - 1) / mult * mult + mult));
 }
 
 size_t	required_size(size_t size, size_t header_size, size_t mult)
@@ -91,15 +86,4 @@ t_region	*is_valid_ptr(void *ptr)
 		}
 	}
 	return (NULL);
-}
-
-t_region	*get_region(t_region *region, void *ptr, size_t region_size)
-{
-	while (region)
-	{
-		if (ptr_in_region(ptr, region, region_size))
-			return (region);
-		region = region->next;
-	}
-	return (region);
 }

@@ -6,7 +6,7 @@
 #    By: nerahmou <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/07 09:17:07 by nerahmou          #+#    #+#              #
-#    Updated: 2019/11/27 16:51:10 by nerahmou    ###    #+. /#+    ###.fr      #
+#    Updated: 2019/12/02 19:09:46 by nerahmou    ###    #+. /#+    ###.fr      #
 #                                                                              #
 # **************************************************************************** #
 
@@ -116,6 +116,7 @@ FILES_LIB =	ft_memchr.c\
 		ft_lstlen.c\
 		ft_tablength.c\
 		ft_strchr_occur.c\
+		next_multiple.c
 
 OBJ_LIB = $(addprefix $(PATH_OBJ_LIB), $(FILES_LIB:.c=.o))
 SRC_LIB = $(addprefix $(PATH_SRC_LIB), $(FILES_LIB))

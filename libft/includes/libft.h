@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2017/11/29 13:51:21 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2018/03/21 17:10:30 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/12/02 19:03:04 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -137,4 +137,5 @@ size_t				ft_char_pos(char *str, char c);
 int					ft_countwords(char *str, char c);
 int					ft_intlen(intmax_t n, int base);
 size_t				ft_lstlen(t_queue *queue);
+size_t				next_multiple(size_t size, size_t mult);
 #endif

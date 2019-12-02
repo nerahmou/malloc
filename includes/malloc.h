@@ -90,11 +90,11 @@
 # define REG_HEAD_SIZE sizeof(t_region)
 # define CHUNK_HEAD_SIZE (sizeof(t_chunk) - sizeof(void*))
 
-# define TINY_MAX_SIZE 1024//(CHUNK_HEAD_SIZE + 496) // 512
-# define SMALL_MAX_SIZE 8192//(CHUNK_HEAD_SIZE + 4080) // 4096
+# define TINY_MAX_SIZE 1024
+# define SMALL_MAX_SIZE 8192
 
-# define TINY_REGION_SIZE 4096 * 512  //((TINY_MAX_SIZE << 3) * 300)
-# define SMALL_REGION_SIZE 4096 * 4096 //(SMALL_MAX_SIZE * 200)
+# define TINY_REGION_SIZE 4096 * 512
+# define SMALL_REGION_SIZE 4096 * 4096
 # define LARGE_REGION_SIZE (REG_HEAD_SIZE + CHUNK_HEAD_SIZE)
 
 # define ALIGNMENT 16
@@ -135,9 +135,9 @@ struct	s_chunk
 
 struct	s_region
 {
-	t_region	*head;
+	t_region	**head;
 	t_region	*next;
-	unsigned	region_size;
+	unsigned	size;
 	unsigned 	max_chunk_size;
 	unsigned	space;
 	unsigned	nb_chunk_in_use;
@@ -166,7 +166,6 @@ void	show_alloc_mem();
 t_region	*is_valid_ptr(void*);
 bool	ptr_in_region(void*, t_region*, size_t);
 t_region	*get_region(t_region *region, void *ptr, size_t size);
-size_t	next_multiple(size_t size, size_t mult);
 size_t	required_size(size_t size, size_t header_size, size_t mult);
 
 #endif

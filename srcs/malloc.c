@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/17 16:24:17 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/12/02 18:48:00 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/12/02 19:20:48 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -21,12 +21,10 @@ t_chunk	*place_in_region(t_region *region, size_t size)
 	t_chunk		*new;
 	size_t		region_size;
 
-	if (size <= TINY_MAX_SIZE)
-		region_size = TINY_REGION_SIZE;
-	else if (size <= SMALL_MAX_SIZE)
-		region_size = SMALL_REGION_SIZE;
-	else
+	if (size > SMALL_MAX_SIZE)
 		region_size = region->space;
+	else
+		region_size = region->size;
 	new = (t_chunk*)((size_t)region + REG_HEAD_SIZE + (region_size - region->space));
 	if (!(new == (t_chunk*)((size_t)region + REG_HEAD_SIZE)))
 	{
@@ -57,9 +55,9 @@ void	*new_region(t_region **head, size_t len)
 		return (NULL);
 	if (*head == NULL)
 		*head = new_region;
-	new_region->head = *head;
+	new_region->head = head;
 	new_region->space = len;
-	new_region->region_size = len;
+	new_region->size = len;
 	new_region->nb_chunk_in_use = 1; 
 	new_region->next = NULL;
 	if (len == TINY_REGION_SIZE)
