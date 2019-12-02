@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/22 11:24:43 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/28 17:19:23 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/12/01 14:28:53 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -17,28 +17,8 @@
 
 int main(int argc, char* argv[]){
 	
-	if (argv[1])
-		debug = 1;
-	void *tab[255] = {
-		malloc(16),
-		malloc(26),
-		malloc(16),
-		/*malloc(36),
-		malloc(16),
-		malloc(59),
-		malloc(159),
-		malloc(490),
-		malloc(512),
-		malloc(992),
-		malloc(4081),
-		malloc(4096),
-		malloc(5159),
-		malloc(8160),
-*/	};
-		show_alloc_mem();
-	show_bins();
-		show_alloc_mem();
-	show_bins();
+	ft_printf("%d\n", 32 >> 4);
+	ft_printf("%d", 32 / 16);
 	//free(tab[0]);
 	//free(tab[2]);
 	//free(tab[1]);

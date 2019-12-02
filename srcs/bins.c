@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/11 15:12:54 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/28 17:51:27 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/12/02 17:55:32 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -27,7 +27,7 @@ t_chunk	*split_bin_elem(t_chunk *chunk, size_t bin_size, size_t size)
 	chunk->size = size;
 	chunk->next = bin_elem;
 	chunk->in_use = true;
-	push((t_chunk*)bin_elem);
+	push(bin_elem);
 	return (chunk);
 }
 
@@ -81,9 +81,9 @@ void	update_bins(t_region *region)
 
 void	push(t_chunk *chunk)
 {
-	short index;
+	unsigned short	index;
 
-	index = (chunk->size - CHUNK_HEAD_SIZE) / 16 - 1;
+	index = ((chunk->size - CHUNK_HEAD_SIZE) >> 4) - 1;
 	chunk->data = g_bins[index];
 	g_bins[index] = chunk;
 }
@@ -96,9 +96,9 @@ t_chunk	*pop_specific(t_chunk *chunk)
 {
 	t_chunk			*bin_elem;
 	t_chunk			*prev_bin_elem;
-	unsigned		index;
+	unsigned short	index;
 
-	index = (chunk->size - CHUNK_HEAD_SIZE) / 16 - 1;
+	index = ((chunk->size - CHUNK_HEAD_SIZE) >> 4) - 1;
 	bin_elem = g_bins[index];
 	while (bin_elem && bin_elem != chunk)
 	{
@@ -123,7 +123,7 @@ t_chunk	*pop(size_t size)
 	t_chunk			*prev_bin_elem = NULL;
 	unsigned short	index;
 
-	index = (size - CHUNK_HEAD_SIZE) / 16 - 1;
+	index = ((size - CHUNK_HEAD_SIZE) >> 4) - 1;
 	bin_elem = g_bins[index];
 	if (bin_elem)
 	{
@@ -136,5 +136,3 @@ t_chunk	*pop(size_t size)
 	}
 	return ((t_chunk*)bin_elem);
 }
-
-

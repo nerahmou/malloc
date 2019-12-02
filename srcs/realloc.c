@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/14 16:19:14 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/28 17:51:39 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/12/02 17:46:28 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -24,15 +24,15 @@ t_chunk	*merge_chunks(t_chunk *first_chunk, t_chunk *second_chunk)
 
 void	*rellocate_chunk(void *ptr, size_t size, size_t needed_size)
 {
-	void	*data = NULL;
+	void	*addr = NULL;
 
-	data = malloc(size);
-	if (data)
+	addr = malloc(size);
+	if (addr)
 	{
-		ft_memmove(data, ptr, size - needed_size);
+		ft_memcpy(addr, ptr, size - needed_size);
 		free(ptr);
 	}
-	return (data);
+	return (addr);
 }
 
 void	*realloc_large(t_region **head, t_chunk *chunk, void *ptr, size_t size)
@@ -48,7 +48,7 @@ void	*realloc_large(t_region **head, t_chunk *chunk, void *ptr, size_t size)
 		region_size = SMALL_REGION_SIZE;
 	else
 		region_size = LARGE_REGION_SIZE;
-	region = get_the_region(*head, ptr, region_size);
+	region = get_region(*head, ptr, region_size);
 	needed_size = size - (chunk->size - CHUNK_HEAD_SIZE);
 	if (region_size == LARGE_REGION_SIZE && (region->space - REG_HEAD_SIZE) >= needed_size)
 	{
@@ -67,7 +67,7 @@ void	*realloc_large(t_region **head, t_chunk *chunk, void *ptr, size_t size)
 void	*realloc_small(t_region **head, t_chunk *chunk, void *ptr, size_t size)
 {
 	t_region	*region;
-	t_chunk *data;
+	t_chunk *next_chunk;
 	size_t	needed_size;
 	size_t	max_size;
 	size_t region_size;
@@ -82,38 +82,33 @@ void	*realloc_small(t_region **head, t_chunk *chunk, void *ptr, size_t size)
 		region_size = SMALL_REGION_SIZE;
 	}
 	size = next_multiple(size, 16);
-	region = get_the_region(*head, ptr, region_size);
+	region = get_region(*head, ptr, region_size);
 	needed_size = size - (chunk->size - CHUNK_HEAD_SIZE);
-	data = chunk->next;
-	if (data == NULL && (region->space - REG_HEAD_SIZE) >= needed_size)
+	next_chunk = chunk->next;
+	if (chunk->size + needed_size <= max_size)
 	{
-		chunk->size += needed_size;
-		region->space -= needed_size;
+		if (next_chunk == NULL && (region->space - REG_HEAD_SIZE) >= needed_size)
+		{
+			chunk->size += needed_size;
+			region->space -= needed_size;
+		}
+		else if (next_chunk && next_chunk->in_use == false)
+		{
+			next_chunk = pop_specific((t_chunk*)next_chunk);
+			//if ((long)next_chunk->size - (long)needed_size >= MIN_BIN_SIZE)
+			//	next_chunk = split_bin_elem(next_chunk, next_chunk->size, needed_size);
+			chunk = merge_chunks(chunk, next_chunk);
+		}
 	}
-	else if (data && data->in_use == false && data->size == needed_size && chunk->size + needed_size <= max_size)
-	{
-		data = pop_specific((t_chunk*)data);
-		chunk = merge_chunks(chunk, data);
-	}
-	else if (data && data->in_use == false &&(long)data->size - (long)needed_size >= MIN_BIN_SIZE && chunk->size + needed_size <= max_size)
-	{
-		data = pop_specific((t_chunk*)data);
-		//data = split_bin_elem(data, data->size, needed_size);
-		chunk = merge_chunks(chunk, data);
-	}
-	else
-		return (rellocate_chunk(ptr, size, needed_size));
-	return (ptr);
+	return (rellocate_chunk(ptr, size, needed_size));
 }
 
 
 void	*realloc(void *ptr, size_t size)
 {
 	t_region		**head;
-	t_region		*region;
-	t_chunk			*chunk = NULL;
-	void			*addr = NULL;
-	
+	t_chunk			*chunk;
+
 	if (ptr == NULL)
 		return (malloc(size));
 	head = is_valid_ptr(ptr);
@@ -124,11 +119,7 @@ void	*realloc(void *ptr, size_t size)
 	{
 		if (chunk->size <= SMALL_MAX_SIZE)
 			return (realloc_small(head, chunk, ptr, size));
-		/*addr = malloc(size);
-		ft_memmove(addr, ptr, DATA_SIZE(chunk));
-		free(ptr);
-		return addr;
-	*/	return (realloc_large(head, chunk, ptr, size));
+		return (realloc_large(head, chunk, ptr, size));
 	}
 	return (ptr);
 }

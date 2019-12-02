@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/17 16:24:17 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/28 17:22:06 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/12/02 18:48:00 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -17,8 +17,8 @@
 
 t_chunk	*place_in_region(t_region *region, size_t size)
 {
-	t_chunk		*prev_chunk = NULL;
-	t_chunk		*new = NULL;
+	t_chunk		*prev_chunk;
+	t_chunk		*new;
 	size_t		region_size;
 
 	if (size <= TINY_MAX_SIZE)
@@ -57,17 +57,19 @@ void	*new_region(t_region **head, size_t len)
 		return (NULL);
 	if (*head == NULL)
 		*head = new_region;
-	new_region->space = len; // Gere les deux cas vu que c'est uen union
+	new_region->head = *head;
+	new_region->space = len;
+	new_region->region_size = len;
+	new_region->nb_chunk_in_use = 1; 
 	new_region->next = NULL;
+	if (len == TINY_REGION_SIZE)
+		new_region->max_chunk_size = TINY_MAX_SIZE;
+	else if (len <= SMALL_MAX_SIZE)
+		new_region->max_chunk_size = SMALL_MAX_SIZE;
 	return (new_region);
 }
 
-
-/*
- * get_region():	Find and return a region with enough space for the 
- *					size. If not found, call new_region()
- */
-t_region	*get_region(size_t size)
+t_region	*get_region_to_place_chunk(size_t size)
 {
 	t_region	**head = NULL;
 	t_region	*region = NULL;
@@ -113,7 +115,7 @@ void	*place_chunk(size_t size)
 	t_chunk		*new_chunk = NULL;
 	t_region	*region = NULL;
 
-	region = get_region(size);
+	region = get_region_to_place_chunk(size);
 	if (region == NULL)
 		return (NULL);
 	new_chunk = place_in_region(region, size);

@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/05 15:37:35 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/28 17:49:44 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/11/28 18:40:31 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -16,8 +16,9 @@
 
 # include "malloc.h"
 
-# define BINS_NUMBER (unsigned short)((SMALL_MAX_SIZE / 16) - 2)
-# define MIN_BIN_SIZE 48
+# define BINS_NUMBER ((SMALL_MAX_SIZE - CHUNK_HEAD_SIZE) / ALIGNMENT)
+# define MAX_BINS_INDEX BINS_NUMBER - 1
+# define MIN_BIN_SIZE (long)(CHUNK_HEAD_SIZE + ALIGNMENT)
 
 /*
 ******************FREE****************
@@ -36,7 +37,7 @@ void	push(t_chunk *chunk);
  * Corbeilles utilisé pour stocker l'addresse des malloc free pour les
  * reutiliser sans parcourir l'ensemble d'un region
  */
-t_chunk	*g_bins[BINS_NUMBER];
+extern t_chunk	*g_bins[BINS_NUMBER];
 
 
 #endif
