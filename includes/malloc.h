@@ -73,6 +73,7 @@
 */
 
 # define MALLOC_H
+
 # define DECI_BASE 10
 # define HEXA_BASE 16
 
@@ -97,6 +98,11 @@
 # define SMALL_REGION_SIZE 4096 * 4096
 # define LARGE_REGION_SIZE (REG_HEAD_SIZE + CHUNK_HEAD_SIZE)
 
+
+# define TINY_REGION_HEAD &(g_heap.tiny_region)
+# define SMALL_REGION_HEAD &(g_heap.small_region)
+# define LARGE_REGION_HEAD &(g_heap.large_region)
+
 # define ALIGNMENT 16
 /*
 ** INCLUDES
@@ -106,6 +112,8 @@
 # include <sys/resource.h>
 # include <unistd.h>
 # include "libft.h"
+
+
 /*
 ** TYPE_DEFS
 ** - t_heap: Structure global gerant la memoire
@@ -113,16 +121,16 @@
 **				comprenant: les tinies, les smalls et les larges
 ** - t_chunk: Un troncon de memoire comprenant: Metadata + data
 */
-typedef struct s_heap				t_heap;
-typedef struct s_region				t_region;
-typedef struct s_chunk				t_chunk;
-
 /*
  * ENUMS
  *
  *	e_region_OFFSET_TYPE: Utilisé pour acceder au bon type de region dans la
  *	g_heap
  * */
+typedef struct s_heap				t_heap;
+typedef struct s_region				t_region;
+typedef struct s_chunk				t_chunk;
+
 
 struct	s_chunk
 {
@@ -137,10 +145,9 @@ struct	s_region
 {
 	t_region	**head;
 	t_region	*next;
-	unsigned	size;
-	unsigned 	max_chunk_size;
+	size_t		size;
 	unsigned	space;
-	unsigned	nb_chunk_in_use;
+	unsigned	max_chunk_size;
 };
 
 struct	s_heap
@@ -150,11 +157,13 @@ struct	s_heap
 	t_region			*large_region;
 };
 
+extern t_heap	g_heap;
+
+
 /*
 *****************GLOBAL_VARS****************
 */
 
-/*extern*/ t_heap	g_heap;
 
 void	show_alloc_mem(void);
 void	*malloc(size_t size);
@@ -167,5 +176,6 @@ t_region	*is_valid_ptr(void*);
 bool	ptr_in_region(void*, t_region*, size_t);
 t_region	*get_region(t_region *region, void *ptr, size_t size);
 size_t	required_size(size_t size, size_t header_size, size_t mult);
+t_region	*get_region_to_place_chunk(size_t size);
 
 #endif

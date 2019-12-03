@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/14 16:19:14 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/12/02 19:26:33 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/12/03 18:45:04 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -24,7 +24,7 @@ t_chunk	*merge_chunks(t_chunk *first_chunk, t_chunk *second_chunk)
 
 void	*rellocate_chunk(void *ptr, size_t size, size_t needed_size)
 {
-	void	*addr = NULL;
+	void	*addr;
 
 	addr = malloc(size);
 	if (addr)
@@ -38,54 +38,47 @@ void	*rellocate_chunk(void *ptr, size_t size, size_t needed_size)
 void	*realloc_large(t_region *region, t_chunk *chunk, void *ptr, size_t size)
 {
 	size_t	needed_size;
-	void	*addr;
 
 	needed_size = size - (chunk->size - CHUNK_HEAD_SIZE);
-	if (region->size == LARGE_REGION_SIZE && (region->space - REG_HEAD_SIZE) >= needed_size)
+	if (region->size == LARGE_REGION_SIZE &&
+		(region->space - REG_HEAD_SIZE) >= needed_size)
 	{
 		chunk->size += needed_size;
 		region->space -= needed_size;
 		return (ptr);
 	}
 	else
-	{
-		addr = rellocate_chunk(ptr, size, needed_size);
-		return addr;
-	}
-	return ptr;
+		return (rellocate_chunk(ptr, size, needed_size));
 }
 
-void	*realloc_small(t_region *region, t_chunk *chunk, void *ptr, size_t size)
+void	*realloc_small(t_region *reg, t_chunk *chunk, void *ptr, size_t size)
 {
-	t_chunk *next_chunk;
+	t_chunk	*next_chunk;
 	size_t	needed_size;
 
 	size = next_multiple(size, 16);
 	needed_size = size - (chunk->size - CHUNK_HEAD_SIZE);
 	next_chunk = chunk->next;
-	if (chunk->size + needed_size <= region->max_chunk_size)
+	if (chunk->size + needed_size <= reg->max_chunk_size)
 	{
-		if (next_chunk == NULL && (region->space - REG_HEAD_SIZE) >= needed_size)
+		if (next_chunk == NULL && (reg->space - REG_HEAD_SIZE) >= needed_size)
 		{
 			chunk->size += needed_size;
-			region->space -= needed_size;
+			reg->space -= needed_size;
 		}
 		else if (next_chunk && next_chunk->in_use == false)
 		{
 			next_chunk = pop_specific((t_chunk*)next_chunk);
-			//if ((long)next_chunk->size - (long)needed_size >= MIN_BIN_SIZE)
-			//	next_chunk = split_bin_elem(next_chunk, next_chunk->size, needed_size);
 			chunk = merge_chunks(chunk, next_chunk);
 		}
 	}
 	return (rellocate_chunk(ptr, size, needed_size));
 }
 
-
 void	*realloc(void *ptr, size_t size)
 {
-	t_region		*region;
-	t_chunk			*chunk;
+	t_region	*region;
+	t_chunk		*chunk;
 
 	if (ptr == NULL)
 		return (malloc(size));

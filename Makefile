@@ -6,7 +6,7 @@
 #    By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2019/10/08 11:37:09 by nerahmou     #+#   ##    ##    #+#        #
-#    Updated: 2019/11/28 16:24:19 by nerahmou    ###    #+. /#+    ###.fr      #
+#    Updated: 2019/12/03 16:05:13 by nerahmou    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
@@ -42,6 +42,7 @@ SRCS := $(addprefix $(SRCS_DIR)/,	malloc.c\
 									realloc.c\
 									calloc.c\
 									free.c\
+									region.c\
 									utils.c\
 									defrag.c\
 									bins.c\

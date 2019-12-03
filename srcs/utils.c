@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/22 15:12:28 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/12/02 19:33:26 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/12/03 19:13:59 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -62,7 +62,7 @@ t_region	*is_valid_ptr(void *ptr)
 	i = -1;
 	while (++i < 3)
 	{
-		head = (&g_heap.tiny_region + i);
+		head = (TINY_REGION_HEAD + i);
 		if (i == 0)
 			region_size = TINY_REGION_SIZE;
 		else if (i == 1)

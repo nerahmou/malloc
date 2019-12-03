@@ -6,16 +6,24 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/19 13:22:49 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/11/28 17:24:12 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/12/03 19:13:26 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "malloc.h"
 
-void	print_region_info(t_region *region, unsigned char i)
+void	print_region_info(t_region *region)
 {
-	ft_printf(UNDERLINE BOLD "%i : " GREEN HEXA_PREFIX, i);
+	char	*region_name;
+
+	if (region->max_chunk_size == TINY_MAX_SIZE)
+		region_name = "TINY ";
+	else if (region->max_chunk_size == SMALL_MAX_SIZE)
+		region_name = "SMALL";
+	else
+		region_name = "LARGE";
+	ft_printf(UNDERLINE BOLD "%s : " GREEN HEXA_PREFIX, region_name);
 	ft_putnbr_base((long)region, HEXA_BASE_STR, HEXA_BASE);
 	ft_printf("\n{eoc}");
 }
@@ -60,10 +68,10 @@ void	show_alloc_mem()
 	ft_putchar('\n');
 	while (++i < 3)
 	{
-		region = *(&g_heap.tiny_region + i);
+		region = *(TINY_REGION_HEAD + i);
 		while (region)
 		{
-			print_region_info(region, i);
+			print_region_info(region);
 			total += print_chunks(region);
 			region = region->next;
 		}
