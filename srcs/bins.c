@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/11 15:12:54 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/12/03 18:42:47 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/12/04 16:02:34 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -31,7 +31,7 @@ t_chunk	*split_bin_elem(t_chunk *chunk, size_t size)
 	return (chunk);
 }
 
-void	update_bins(t_region *region)
+void	clear_unused_bins(t_region *region)
 {
 	t_chunk *chunk;
 
@@ -47,18 +47,18 @@ void	push(t_chunk *chunk)
 {
 	unsigned short	index;
 
-	index = ((chunk->size - CHUNK_HEAD_SIZE) >> 4) - 1;
+	index = ((chunk->size - CHUNK_HEAD_SIZE) >> (ALIGNMENT >> 2)) - 1;
 	chunk->data = g_bins[index];
 	g_bins[index] = chunk;
 }
 
 t_chunk	*pop_specific(t_chunk *chunk)
 {
+	unsigned short	index;
 	t_chunk			*bin_elem;
 	t_chunk			*prev_bin_elem;
-	unsigned short	index;
 
-	index = ((chunk->size - CHUNK_HEAD_SIZE) >> 4) - 1;
+	index = ((chunk->size - CHUNK_HEAD_SIZE) >> (ALIGNMENT >> 2)) - 1;
 	bin_elem = g_bins[index];
 	while (bin_elem && bin_elem != chunk)
 	{
@@ -81,7 +81,7 @@ t_chunk	*pop(size_t size)
 	unsigned short	index;
 	t_chunk			*bin_elem;
 
-	index = ((size - CHUNK_HEAD_SIZE) >> 4) - 1;
+	index = ((size - CHUNK_HEAD_SIZE) >> (ALIGNMENT >> 2)) - 1;
 	bin_elem = g_bins[index];
 	if (bin_elem)
 	{

@@ -1,7 +1,8 @@
 cmake*
-.idea
+*idea
 a.out*
 *.dSYM
 notes
 main.c
 libft_malloc.so
+*swp

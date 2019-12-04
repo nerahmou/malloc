@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/14 16:19:14 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/12/03 18:45:04 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/12/04 15:25:40 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -40,15 +40,13 @@ void	*realloc_large(t_region *region, t_chunk *chunk, void *ptr, size_t size)
 	size_t	needed_size;
 
 	needed_size = size - (chunk->size - CHUNK_HEAD_SIZE);
-	if (region->size == LARGE_REGION_SIZE &&
-		(region->space - REG_HEAD_SIZE) >= needed_size)
+	if (region->space - REG_HEAD_SIZE >= needed_size)
 	{
 		chunk->size += needed_size;
 		region->space -= needed_size;
 		return (ptr);
 	}
-	else
-		return (rellocate_chunk(ptr, size, needed_size));
+	return (rellocate_chunk(ptr, size, needed_size));
 }
 
 void	*realloc_small(t_region *reg, t_chunk *chunk, void *ptr, size_t size)
@@ -65,11 +63,13 @@ void	*realloc_small(t_region *reg, t_chunk *chunk, void *ptr, size_t size)
 		{
 			chunk->size += needed_size;
 			reg->space -= needed_size;
+			return (ptr);
 		}
 		else if (next_chunk && next_chunk->in_use == false)
 		{
 			next_chunk = pop_specific((t_chunk*)next_chunk);
 			chunk = merge_chunks(chunk, next_chunk);
+			return (ptr);
 		}
 	}
 	return (rellocate_chunk(ptr, size, needed_size));

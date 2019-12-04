@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/12/03 16:01:20 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/12/03 18:45:49 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/12/04 16:12:50 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -71,7 +71,7 @@ t_region	*get_region_to_place_chunk(size_t size)
 		else if (size <= SMALL_MAX_SIZE)
 			region_size = SMALL_REGION_SIZE;
 		else
-			region_size = required_size(size, REG_HEAD_SIZE, 4096);
+			region_size = required_size(size, REG_HEAD_SIZE, PAGE_SIZE);
 		region = new_region(head, region_size);
 		if (previous_region != NULL)
 			previous_region->next = region;
