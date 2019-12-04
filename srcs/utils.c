@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/22 15:12:28 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/12/04 14:31:51 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/12/04 18:54:22 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -66,7 +66,7 @@ t_region	*is_valid_ptr(void *ptr)
 			if (ptr_in_region(ptr, region, region->size))
 			{
 				chunk = (t_chunk*)((size_t)region + REG_HEAD_SIZE);
-				while (chunk->size)
+				while (chunk)
 				{
 					if (&(chunk->data) == ptr)
 						return (region);
