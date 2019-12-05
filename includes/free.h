@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/05 15:37:35 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/12/04 16:04:03 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/12/04 18:53:36 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -44,6 +44,7 @@ t_chunk	*pop_specific(t_chunk *chunk);
 void	push(t_chunk *chunk);
 bool	defrag(t_region *region, t_chunk **chunk);
 void	clear_unused_bins(t_region *region);
+t_chunk	*split_bin_elem(t_chunk *chunk, size_t size);
 
 /*
 ******************GLOBALS****************

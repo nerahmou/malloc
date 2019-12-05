@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/12/03 16:01:20 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/12/04 16:12:50 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/12/05 13:10:46 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -28,7 +28,7 @@ void		*new_region(t_region **head, size_t len)
 	new_region->next = NULL;
 	if (len == TINY_REGION_SIZE)
 		new_region->max_chunk_size = TINY_MAX_SIZE;
-	else if (len <= SMALL_MAX_SIZE)
+	else if (len == SMALL_REGION_SIZE)
 		new_region->max_chunk_size = SMALL_MAX_SIZE;
 	return (new_region);
 }
