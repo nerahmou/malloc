@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/26 13:54:48 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/12/04 18:48:24 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/12/05 13:21:12 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -16,7 +16,7 @@
 
 void	free_region(t_region *to_munmap)
 {
-	t_region	*region;
+	register t_region	*region;
 
 	region = *to_munmap->head;
 	if (*to_munmap->head == to_munmap)

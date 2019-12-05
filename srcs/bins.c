@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/11 15:12:54 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/12/04 16:02:34 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/12/05 13:26:00 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -33,7 +33,7 @@ t_chunk	*split_bin_elem(t_chunk *chunk, size_t size)
 
 void	clear_unused_bins(t_region *region)
 {
-	t_chunk *chunk;
+	register t_chunk	*chunk;
 
 	chunk = (t_chunk*)((size_t)region + REG_HEAD_SIZE);
 	while (chunk)
@@ -54,9 +54,9 @@ void	push(t_chunk *chunk)
 
 t_chunk	*pop_specific(t_chunk *chunk)
 {
-	unsigned short	index;
-	t_chunk			*bin_elem;
-	t_chunk			*prev_bin_elem;
+	unsigned short		index;
+	register t_chunk	*bin_elem;
+	register t_chunk	*prev_bin_elem;
 
 	index = ((chunk->size - CHUNK_HEAD_SIZE) >> (ALIGNMENT >> 2)) - 1;
 	bin_elem = g_bins[index];

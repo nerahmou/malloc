@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/08 16:30:24 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/12/03 18:43:10 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/12/05 13:21:22 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -15,7 +15,7 @@
 
 bool	unused_region(t_region *region)
 {
-	t_chunk *chunk;
+	register t_chunk *chunk;
 
 	chunk = (t_chunk*)((size_t)region + REG_HEAD_SIZE);
 	while (chunk && chunk->in_use == false)
@@ -49,7 +49,7 @@ t_chunk	*merge_next_freed(t_chunk *freed)
 
 bool	defrag(t_region *region, t_chunk **chunk)
 {
-	t_chunk	*freed;
+	register t_chunk	*freed;
 
 	freed = *chunk;
 	while (freed->prev && freed->prev->in_use == false

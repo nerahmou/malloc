@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/17 16:24:17 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/12/04 18:57:39 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/12/05 13:26:23 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -16,9 +16,9 @@
 
 t_chunk	*place_in_region(t_region *reg, size_t size)
 {
-	t_chunk		*prev_chunk;
-	t_chunk		*new;
-	size_t		reg_size;
+	register t_chunk	*prev_chunk;
+	t_chunk				*new;
+	size_t				reg_size;
 
 	if (size > SMALL_MAX_SIZE)
 		reg_size = reg->space;
