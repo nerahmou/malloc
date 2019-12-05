@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/22 15:12:28 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/12/05 13:17:10 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/12/05 16:30:19 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -18,8 +18,8 @@ t_chunk	*g_bins[BINS_NUMBER] = {NULL};
 
 void		show_bins(size_t nb)
 {
-	unsigned short	i;
-	t_chunk			*chunk;
+	register unsigned short	i;
+	t_chunk					*chunk;
 
 	i = 0;
 	ft_putchar('\n');
@@ -53,9 +53,9 @@ bool		ptr_in_region(void *ptr, t_region *region, size_t reg_size)
 
 t_region	*is_valid_ptr(void *ptr)
 {
-	unsigned char	i;
-	t_region		*region;
-	t_chunk			*chunk;
+	unsigned char		i;
+	register t_region	*region;
+	register t_chunk	*chunk;
 
 	i = -1;
 	while (++i < NB_TYPE_OF_REGION)
@@ -77,4 +77,14 @@ t_region	*is_valid_ptr(void *ptr)
 		}
 	}
 	return (NULL);
+}
+
+bool	unused_region(t_region *region)
+{
+	register t_chunk	*chunk;
+
+	chunk = (t_chunk*)((size_t)region + REG_HEAD_SIZE);
+	while (chunk && chunk->in_use == false)
+		chunk = chunk->next;
+	return (chunk == 0);
 }

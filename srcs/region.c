@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/12/03 16:01:20 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/12/05 13:10:46 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/12/05 16:23:34 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -36,10 +36,10 @@ void		*new_region(t_region **head, size_t len)
 t_region	**get_appropriate_region_type(size_t size)
 {
 	if (size <= TINY_MAX_SIZE)
-		return (&(g_heap.tiny_region));
+		return (TINY_REGION_HEAD);
 	if (size <= SMALL_MAX_SIZE)
-		return (&(g_heap.small_region));
-	return (&(g_heap.large_region));
+		return (SMALL_REGION_HEAD);
+	return (LARGE_REGION_HEAD);
 }
 
 t_region	*find_space_in_region(t_region *reg, t_region **prev, size_t size)

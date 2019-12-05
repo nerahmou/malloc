@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/19 13:22:49 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/12/05 13:23:14 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/12/05 16:28:03 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -30,10 +30,10 @@ void	print_region_info(t_region *region)
 
 size_t	print_chunks(t_region *region)
 {
-	size_t		chunk_start;
-	size_t		data_size;
-	size_t		total;
 	register t_chunk	*chunk;
+	size_t				chunk_start;
+	size_t				data_size;
+	size_t				total;
 
 	total = 0;
 	chunk = (t_chunk*)((size_t)region + REG_HEAD_SIZE);
@@ -60,8 +60,8 @@ size_t	print_chunks(t_region *region)
 void	show_alloc_mem(void)
 {
 	register t_region	*region;
-	size_t		total;
-	short		i;
+	size_t				total;
+	short				i;
 
 	total = 0;
 	i = -1;

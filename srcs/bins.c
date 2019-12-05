@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/11 15:12:54 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/12/05 13:26:00 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/12/05 16:29:35 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -26,7 +26,6 @@ t_chunk	*split_bin_elem(t_chunk *chunk, size_t size)
 	bin_elem->in_use = false;
 	chunk->size = size;
 	chunk->next = bin_elem;
-	chunk->in_use = true;
 	push(bin_elem);
 	return (chunk);
 }

@@ -6,22 +6,12 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/08 16:30:24 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/12/05 13:21:22 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/12/05 16:28:36 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "free.h"
-
-bool	unused_region(t_region *region)
-{
-	register t_chunk *chunk;
-
-	chunk = (t_chunk*)((size_t)region + REG_HEAD_SIZE);
-	while (chunk && chunk->in_use == false)
-		chunk = chunk->next;
-	return (chunk == 0);
-}
 
 t_chunk	*merge_prev_freed(t_chunk *freed)
 {

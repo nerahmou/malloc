@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/17 16:24:17 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/12/05 13:26:23 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/12/05 16:26:19 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -56,9 +56,9 @@ void	*place_chunk(size_t size)
 
 void	*get_chunk_from_bin(size_t size)
 {
-	t_chunk	*bin_elem;
-	size_t	bin_size;
-	size_t	bin_size_limit;
+	register size_t	bin_size;
+	register size_t	bin_size_limit;
+	t_chunk			*bin_elem;
 
 	if (size > SMALL_MAX_SIZE)
 		return (NULL);
@@ -87,7 +87,7 @@ void	*malloc(size_t size)
 
 	if (size == 0)
 		++size;
-	size = required_size(size, CHUNK_HEAD_SIZE, 16);
+	size = required_size(size, CHUNK_HEAD_SIZE, ALIGNMENT);
 	addr = get_chunk_from_bin(size);
 	if (addr == NULL)
 		addr = place_chunk(size);
