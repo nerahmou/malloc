@@ -6,7 +6,7 @@
 #    By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2019/10/08 11:37:09 by nerahmou     #+#   ##    ##    #+#        #
-#    Updated: 2019/12/03 16:05:13 by nerahmou    ###    #+. /#+    ###.fr      #
+#    Updated: 2019/12/04 16:20:52 by nerahmou    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
@@ -20,7 +20,7 @@ CC := cc
 RM += -r
 
 ifeq ($(DEBUG),1)
-	CFLAGS := -O2 -Wall -Wextra -Wpadded -fPIC
+	CFLAGS := -g3 -O2 -Wall -Wextra -Wpadded -fPIC
 else
 	CFLAGS := -O2 -Wall -Wextra -Werror -Wpadded -fPIC
 endif
