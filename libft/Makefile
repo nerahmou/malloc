@@ -6,7 +6,7 @@
 #    By: nerahmou <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/07 09:17:07 by nerahmou          #+#    #+#              #
-#    Updated: 2019/12/02 19:09:46 by nerahmou    ###    #+. /#+    ###.fr      #
+#    Updated: 2019/12/09 16:52:52 by nerahmou    ###    #+. /#+    ###.fr      #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,6 +28,7 @@ CFLAGS := -Wall -Wextra -Werror
 PATH_OBJ := ./objs/
 PATH_SRC := ./srcs/
 INCS := ./includes/
+INCS_FILES := $(addprefix $(INCS), libft.h ft_printf.h)
 RM := rm -rf
 
 #******************************************************************************#
@@ -174,7 +175,7 @@ FILES = $(FILES_LIB) $(FILES_GNL) $(FILES_PRF)
 
 all: $(NAME)
 
-$(NAME): $(PATHS_OBJ) $(OBJS) $(INCS)
+$(NAME): $(PATHS_OBJ) $(OBJS)# $(INCS)
 	@$(AR) $(NAME) $(OBJS)
 	@echo "Library created 👍 \n"
 
@@ -182,7 +183,7 @@ $(PATHS_OBJ):
 	@mkdir -p $@
 	@clear
 
-$(PATH_OBJ)%.o: $(PATH_SRC)%.c $(INCS)
+$(PATH_OBJ)%.o: $(PATH_SRC)%.c $(INCS_FILES)
 	@echo "[$(_BOLD)$(_IRED)$(notdir $<)\033[0;0m] -> [$(_BOLD)$(_IGREEN)$(notdir $@)\033[0;0m]"
 	@$(CC) $(CFLAGS) -c $< -o $@ -I $(INCS)
 	@clear

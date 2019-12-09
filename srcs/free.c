@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/26 13:54:48 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/12/05 16:25:40 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/12/09 16:53:48 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -37,7 +37,7 @@ void	free_small(t_region *region, void *ptr)
 
 	chunk = (t_chunk*)((size_t)ptr - CHUNK_HEAD_SIZE);
 	chunk->in_use = false;
-	if (defrag(region, &chunk))
+	if (defrag(region, &chunk) && region->next)
 	{
 		clear_unused_bins(region);
 		free_region(region);
