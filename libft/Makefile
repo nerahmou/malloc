@@ -6,7 +6,6 @@
 #    By: nerahmou <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/07 09:17:07 by nerahmou          #+#    #+#              #
-#    Updated: 2019/12/17 10:24:03 by nerahmou    ###    #+. /#+    ###.fr      #
 #                                                                              #
 # **************************************************************************** #
 
@@ -175,7 +174,11 @@ FILES = $(FILES_LIB) $(FILES_GNL) $(FILES_PRF)
 
 all: $(NAME)
 
+<<<<<<< HEAD
 $(NAME): $(PATHS_OBJ) $(OBJS)
+=======
+$(NAME): $(PATHS_OBJ) $(OBJS) $(INCS)
+>>>>>>> 0fe89e27529c99ec67095c8aba719f6d9142a857
 	@$(AR) $(NAME) $(OBJS)
 	@echo "Library created 👍 \n"
 
