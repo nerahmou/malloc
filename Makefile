@@ -6,7 +6,7 @@
 #    By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2019/10/08 11:37:09 by nerahmou     #+#   ##    ##    #+#        #
-#    Updated: 2019/12/04 16:20:52 by nerahmou    ###    #+. /#+    ###.fr      #
+#    Updated: 2019/12/17 10:42:14 by nerahmou    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
@@ -53,9 +53,9 @@ NAME := libft_malloc_$(HOSTTYPE).so
 LINK_NAME := libft_malloc.so
 
 
-all: $(NAME)
+all: build_libft $(NAME)
 
-$(NAME): $(LIB) $(OBJS)
+$(NAME): $(OBJS)
 	@echo "Link object files"
 	$(CC) -shared $(CFLAGS) $^ -L $(LFTDIR) -lft -o $(NAME)
 	ln -s $(NAME) $(LINK_NAME) 2> /dev/null || true
@@ -68,8 +68,8 @@ $(OBJS_DIR):
 	@echo "Create $@ directory"
 	mkdir $@
 
-$(LIB):
-	make -C $(LFTDIR)
+build_libft:
+	@make -C $(LFTDIR)
 
 clean:
 	@echo "Clean"
