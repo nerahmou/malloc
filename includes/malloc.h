@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/12/04 15:26:56 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/12/04 15:56:46 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2020/01/06 17:41:06 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -26,25 +26,16 @@
 
 # define HEXA_PREFIX "0x"
 
-# define PROT_OPTS (PROT_READ | PROT_WRITE)
-# define MAP_FLAGS (MAP_ANON | MAP_PRIVATE)
 # define MUNMAP_FAILED -1
 
-# define PAGE_SIZE getpagesize()
-
-# define REG_HEAD_SIZE sizeof(t_region)
-# define CHUNK_HEAD_SIZE (sizeof(t_chunk) - sizeof(void*))
+# define PAGE_SIZE getpagesize
 
 # define TINY_MAX_SIZE 1024
 # define SMALL_MAX_SIZE 8192
 
-# define TINY_REGION_SIZE (size_t)PAGE_SIZE * 512
-# define SMALL_REGION_SIZE (size_t)PAGE_SIZE * 4096
-# define LARGE_REGION_SIZE (REG_HEAD_SIZE + CHUNK_HEAD_SIZE)
-
-# define TINY_REGION_HEAD &(g_heap.tiny_region)
-# define SMALL_REGION_HEAD &(g_heap.small_region)
-# define LARGE_REGION_HEAD &(g_heap.large_region)
+# define TINY_REGION_SIZE 2097152
+# define SMALL_REGION_SIZE 16777216
+# define LARGE_REGION_SIZE 80
 
 # define NB_TYPE_OF_REGION 3
 

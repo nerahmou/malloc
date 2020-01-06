@@ -6,7 +6,7 @@
 #    By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2019/10/08 11:37:09 by nerahmou     #+#   ##    ##    #+#        #
-#    Updated: 2019/12/17 10:42:14 by nerahmou    ###    #+. /#+    ###.fr      #
+#    Updated: 2020/01/06 14:37:54 by nerahmou    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
@@ -15,6 +15,9 @@
 .SUFFIXES:
 
 ########################### VARS ############################
+bold=`tput bold`
+normal=`tput sgr0`
+
 DEBUG := 0
 CC := cc
 RM += -r
@@ -55,28 +58,29 @@ LINK_NAME := libft_malloc.so
 
 all: build_libft $(NAME)
 
-$(NAME): $(OBJS)
-	@echo "Link object files"
+$(NAME): $(LIB) $(OBJS)
+	@echo "\n${bold}Link object files${normal}"
 	$(CC) -shared $(CFLAGS) $^ -L $(LFTDIR) -lft -o $(NAME)
+	@echo "\n${bold}Symbolic link${normal}"
 	ln -s $(NAME) $(LINK_NAME) 2> /dev/null || true
 
 $(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c $(HEADERS) | $(OBJS_DIR)
-	@echo "Compile $< in $@"
+	@echo "\n${bold}Compile $< in $@${normal}"
 	$(CC) $(CFLAGS) -I $(HEADERS_DIR) -I $(LIB_HEADER) -c $< -o $@ 
 
 $(OBJS_DIR):
-	@echo "Create $@ directory"
+	@echo "${bold}Create $@ directory${normal}"
 	mkdir $@
 
 build_libft:
 	@make -C $(LFTDIR)
 
 clean:
-	@echo "Clean"
+	@echo "${bold}Clean${normal}"
 	$(RM) $(OBJS_DIR)
 
 fclean: clean
-	@echo "Fclean"
+	@echo "${bold}Fclean${normal}"
 	$(RM) $(NAME) $(LINK_NAME)
 	make -C $(LFTDIR) fclean
 

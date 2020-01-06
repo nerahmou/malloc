@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/05 15:37:35 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/12/09 17:47:00 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2020/01/06 17:44:42 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -17,13 +17,13 @@
 ******************DEFINES****************
 */
 # define FREE_H
-# define BINS_NUMBER ((SMALL_MAX_SIZE - CHUNK_HEAD_SIZE) / ALIGNMENT)
-# define MAX_BINS_INDEX BINS_NUMBER - 1
+# define BINS_NUMBER 510
+# define MAX_BINS_INDEX 509
 
 /*
 ** MIN_BIN_SIZE is the minimum acceptable size to store in the first bin
 */
-# define MIN_BIN_SIZE (size_t)(CHUNK_HEAD_SIZE + ALIGNMENT)
+# define MIN_BIN_SIZE 48
 
 /*
 ******************INCLUDES****************

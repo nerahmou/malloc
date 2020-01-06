@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/14 16:19:14 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/12/05 16:26:30 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2020/01/06 17:14:52 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -39,8 +39,8 @@ void	*realloc_large(t_region *region, t_chunk *chunk, void *ptr, size_t size)
 {
 	size_t	needed_size;
 
-	needed_size = size - (chunk->size - CHUNK_HEAD_SIZE);
-	if (region->space - REG_HEAD_SIZE >= needed_size)
+	needed_size = size - (chunk->size - (sizeof(t_chunk) - 8));
+	if (region->space - sizeof(t_region) >= needed_size)
 	{
 		chunk->size += needed_size;
 		region->space -= needed_size;
@@ -55,11 +55,11 @@ void	*realloc_small(t_region *reg, t_chunk *chunk, void *ptr, size_t size)
 	size_t	needed_size;
 
 	size = next_multiple(size, ALIGNMENT);
-	needed_size = size - (chunk->size - CHUNK_HEAD_SIZE);
+	needed_size = size - (chunk->size - (sizeof(t_chunk) - 8));
 	next_chunk = chunk->next;
 	if (chunk->size + needed_size <= reg->max_chunk_size)
 	{
-		if (next_chunk == NULL && (reg->space - REG_HEAD_SIZE) >= needed_size)
+		if (next_chunk == NULL && reg->space - sizeof(t_region) >= needed_size)
 		{
 			chunk->size += needed_size;
 			reg->space -= needed_size;
@@ -86,8 +86,8 @@ void	*realloc(void *ptr, size_t size)
 	region = is_valid_ptr(ptr);
 	if (region == NULL)
 		return (NULL);
-	chunk = (t_chunk*)((size_t)ptr - CHUNK_HEAD_SIZE);
-	if (size > chunk->size - CHUNK_HEAD_SIZE)
+	chunk = (t_chunk*)((size_t)ptr - (sizeof(t_chunk) - 8));
+	if (size > chunk->size - (sizeof(t_chunk) - 8))
 	{
 		if (chunk->size <= SMALL_MAX_SIZE)
 			return (realloc_small(region, chunk, ptr, size));

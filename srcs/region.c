@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/12/03 16:01:20 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/12/05 16:23:34 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2020/01/06 17:08:41 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -17,7 +17,8 @@ void		*new_region(t_region **head, size_t len)
 {
 	t_region	*new_region;
 
-	new_region = mmap(NULL, len, PROT_OPTS, MAP_FLAGS, -1, 0);
+	new_region = mmap(NULL, len, (PROT_READ | PROT_WRITE),
+									(MAP_ANON | MAP_PRIVATE), -1, 0);
 	if (new_region == MAP_FAILED)
 		return (NULL);
 	if (*head == NULL)
@@ -36,10 +37,10 @@ void		*new_region(t_region **head, size_t len)
 t_region	**get_appropriate_region_type(size_t size)
 {
 	if (size <= TINY_MAX_SIZE)
-		return (TINY_REGION_HEAD);
+		return (&(g_heap.tiny_region));
 	if (size <= SMALL_MAX_SIZE)
-		return (SMALL_REGION_HEAD);
-	return (LARGE_REGION_HEAD);
+		return (&(g_heap.small_region));
+	return (&(g_heap.large_region));
 }
 
 t_region	*find_space_in_region(t_region *reg, t_region **prev, size_t size)
@@ -47,7 +48,7 @@ t_region	*find_space_in_region(t_region *reg, t_region **prev, size_t size)
 	*prev = NULL;
 	while (reg)
 	{
-		if (reg->space - REG_HEAD_SIZE >= size)
+		if (reg->space - sizeof(t_region) >= size)
 			return (reg);
 		*prev = reg;
 		reg = reg->next;
@@ -71,10 +72,13 @@ t_region	*get_region_to_place_chunk(size_t size)
 		else if (size <= SMALL_MAX_SIZE)
 			region_size = SMALL_REGION_SIZE;
 		else
-			region_size = required_size(size, REG_HEAD_SIZE, PAGE_SIZE);
-		region = new_region(head, region_size);
-		if (previous_region != NULL)
-			previous_region->next = region;
+			region_size = required_size(size, sizeof(t_region), PAGE_SIZE());
+		if (region_size != 0)
+		{
+			region = new_region(head, region_size);
+			if (previous_region != NULL)
+				previous_region->next = region;
+		}
 	}
 	return (region);
 }

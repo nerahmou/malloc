@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/10/17 16:24:17 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/12/09 17:47:34 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2020/01/06 17:09:55 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -24,10 +24,10 @@ t_chunk	*place_in_region(t_region *reg, size_t size)
 		reg_size = reg->space;
 	else
 		reg_size = reg->size;
-	new = (t_chunk*)((size_t)reg + REG_HEAD_SIZE + (reg_size - reg->space));
-	if (!(new == (t_chunk*)((size_t)reg + REG_HEAD_SIZE)))
+	new = (t_chunk*)((size_t)reg + sizeof(t_region) + (reg_size - reg->space));
+	if (!(new == (t_chunk*)((size_t)reg + sizeof(t_region))))
 	{
-		prev_chunk = (t_chunk*)((size_t)reg + REG_HEAD_SIZE);
+		prev_chunk = (t_chunk*)((size_t)reg + sizeof(t_region));
 		while (prev_chunk->next != NULL)
 			prev_chunk = prev_chunk->next;
 		prev_chunk->next = new;
@@ -85,11 +85,15 @@ void	*malloc(size_t size)
 {
 	void *addr;
 
+	addr = NULL;
 	if (size == 0)
 		++size;
-	size = required_size(size, CHUNK_HEAD_SIZE, ALIGNMENT);
-	addr = get_chunk_from_bin(size);
-	if (addr == NULL)
-		addr = place_chunk(size);
+	size = required_size(size, sizeof(t_chunk) - 8, ALIGNMENT);
+	if (size != 0)
+	{
+		addr = get_chunk_from_bin(size);
+		if (addr == NULL)
+			addr = place_chunk(size);
+	}
 	return (addr);
 }

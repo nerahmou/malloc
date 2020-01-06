@@ -6,7 +6,7 @@
 /*   By: nerahmou <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/11/26 13:54:48 by nerahmou     #+#   ##    ##    #+#       */
-/*   Updated: 2019/12/09 16:53:48 by nerahmou    ###    #+. /#+    ###.fr     */
+/*   Updated: 2020/01/06 17:15:40 by nerahmou    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -35,7 +35,7 @@ void	free_small(t_region *region, void *ptr)
 {
 	t_chunk		*chunk;
 
-	chunk = (t_chunk*)((size_t)ptr - CHUNK_HEAD_SIZE);
+	chunk = (t_chunk*)((size_t)ptr - (sizeof(t_chunk) - 8));
 	chunk->in_use = false;
 	if (defrag(region, &chunk) && region->next)
 	{
@@ -55,7 +55,7 @@ void	free(void *ptr)
 		region = is_valid_ptr(ptr);
 		if (region)
 		{
-			if (region->head == LARGE_REGION_HEAD)
+			if (region->head == &(g_heap.large_region))
 				free_region(region);
 			else
 				free_small(region, ptr);
